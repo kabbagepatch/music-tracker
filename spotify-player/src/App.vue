@@ -1,28 +1,59 @@
-<script setup lang="ts">
-import NowPlaying from "./components/NowPlaying.vue";
-</script>
-
 <template>
   <main class="container">
     <h1>Now Playing</h1>
 
     <div class="albumart">
-      <img src="./assets/bite_me.png" alt="Album Art" />
+      <img :src="albumArts[curIndex]" alt="Album Art" />
     </div>
 
-    <now-playing />
+    <now-playing
+      :songName="songTitles[curIndex]"
+      :backClick="backClick"
+      :forwardClick="forwardClick"
+    />
   </main>
 </template>
 
-<style scoped>
+<script setup lang="ts">
+import NowPlaying from "./components/NowPlaying.vue";
 
+import { ref } from 'vue'
+
+import art1 from './assets/bite_me.png';
+import art2 from './assets/From_Zero.png';
+import art3 from './assets/Imaginal_Disk.png';
+import art4 from './assets/liminal_space.png';
+import art5 from './assets/The_Loveliest_Time.png';
+
+const albumArts = [art1, art2, art3, art4, art5];
+const songTitles = [
+  "Renee Rapp - Leave Me Alone",
+  "Linkin Park - Heavy is the Crown",
+  "Magdalena Bay - Tunnel Vision",
+  "mxmtoon - rain",
+  "Carly Rae Jepsen - Beach House"
+];
+const curIndex = ref(0);
+
+const forwardClick = () => {
+  curIndex.value = (curIndex.value + 1) % albumArts.length;
+  console.log(curIndex);
+};
+
+const backClick = () => {
+  curIndex.value = (curIndex.value - 1 + albumArts.length) % albumArts.length;
+  console.log(curIndex);
+};
+
+</script>
+
+<style scoped>
 h1 {
-  margin: 5px;
+  margin: 0 5px;
   margin-bottom: 10px;
-  font-size: 28px;
+  font-size: 24px;
   width: 100%;
   color: white;
-  letter-spacing: 3px;
 }
 
 .albumart {
@@ -33,10 +64,11 @@ h1 {
   padding: 3px;
   background: #ffb3c6;
   filter: drop-shadow(0 0 0.15em #cc7296);
+  justify-content: center;
 }
 
 .albumart img {
-  width: 100%;
+  width: 356px;
   will-change: filter;
   transition: 0.75s;
   border-radius: 28px;
@@ -50,21 +82,28 @@ h1 {
 <style>
 @font-face {
   font-family: "Pixels";
-  src: url('./assets/Jersey10-Regular.ttf');;
+  src: url('./assets/Jersey10-Regular.ttf');
+}
+@font-face {
+  font-family: "Bubbly";
+  src: url('./assets/Atop-R99O3.ttf');
 }
 
 :root {
-  font-family: Pixels, Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 20px;
+  font-family: Bubbly, Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 16px;
   line-height: 24px;
-  letter-spacing: 2px;
   font-weight: 400;
   text-shadow: -1px -1px 0 #4c0080, 1px -1px 0 #4c0080, -1px 1px 0 #4c0080, 1px 1px 0 #4c0080;
   color: #0f0f0f;
-  background-color: #f6f6f6;
-  background-image: url('./assets/pretty.jpg');
+  background-color: #dfbfed;
+  /* background-image: url('./assets/pretty.jpg'); */
   background-repeat: no-repeat;
   background-size: cover;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -90,35 +129,15 @@ a:hover {
   color: #535bf2;
 }
 
-input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-}
-
 button {
   cursor: pointer;
-}
-
-button:hover {
-  border-color: #396cd8;
-}
-button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
-}
-
-input,
-button {
+  border: none;
+  background: none;
   outline: none;
+  color: #ffffff;
+  text-shadow: -1px -1px 0 #4c0080, 1px -1px 0 #4c0080, -1px 1px 0 #4c0080, 1px 1px 0 #4c0080;
+  font-size: 24px;
+  font-family: Bubbly, Inter, Avenir, Helvetica, Arial, sans-serif;
 }
 
 #greet-input {
@@ -128,15 +147,6 @@ button {
 @media (prefers-color-scheme: dark) {
   a:hover {
     color: #24c8db;
-  }
-
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
-  }
-  button:active {
-    background-color: #0f0f0f69;
   }
 }
 
