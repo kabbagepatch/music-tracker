@@ -3,11 +3,11 @@
     <h1>Now Playing</h1>
 
     <div class="albumart">
-      <img :src="albumArts[curIndex]" alt="Album Art" />
+      <img :src="tracks[curIndex]?.album?.images[1].url" alt="Album Art" />
     </div>
 
     <now-playing
-      :songName="songTitles[curIndex]"
+      :songName="`${tracks[curIndex]?.artists.map(a => a.name).join(',')} - ${tracks[curIndex]?.name}`"
       :backClick="backClick"
       :forwardClick="forwardClick"
     />
@@ -15,34 +15,27 @@
 </template>
 
 <script setup lang="ts">
-import NowPlaying from "./components/NowPlaying.vue";
-
 import { ref } from 'vue'
+import NowPlaying from "./components/NowPlaying.vue";
+import { getPlaylist } from './services/spotify';
 
-import art1 from './assets/bite_me.png';
-import art2 from './assets/From_Zero.png';
-import art3 from './assets/Imaginal_Disk.png';
-import art4 from './assets/liminal_space.png';
-import art5 from './assets/The_Loveliest_Time.png';
-
-const albumArts = [art1, art2, art3, art4, art5];
-const songTitles = [
-  "Renee Rapp - Leave Me Alone",
-  "Linkin Park - Heavy is the Crown",
-  "Magdalena Bay - Tunnel Vision",
-  "mxmtoon - rain",
-  "Carly Rae Jepsen - Beach House"
-];
+const tracks: any = ref([]);
 const curIndex = ref(0);
 
+getPlaylist('1uRFGSIGuNELeRkNktwHRR').then(playlist => {
+  tracks.value = playlist.tracks.items
+    .filter((item: any) => item.track.id)
+    .map((item: any) => item.track);
+}).catch(err => {
+  console.error("Error fetching Spotify access token:", err);
+});
+
 const forwardClick = () => {
-  curIndex.value = (curIndex.value + 1) % albumArts.length;
-  console.log(curIndex);
+  curIndex.value = (curIndex.value + 1) % tracks.value.length;
 };
 
 const backClick = () => {
-  curIndex.value = (curIndex.value - 1 + albumArts.length) % albumArts.length;
-  console.log(curIndex);
+  curIndex.value = (curIndex.value - 1 + tracks.value.length) % tracks.value.length;
 };
 
 </script>

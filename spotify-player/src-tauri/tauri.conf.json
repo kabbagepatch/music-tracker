@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Spotify Player",
+  "productName": "spotify-player",
   "version": "0.1.0",
-  "identifier": "com.kavish.music.spotify",
+  "identifier": "com.kavish.music.spotify-player",
   "build": {
     "beforeDevCommand": "yarn dev",
     "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "spotify",
+        "title": "Spotify Player",
         "width": 400,
         "height": 600,
         "resizable": false

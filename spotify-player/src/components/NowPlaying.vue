@@ -1,7 +1,7 @@
 /<template>
   <div class="now-playing">
     <div class="now-playing-inner">
-      <div class="song-name">{{ songName.length > 27 ? songName.substring(0,26) + '...' : songName }}</div>
+      <div class="song-name">{{ songName.length > 25 ? songName.substring(0,24) + '...' : songName }}</div>
       <div class="player">
         <div class="player-left">
           <button class="icon over" @click="backClick">⏮</button>
