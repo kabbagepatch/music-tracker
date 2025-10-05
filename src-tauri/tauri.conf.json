@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "spotify-player",
+  "productName": "music-tracker",
   "version": "0.1.0",
-  "identifier": "com.kavish.music.spotify-player",
+  "identifier": "com.kavish.music-tracker",
   "build": {
     "beforeDevCommand": "yarn dev",
     "devUrl": "http://localhost:1420",
@@ -12,10 +12,9 @@
   "app": {
     "windows": [
       {
-        "title": "Spotify Player",
-        "width": 400,
-        "height": 600,
-        "resizable": false
+        "title": "Music Tracker",
+        "width": 600,
+        "height": 600
       }
     ],
     "security": {

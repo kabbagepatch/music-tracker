@@ -29,6 +29,7 @@ defineProps({
 
 <style scoped>
 .playlist-container {
+  width: 364px;
   height: 400px;
   overflow-x: hidden;
   color: white;
