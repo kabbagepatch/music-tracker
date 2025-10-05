@@ -1,12 +1,14 @@
-/<template>
+<template>
   <div class="now-playing">
     <div class="now-playing-inner">
-      <div class="song-name">{{ songName.length > 25 ? songName.substring(0,24) + '...' : songName }}</div>
+      <div class="song-name-container">
+        <div class="song-name" @click="nowPlayingClick">{{ artists }} - {{ songName }}</div>
+      </div>
       <div class="player">
         <div class="player-left">
           <button class="icon over" @click="backClick">⏮</button>
           <div class="divider" />
-          <button class="under">Menu</button>
+          <button class="under" @click="menuClick">Menu</button>
         </div>
         <div class="play-button-container">
           <div class="play-button" @click="playing = !playing">
@@ -33,13 +35,25 @@ import { ref } from "vue";
 defineProps({
   songName: {
     type: String,
-    default: "Renee Rapp - Leave Me Alone",
+    default: "",
+  },
+  artists: {
+    type: String,
+    default: "",
   },
   backClick: {
     type: Function,
     default: () => {},
   },
   forwardClick: {
+    type: Function,
+    default: () => {},
+  },
+  menuClick: {
+    type: Function,
+    default: () => {},
+  },
+  nowPlayingClick: {
     type: Function,
     default: () => {},
   },
@@ -51,6 +65,7 @@ const liked = ref(false);
 
 <style>
 .now-playing {
+  width: 364px;
   height: 156px;
   background-color: #FFDEEB;
   border-radius: 28px;
@@ -68,9 +83,34 @@ const liked = ref(false);
   height: 124px;
 }
 
-.song-name {
+.song-name-container {
+  max-width: 324px;
   width: 100%;
+  height: 24px;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  display: flex;
+  justify-content: center;
+}
+
+.song-name {
   flex-wrap: nowrap;
+  animation: move 10s linear infinite forwards;
+  cursor: pointer;
+}
+
+@keyframes move {
+  0%,
+  10%,
+  90%,
+  100% {
+    transform: translateX(calc(max(0px, (100% - 314px) / 2)));
+  }
+  40%,
+  60% {
+    transform: translateX(calc(-1 * max(0px, (100% - 314px) / 2)));
+  }
 }
 
 .player {
