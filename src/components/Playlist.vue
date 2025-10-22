@@ -1,8 +1,8 @@
 <template>
   <div class="playlist-container">
-    <h1>{{ playist.name }}</h1>
+    <h1>{{ playlist.name.length > 24 ? playlist.name.substr(0, 24) + '...' : playlist.name }}</h1>
     <div class="tracks">
-      <div :class="`track ${curIndex === i ? 'selected' : ''}`" v-for="(item, i) in playist.tracks.items.filter((item: any) => item.track.id)" :key="item.track.id" @click="trackClick(item.track, i)">
+      <div :class="`track ${curIndex === i ? 'selected' : ''}`" v-for="(item, i) in playlist.tracks.items.filter((item: any) => item.track.id)" :key="item.track.id" @click="trackClick(item.track, i)">
         <img class="track-thumbnail" :src="item.track?.album?.images[2].url" alt="Album Art" />
         <div class="track-name" >{{ item.track.name }}</div>
       </div>
@@ -14,7 +14,7 @@
 import { ref } from "vue";
 
 defineProps({
-  playist: {},
+  playlist: {},
   curIndex: {
     type: Number,
     default: -1,

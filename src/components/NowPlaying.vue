@@ -1,36 +1,35 @@
 <template>
-  <div class="now-playing">
-    <div class="now-playing-inner">
-      <div class="song-name-container">
-        <div class="song-name" @click="nowPlayingClick">{{ artists }} - {{ songName }}</div>
+  <card>
+    <div class="song-name-container">
+      <div class="song-name" @click="nowPlayingClick">{{ artists }} - {{ songName }}</div>
+    </div>
+    <div class="player">
+      <div class="player-left">
+        <button class="icon over" @click="backClick">⏮</button>
+        <div class="divider" />
+        <button class="under" @click="menuClick">Home</button>
       </div>
-      <div class="player">
-        <div class="player-left">
-          <button class="icon over" @click="backClick">⏮</button>
-          <div class="divider" />
-          <button class="under" @click="menuClick">Menu</button>
-        </div>
-        <div class="play-button-container">
-          <div class="play-button" @click="playing = !playing">
-            <div class="play-button-inner icon">
-              {{ playing ? "⏸" : "▶"}}
-            </div>
+      <div class="play-button-container">
+        <div class="play-button" @click="playing = !playing">
+          <div class="play-button-inner icon">
+            {{ playing ? "⏸" : "▶"}}
           </div>
         </div>
-        <div class="player-right">
-          <button class="icon over" @click="forwardClick">⏭</button>
-          <div class="divider" />
-          <button class="under heart" @click="liked = !liked">
-            {{ liked ? "💖" : "🤍" }}
-          </button>
-        </div>
+      </div>
+      <div class="player-right">
+        <button class="icon over" @click="forwardClick">⏭</button>
+        <div class="divider" />
+        <button class="under heart" @click="liked = !liked">
+          {{ liked ? "💖" : "🤍" }}
+        </button>
       </div>
     </div>
-  </div>
+  </card>
 </template>
 
 <script setup>
 import { ref } from "vue";
+import Card from "./Card.vue";
 
 defineProps({
   songName: {
@@ -63,26 +62,7 @@ const playing = ref(false);
 const liked = ref(false);
 </script>
 
-<style>
-.now-playing {
-  width: 364px;
-  height: 156px;
-  background-color: #FFDEEB;
-  border-radius: 28px;
-  color: white;
-  text-align: center;
-  font-size: 20px;
-  filter: drop-shadow(0 0 0.15em #cc7296);
-}
-
-.now-playing-inner {
-  margin: 3px;
-  padding: 12px 16px;
-  border: 1px solid #ff67a4;
-  border-radius: 28px;
-  height: 124px;
-}
-
+<style scoped>
 .song-name-container {
   max-width: 324px;
   width: 100%;
