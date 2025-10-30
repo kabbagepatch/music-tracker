@@ -5,19 +5,23 @@
     </div>
     <div class="player">
       <div class="player-left">
-        <button class="icon over" @click="backClick">⏮</button>
+        <button class="icon over" @click="backClick">
+          <img :style="{ width: '35px', marginTop: '8px' }" src="../assets/reverse-bgremoved.png">
+        </button>
         <div class="divider" />
         <button class="under" @click="menuClick">Home</button>
       </div>
       <div class="play-button-container">
         <div class="play-button" @click="playing = !playing">
           <div class="play-button-inner icon">
-            {{ playing ? "⏸" : "▶"}}
+            <img :style="{ width: '50px', marginLeft: '5px' }" src="../assets/play-bgremoved.png">
           </div>
         </div>
       </div>
       <div class="player-right">
-        <button class="icon over" @click="forwardClick">⏭</button>
+        <button class="icon over" @click="forwardClick">
+          <img :style="{ width: '35px', marginTop: '8px' }" src="../assets/forward-bgremoved.png">
+        </button>
         <div class="divider" />
         <button class="under heart" @click="liked = !liked">
           {{ liked ? "💖" : "🤍" }}
@@ -30,6 +34,9 @@
 <script setup>
 import { ref } from "vue";
 import Card from "./Card.vue";
+import playButton from "../assets/play-bgremoved.png";
+import forwardButton from "../assets/forward-bgremoved.png";
+import reverseButton from "../assets/reverse-bgremoved.png";
 
 defineProps({
   songName: {
