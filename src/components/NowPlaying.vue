@@ -12,9 +12,10 @@
         <button class="under" @click="menuClick">Home</button>
       </div>
       <div class="play-button-container">
-        <div class="play-button" @click="playing = !playing">
+        <div class="play-button">
           <div class="play-button-inner icon">
-            <img :style="{ width: '50px', marginLeft: '5px' }" src="../assets/play-bgremoved.png">
+            <img v-if="!playing" :style="{ width: '50px', marginLeft: '5px' }" src="../assets/play-bgremoved.png">
+            <div v-else :style="{ width: '0px', marginLeft: '0px' }">⏸️</div>
           </div>
         </div>
       </div>
@@ -59,14 +60,20 @@ defineProps({
     type: Function,
     default: () => {},
   },
+  playing: {
+    type: Boolean,
+    default: false,
+  },
+  liked: {
+    type: Boolean,
+    default: false,
+  },
   nowPlayingClick: {
     type: Function,
     default: () => {},
   },
 });
 
-const playing = ref(false);
-const liked = ref(false);
 </script>
 
 <style scoped>

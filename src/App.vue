@@ -6,31 +6,61 @@
         <card><div class="button-container"><h1>Spotify Player</h1></div></card>
       </button>
       <br />
-      <button>
+      <button @click="spotifyTrackerClick">
         <card><div class="button-container"><h1>Spotify Tracker</h1></div></card>
       </button>
       <br />
-      <button>
-        <card><div class="button-container"><h1>Music Player</h1></div></card>
+      <button @click="connectToSpotifyClick">
+        <card><div class="button-container"><h1>Connect To Spotify</h1></div></card>
       </button>
     </div>
     <div v-else-if="curComponent === 'SpotifyPlayer'">
       <button class="homeButton" @click="backToHome">←</button>
       <spotify-player />
     </div>
+    <div v-else-if="curComponent === 'SpotifyTracker'">
+      <button class="homeButton" @click="backToHome">←</button>
+      <spotify-tracker />
+    </div>
   </main>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue"
-import SpotifyPlayer from "./spotify-player/SpotifyPlayer.vue";
+import SpotifyPlayer from "./SpotifyPlayer.vue";
+import SpotifyTracker from "./SpotifyTracker.vue";
 import Card from "./components/Card.vue";
+
+import { conntectToSpotify } from "./services/connectToSpotify";
+import { getTopItems, getUser } from "./services/spotify";
 
 const curComponent = ref('Home');
 
 const spotifyPlayerClick = () => {
   curComponent.value = 'SpotifyPlayer';
 };
+
+const spotifyTrackerClick = () => {
+  curComponent.value = 'SpotifyTracker';
+};
+
+const connectToSpotifyClick = () => {
+  conntectToSpotify();
+};
+
+try {
+  getUser().then((data) => {
+    console.log("User data:", data);
+  });
+  getTopItems('tracks', 'medium_term', 10).then((data) => {
+    console.log("Top tracks:", data.items.map((a : any) => a.name));
+  });
+  getTopItems('artists', 'medium_term', 10).then((data) => {
+    console.log("Top artists:", data.items.map((a : any) => a.name));
+  });
+} catch (error) {
+  console.log("Error fetching user data:", error);
+}
 
 const backToHome = () => {
   curComponent.value = 'Home';
@@ -56,9 +86,10 @@ h1 {
 }
 
 .homeButton {
-  float: right;
+  position: absolute;
+  right: 0;
   margin-right: 10px;
-  margin-top: -5px;
+  margin-top: -10px;
 }
 </style>
 <style>

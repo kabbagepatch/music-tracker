@@ -10,22 +10,24 @@
       <Playlist :playlist="playlist" :curIndex="curIndex" :trackClick="trackClick" />
     </div>
 
+    <!-- :artists="curTrack?.artists.map((a: any) => a.name).join(',')" -->
     <now-playing
-      :artists="curTrack?.artists.map((a: any) => a.name).join(',')"
+      :artists="curTrack?.artists[0].name"
       :songName="curTrack?.name"
       :backClick="backClick"
       :forwardClick="forwardClick"
       :menuClick="menuClick"
       :nowPlayingClick="nowPlayingClick"
+      :playing="curTrack?.is_playing"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue"
-import NowPlaying from "../components/NowPlaying.vue";
-import Playlist from "../components/Playlist.vue";
-import { getPlaylist } from '../services/spotify';
+import NowPlaying from "./components/NowPlaying.vue";
+import Playlist from "./components/Playlist.vue";
+import { getUserQueue, skipToNextTrack } from './services/spotify';
 
 const curComponent = ref('NowPlaying');
 
@@ -34,19 +36,37 @@ const tracks: any = ref([]);
 const curIndex = ref(0);
 const curTrack: any = ref();
 
-getPlaylist('1uRFGSIGuNELeRkNktwHRR').then(playlistres => {
-  playlist.value = playlistres;
-  tracks.value = playlistres.tracks.items
-    .filter((item: any) => item.track.id)
-    .map((item: any) => item.track);
-  curTrack.value = tracks.value[curIndex.value];
-}).catch(err => {
-  console.error("Error fetching Spotify access token:", err);
-});
+// getPlaylist('1uRFGSIGuNELeRkNktwHRR').then(playlistres => {
+//   playlist.value = playlistres;
+//   tracks.value = playlistres.tracks.items
+//     .filter((item: any) => item.track.id)
+//     .map((item: any) => item.track);
+//   curTrack.value = tracks.value[curIndex.value];
+// }).catch(err => {
+//   console.error("Error fetching Spotify access token:", err);
+// });
+
+const getQueue = (setCurTrack = false) => {
+  getUserQueue().then(queueRes => {
+    console.log("User queue:", queueRes);
+    tracks.value = [queueRes.currently_playing, ...queueRes.queue];
+    if (setCurTrack) curTrack.value = tracks.value[0];
+  }).catch(err => {
+    console.error("Error fetching user queue:", err);
+  });
+}
+
+getQueue(true);
 
 const forwardClick = () => {
+  curTrack.value = tracks.value[(curIndex.value + 1) % tracks.value.length];
   curIndex.value = (curIndex.value + 1) % tracks.value.length;
-  curTrack.value = tracks.value[curIndex.value];
+  skipToNextTrack().then(() => {
+    console.log("Skipped to next track successfully");
+    getQueue();
+  }).catch(err => {
+    console.error("Error skipping to next track:", err);
+  });
 };
 
 const backClick = () => {
