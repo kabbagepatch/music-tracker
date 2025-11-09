@@ -103,14 +103,12 @@ h1 {
 }
 
 :root {
-  font-family: Bubbly, Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
+  font-family: Pixels, Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 20px;
   line-height: 24px;
   font-weight: 400;
-  text-shadow: -1px -1px 0 #4c0080, 1px -1px 0 #4c0080, -1px 1px 0 #4c0080, 1px 1px 0 #4c0080;
-  color: #0f0f0f;
-  background-color: #dfbfed;
-  /* background-image: url('./assets/pretty.jpg'); */
+  text-shadow: -1px -1px 0 var(--text-outline), 1px -1px 0 var(--text-outline), -1px 1px 0 var(--text-outline), 1px 1px 0 var(--text-outline);
+  background-color: var(--background-color);
   background-repeat: no-repeat;
   background-size: cover;
   padding: 10px;
@@ -123,6 +121,22 @@ h1 {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  /* --primary-color: hsl(336, 100%, 94%);
+  --primary-color-shadow: hsl(336, 47%, 62%);
+  --secondary-color: hsl(336, 100%, 70%);
+  --tertiary-color: hsl(58, 55%, 86%);
+  --background-color: hsl(282, 56%, 84%);
+  --text-color: white;
+  --text-outline: hsl(276, 100%, 25%); */
+
+  --primary-color: hsl(39, 59%, 78%);
+  --primary-color-shadow: hsl(39, 59%, 58%);
+  --secondary-color: #743014;
+  --tertiary-color: #84592B;
+  --background-color: #442D1C;
+  --text-color: hsl(0, 0%, 100%);
+  --text-outline: #442D1C;
 }
 
 .container {
@@ -135,19 +149,9 @@ h1 {
 h1 {
   margin: 0 5px;
   margin-bottom: 10px;
-  font-size: 24px;
+  font-size: 28px;
   width: 100%;
-  color: white;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
+  color: var(--text-color);
 }
 
 button {
@@ -158,20 +162,9 @@ button {
   border: none;
   background: none;
   outline: none;
-  color: #ffffff;
-  text-shadow: -1px -1px 0 #4c0080, 1px -1px 0 #4c0080, -1px 1px 0 #4c0080, 1px 1px 0 #4c0080;
+  color: var(--text-color);
+  text-shadow: -1px -1px 0 var(--text-outline), 1px -1px 0 var(--text-outline), -1px 1px 0 var(--text-outline), 1px 1px 0 var(--text-outline);
   font-size: 24px;
-  font-family: Bubbly, Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Pixels, Inter, Avenir, Helvetica, Arial, sans-serif;
 }
-
-#greet-input {
-  margin-right: 5px;
-}
-
-@media (prefers-color-scheme: dark) {
-  a:hover {
-    color: #24c8db;
-  }
-}
-
 </style>

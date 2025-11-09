@@ -6,22 +6,26 @@
     <div class="player">
       <div class="player-left">
         <button class="icon over" @click="backClick">
-          <img :style="{ width: '35px', marginTop: '8px' }" src="../assets/reverse-bgremoved.png">
+          <!-- <img :style="{ width: '35px', marginTop: '8px' }" src="../assets/reverse-bgremoved.png"> -->
+          ⏮
         </button>
         <div class="divider" />
         <button class="under" @click="menuClick">Home</button>
       </div>
       <div class="play-button-container">
-        <div class="play-button">
+        <div class="play-button" @click="playClick">
           <div class="play-button-inner icon">
-            <img v-if="!playing" :style="{ width: '50px', marginLeft: '5px' }" src="../assets/play-bgremoved.png">
-            <div v-else :style="{ width: '0px', marginLeft: '0px' }">⏸️</div>
+            <div v-if="!playing">▶</div>
+            <div v-else>⏸</div>
+            <!-- <img v-if="!playing" :style="{ width: '50px', marginLeft: '5px' }" src="../assets/play-bgremoved.png">
+            <div v-else :style="{ width: '0px', marginLeft: '0px' }">⏸️</div> -->
           </div>
         </div>
       </div>
       <div class="player-right">
         <button class="icon over" @click="forwardClick">
-          <img :style="{ width: '35px', marginTop: '8px' }" src="../assets/forward-bgremoved.png">
+          <!-- <img :style="{ width: '35px', marginTop: '8px' }" src="../assets/forward-bgremoved.png"> -->
+          ⏭
         </button>
         <div class="divider" />
         <button class="under heart" @click="liked = !liked">
@@ -56,7 +60,7 @@ defineProps({
     type: Function,
     default: () => {},
   },
-  menuClick: {
+  playClick: {
     type: Function,
     default: () => {},
   },
@@ -92,6 +96,7 @@ defineProps({
   flex-wrap: nowrap;
   animation: move 10s linear infinite forwards;
   cursor: pointer;
+  font-size: 28px;
 }
 
 @keyframes move {
@@ -129,14 +134,13 @@ defineProps({
 }
 
 .play-button {
-  color: #ff67a4;
   text-shadow: none;
-  background: white;
+  background: var(--tertiary-color);
   border-radius: 50%;
   width: 80px;
   height: 80px;
   padding: 2px;
-  filter: drop-shadow(0 0 0.1em #cc7296);
+  filter: drop-shadow(0 0 0.1em var(--primary-color-shadow));
 }
 
 .play-button-inner {
@@ -145,13 +149,13 @@ defineProps({
   align-items: center;
   width: 78px;
   height: 78px;
-  border: 1px solid #ff67a4;
+  border: 1px solid var(--primary-color);
   border-radius: 50%;
 }
 
 .play-button:hover, .heart:hover {
   cursor: pointer;
-  filter: drop-shadow(0 0 0.25em #cc7296);
+  filter: drop-shadow(0 0 0.25em var(--primary-color-shadow));
 }
 
 .player-left, .player-right {
@@ -164,8 +168,8 @@ defineProps({
 
 .divider {
   height: 6px;
-  background: #EFEEC8;
-  box-shadow: 0 0 0.1em #cc7296;
+  background: var(--tertiary-color);
+  box-shadow: 0 0 0.1em var(--primary-color-shadow);
   width: 100%;
   border-radius: 20px;
 }

@@ -82,6 +82,28 @@ export const skipToNextTrack = async () => {
   return response.data;
 }
 
+export const skipToPreviousTrack = async () => {
+  const accessToken = await getUserAccessToken();
+  const url = `https://api.spotify.com/v1/me/player/previous`;
+  const response = await axios.post(url, null, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  return response.data;
+}
+
+export const togglePlayPause = async (isPlaying: boolean) => {
+  const accessToken = await getUserAccessToken();
+  const url = `https://api.spotify.com/v1/me/player/${isPlaying ? 'pause' : 'play'}`;
+  const response = await axios.put(url, null, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  return response.data;
+}
+
 export const getTopItems = async (type: 'artists' | 'tracks', time_range: 'short_term' | 'medium_term' | 'long_term', limit: number = 20) => {
   const accessToken = await getUserAccessToken();
   const url = `https://api.spotify.com/v1/me/top/${type}?time_range=${time_range}&limit=${limit}`;

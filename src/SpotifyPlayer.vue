@@ -16,9 +16,8 @@
       :songName="curTrack?.name"
       :backClick="backClick"
       :forwardClick="forwardClick"
-      :menuClick="menuClick"
-      :nowPlayingClick="nowPlayingClick"
-      :playing="curTrack?.is_playing"
+      :playClick="playClick"
+      :playing="playState?.is_playing"
     />
   </div>
 </template>
@@ -27,11 +26,12 @@
 import { ref } from "vue"
 import NowPlaying from "./components/NowPlaying.vue";
 import Playlist from "./components/Playlist.vue";
-import { getUserQueue, skipToNextTrack } from './services/spotify';
+import { getUserPlaybackState, getUserQueue, skipToNextTrack, skipToPreviousTrack, togglePlayPause } from './services/spotify';
 
 const curComponent = ref('NowPlaying');
 
 const playlist: any = ref({});
+const playState: any = ref({});
 const tracks: any = ref([]);
 const curIndex = ref(0);
 const curTrack: any = ref();
@@ -46,41 +46,78 @@ const curTrack: any = ref();
 //   console.error("Error fetching Spotify access token:", err);
 // });
 
-const getQueue = (setCurTrack = false) => {
+const getPlaybackState = () => {
+  getUserPlaybackState().then(playbackRes => {
+    console.log("User playback state:", playbackRes);
+    playState.value = playbackRes;
+    curTrack.value = playbackRes.item;
+  }).catch(err => {
+    console.error("Error fetching user playback state:", err);
+  });
+}
+
+const getQueue = () => {
   getUserQueue().then(queueRes => {
     console.log("User queue:", queueRes);
     tracks.value = [queueRes.currently_playing, ...queueRes.queue];
-    if (setCurTrack) curTrack.value = tracks.value[0];
   }).catch(err => {
     console.error("Error fetching user queue:", err);
   });
 }
 
-getQueue(true);
+getQueue();
+getPlaybackState();
 
 const forwardClick = () => {
   curTrack.value = tracks.value[(curIndex.value + 1) % tracks.value.length];
   curIndex.value = (curIndex.value + 1) % tracks.value.length;
   skipToNextTrack().then(() => {
     console.log("Skipped to next track successfully");
-    getQueue();
+    if (curIndex.value > 15) {
+      setTimeout(() => {
+        getQueue();
+      }, 300);
+    }
+    setTimeout(() => {
+      getPlaybackState();
+    }, 300);
   }).catch(err => {
     console.error("Error skipping to next track:", err);
   });
 };
 
 const backClick = () => {
-  curIndex.value = (curIndex.value - 1 + tracks.value.length) % tracks.value.length;
-  curTrack.value = tracks.value[curIndex.value];
+  if (curIndex.value > 0) {
+    curIndex.value = (curIndex.value - 1 + tracks.value.length) % tracks.value.length;
+    curTrack.value = tracks.value[curIndex.value];
+  }
+  skipToPreviousTrack().then(() => {
+    console.log("Skipped to previous track successfully");
+    setTimeout(() => {
+      getQueue();
+      getPlaybackState();
+    }, 300);
+  }).catch(err => {
+    console.error("Error skipping to previous track:", err);
+  });
 };
 
-const menuClick = () => {
-  curComponent.value = 'Playlist';
+const playClick = () => {
+  togglePlayPause(playState?.value.is_playing).then(() => {
+    console.log("Toggled play/pause successfully");
+    setTimeout(() => {
+      getQueue(true);
+      getPlaybackState();
+    }, 300);
+  }).catch(err => {
+    console.error("Error toggling play/pause:", err);
+  });
+  playState.value.is_playing = !playState.value.is_playing;
 };
 
-const nowPlayingClick = () => {
-  curComponent.value = 'NowPlaying';
-};
+// const nowPlayingClick = () => {
+//   curComponent.value = 'NowPlaying';
+// };
 
 const trackClick = (track: any, index: number) => {
   curIndex.value = index;
@@ -90,22 +127,14 @@ const trackClick = (track: any, index: number) => {
 </script>
 
 <style scoped>
-h1 {
-  margin: 0 5px;
-  margin-bottom: 10px;
-  font-size: 24px;
-  width: 100%;
-  color: white;
-}
-
 .albumart {
   max-width: 800px;
   display: flex;
   border-radius: 28px;
   margin-bottom: 10px;
   padding: 3px;
-  background: #ffb3c6;
-  filter: drop-shadow(0 0 0.15em #cc7296);
+  background: var(--primary-color);
+  filter: drop-shadow(0 0 0.5em var(--primary-color-shadow));
   justify-content: center;
 }
 
@@ -115,10 +144,10 @@ h1 {
   will-change: filter;
   transition: 0.75s;
   border-radius: 28px;
-  border: 1px solid #ff67a4;
+  border: 1px solid var(--secondary-color);
 }
 
 .albumart:hover {
-  filter: drop-shadow(0 0 2em #cc7296);
+  filter: drop-shadow(0 0 2em var(--primary-color-shadow));
 }
 </style>

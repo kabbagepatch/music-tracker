@@ -1,6 +1,5 @@
 <template>
   <div class="tracks-container">
-    <h1>{{ title.length > 24 ? title.substr(0, 24) + '...' : title }}</h1>
     <div class="tracks">
       <div :class="`track ${curIndex === i ? 'selected' : ''}`" v-for="(item, i) in tracks.filter((item: any) => item.id)" :key="item.id" @click="trackClick(item, i)">
         <img class="track-thumbnail" :src="item.images ? item.images[2].url : item.album?.images[2].url" alt="Album Art" />
@@ -38,15 +37,8 @@ defineProps({
 .tracks-container {
   width: 364px;
   overflow-x: hidden;
-  color: white;
+  color: var(--text-color);
   margin-bottom: 8px;
-}
-
-h1 {
-  margin: 0 5px;
-  margin-bottom: 10px;
-  font-size: 20px;
-  width: 100%;
 }
 
 .tracks {
@@ -54,6 +46,7 @@ h1 {
   overflow-x: hidden;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  border-radius: 12px;
 }
 
 .tracks::-webkit-scrollbar {
@@ -64,9 +57,9 @@ h1 {
   display: flex;
   align-items: center;
   padding: 6px 0;
-  border-bottom: 1px solid #ff97f1;
+  background-color: var(--primary-color);
+  border-bottom: 1px solid var(--secondary-color);
   width: 100%;
-  padding-left: 5px;
   cursor: pointer;
 }
 
@@ -74,15 +67,15 @@ h1 {
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  margin-right: 12px;
+  margin: 0 12px;
 }
 
 .track-name {
-  font-size: 18px;
+  font-size: 24px;
 }
 
 .selected {
-  color: #ffb3c6;
+  color: var(--secondary-color);
   font-weight: bold;
   background-color: #31001438;
 }

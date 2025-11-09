@@ -32,7 +32,7 @@ defineProps({
   width: 364px;
   height: 400px;
   overflow-x: hidden;
-  color: white;
+  color: var(--text-color);
   margin-bottom: 8px;
 }
 
@@ -59,7 +59,7 @@ h1 {
   display: flex;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid #ff67a4;
+  border-bottom: 1px solid var(--secondary-color);
   width: 100%;
   padding-left: 5px;
   cursor: pointer;
@@ -77,7 +77,7 @@ h1 {
 }
 
 .selected {
-  color: #ffb3c6;
+  color: var(--secondary-color);
   font-weight: bold;
   background-color: #31001438;
 }

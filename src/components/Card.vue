@@ -10,11 +10,11 @@
 .card {
   width: 364px;
   height: 156px;
-  background-color: #FFDEEB;
+  background-color: var(--primary-color);
   border-radius: 28px;
-  color: white;
+  color: var(--text-color);
   font-size: 20px;
-  filter: drop-shadow(0 0 0.15em #cc7296);
+  filter: drop-shadow(0 0 0.15em var(--primary-color-shadow));
   padding: 1px;
   text-align: center;
 }
@@ -22,7 +22,7 @@
 .card-inner {
   margin: 3px;
   padding: 12px 16px;
-  border: 1px solid #ff67a4;
+  border: 1px solid var(--secondary-color);
   border-radius: 28px;
   height: 124px;
 }

@@ -1,5 +1,5 @@
 const CLIENT_ID = '8c02f3ab3b3c434382158a7002d555f7';
-const REDIRECT_URI = 'http://[::1]:1420';
+const REDIRECT_URI =  window.location.origin; // 'http://[::1]:1420';
 
 const authorizationEndpoint = "https://accounts.spotify.com/authorize";
 const scopes = [
@@ -74,10 +74,8 @@ export const conntectToSpotify = async () => {
 }
 
 export const getUserAccessToken = async (code : string = '') => {
-  console.log("Getting token...");
   const existingToken = localStorage.getItem('access_token');
   if (existingToken) {
-    console.log("Existing token found:", existingToken);
     return existingToken;
   }
 
