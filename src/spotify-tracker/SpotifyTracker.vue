@@ -1,35 +1,38 @@
 <template>
-  <div>
-    <div v-if="curComponent === 'TopTracks'">
-      <div class="titleContainer">
-        <h1 @click="switchItemType">{{ itemType === 'artists' ? 'Artists' : 'Tracks' }}</h1>
-        <h1 @click="switchTimeRange">{{ timeRange === 'long_term' ? '1 Year' : (timeRange === 'medium_term' ? '6 Months' : '4 Weeks') }}</h1>
-        <h1 @click="switchLimit">{{ limit }}</h1>
-      </div>
-      <TrackList title="Top Tracks" :tracks="tracks" />
+  <div class="container">
+    <div class="titleContainer">
+      <h1 @click="switchItemType">{{ itemType === 'artists' ? 'Artists' : 'Tracks' }}</h1>
+      <h1 @click="switchLimit">Top {{ limit }}</h1>
+      <h1 @click="switchTimeRange">{{ timeRange === 'long_term' ? '1 Year' : (timeRange === 'medium_term' ? '6 Months' : '4 Weeks') }}</h1>
     </div>
+    <TrackList :tracks="items" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { Ref, ref } from "vue"
-import TrackList from "./components/TrackList.vue";
-import { getTopItems } from './services/spotify';
+import TrackList from "../components/TrackList.vue";
+import { getTopItems } from '../services/spotify';
 
-const curComponent = ref('TopTracks');
 const itemType : (Ref<'tracks' | 'artists'>) = ref('tracks');
 const timeRange : (Ref<'short_term' | 'medium_term' | 'long_term'>) = ref('short_term');
 const limit = ref(10);
 
-const tracks: any = ref([]);
-// short_term, medium_term, long_term
-// tracks, artists
+const items: any = ref([]);
+const dataCache: any = {}
+
 const setTopItems = () => {
+  const cached = dataCache[`${itemType.value}-${timeRange.value}`];
+  if (cached && cached.length >= limit.value) {
+    items.value = dataCache[`${itemType.value}-${timeRange.value}`].slice(0, limit.value);
+    return;
+  }
+
   getTopItems(itemType.value, timeRange.value, limit.value).then(data => {
-    tracks.value = data.items;
-    console.log("Top tracks fetched:", data.items);
+    items.value = data.items;
+    dataCache[`${itemType.value}-${timeRange.value}`] = data.items;
   }).catch(err => {
-    console.error("Error fetching top tracks:", err);
+    console.error("Error fetching top items:", err);
   });
 }
 setTopItems();
@@ -68,28 +71,23 @@ const switchLimit = () => {
 </script>
 
 <style scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-bottom: -10px;
+}
+
 .titleContainer {
   display: flex;
   width: 340px;
 }
 
 h1 {
-  margin-right: 25px;
   margin-bottom: 10px;
   font-size: 32px;
   color: white;
   cursor: pointer;
-}
-
-h1:nth-child(1) {
-  flex: 3;
-}
-
-h1:nth-child(2) {
-  flex: 4;
-}
-
-h1:nth-child(3) {
-  flex: 1;
+  width: 100%;
 }
 </style>

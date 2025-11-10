@@ -1,17 +1,20 @@
 <template>
   <main class="container">
     <div v-if="curComponent === 'Home'" class="home">
-      <h1>Music Player and Tracker</h1>
+      <div class="header">
+        <img class="icon" src="./assets/vinyl-transparent.png" />
+        <h1 class="title">Music Player and Tracker</h1>
+      </div>
       <button @click="spotifyPlayerClick">
-        <card><div class="button-container"><h1>Spotify Player</h1></div></card>
+        <title-card title="Spotify Player" iconName="vinyl-transparent" />
       </button>
       <br />
       <button @click="spotifyTrackerClick">
-        <card><div class="button-container"><h1>Spotify Tracker</h1></div></card>
+        <title-card title="Top Played" iconName="award-transparent" />
       </button>
       <br />
       <button @click="connectToSpotifyClick">
-        <card><div class="button-container"><h1>Connect To Spotify</h1></div></card>
+        <title-card title="Connect To Spotify" iconName="network-transparent" />
       </button>
     </div>
     <div v-else-if="curComponent === 'SpotifyPlayer'">
@@ -27,12 +30,13 @@
 
 <script setup lang="ts">
 import { ref } from "vue"
-import SpotifyPlayer from "./SpotifyPlayer.vue";
-import SpotifyTracker from "./SpotifyTracker.vue";
-import Card from "./components/Card.vue";
+import SpotifyPlayer from "./spotify-player/SpotifyPlayer.vue";
+import SpotifyTracker from "./spotify-tracker/SpotifyTracker.vue";
+import TitleCard from "./components/TitleCard.vue";
 
 import { conntectToSpotify } from "./services/connectToSpotify";
-import { getTopItems, getUser } from "./services/spotify";
+import { getUser } from "./services/spotify";
+import { AxiosError } from "axios";
 
 const curComponent = ref('Home');
 
@@ -48,19 +52,14 @@ const connectToSpotifyClick = () => {
   conntectToSpotify();
 };
 
-try {
-  getUser().then((data) => {
-    console.log("User data:", data);
-  });
-  getTopItems('tracks', 'medium_term', 10).then((data) => {
-    console.log("Top tracks:", data.items.map((a : any) => a.name));
-  });
-  getTopItems('artists', 'medium_term', 10).then((data) => {
-    console.log("Top artists:", data.items.map((a : any) => a.name));
-  });
-} catch (error) {
-  console.log("Error fetching user data:", error);
-}
+getUser().then((data) => {
+  console.log("User data:", data);
+}).catch((err: AxiosError) => {
+  if (err.response && err.response.status === 401) {
+    console.log("User is not authorized. Please connect to Spotify.");
+    localStorage.removeItem('access_token');
+  }
+});
 
 const backToHome = () => {
   curComponent.value = 'Home';
@@ -73,8 +72,21 @@ const backToHome = () => {
   width: 100%;
 }
 
-h1 {
-  margin-bottom: 20px;
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.header .icon {
+  display: block;
+  margin-right: 10px;
+  width: 30px;
+  height: 30px;
+}
+
+.header .title {
+  margin: 0;
 }
 
 .button-container {
@@ -89,8 +101,13 @@ h1 {
   position: absolute;
   right: 0;
   margin-right: 10px;
-  margin-top: -10px;
+  margin-top: -5px;
 }
+
+.card-title {
+  font-size: 32px;
+}
+
 </style>
 <style>
 @font-face {

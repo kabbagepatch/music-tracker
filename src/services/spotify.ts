@@ -4,7 +4,7 @@ import { getUserAccessToken } from "./connectToSpotify";
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 const clientSecret = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
 
-export const getAccessToken = async (): Promise<string> => {
+export const getBasicToken = async (): Promise<string> => {
   const url = `https://accounts.spotify.com/api/token?grant_type=client_credentials&client_id=${clientId}&client_secret=${clientSecret}`;
   console.log(url);
   const response = await axios.post(url, null, {
@@ -16,8 +16,29 @@ export const getAccessToken = async (): Promise<string> => {
   return response.data.access_token;
 }
 
+const BASE_URL = 'https://api.spotify.com/v1';
+
+const makeUserAuthorizedRequest = async (endpoint: string, method: string, data: any = null, params: any = null) => {
+  const accessToken = await getUserAccessToken();
+  if (!accessToken) {
+    throw new Error("No access token available for user-authorized request.");
+  }
+  const url = `${BASE_URL}${endpoint}`;
+  const response = await axios({
+    method,
+    url,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    data,
+    params,
+  });
+
+  return response.data;
+}
+
 export const getPlaylist = async (playlistId: string) => {
-  const accessToken = await getAccessToken();
+  const accessToken = await getBasicToken();
   const url = `https://api.spotify.com/v1/playlists/${playlistId}`;
   const response = await axios.get(url, {
     headers: {
@@ -28,89 +49,37 @@ export const getPlaylist = async (playlistId: string) => {
 }
 
 export const getUser = async () => {
-  const accessToken = await getUserAccessToken();
-  const url = `https://api.spotify.com/v1/me`;
-  const response = await axios.get(url, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  return response.data;
+  return makeUserAuthorizedRequest('/me', 'GET');
 }
 
 export const getUserPlaybackState = async () => {
-  const accessToken = await getUserAccessToken();
-  const url = `https://api.spotify.com/v1/me/player`;
-  const response = await axios.get(url, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  return response.data;
+  return makeUserAuthorizedRequest('/me/player', 'GET');
+}
+
+export const getUserRecentlyPlayed = async () => {
+  return makeUserAuthorizedRequest('/me/player/recently-played', 'GET', null, { limit: 1 });
 }
 
 export const getUserQueue = async () => {
-  const accessToken = await getUserAccessToken();
-  const url = `https://api.spotify.com/v1/me/player/queue`;
-  const response = await axios.get(url, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  return response.data;
+  return makeUserAuthorizedRequest('/me/player/queue', 'GET');
 }
 
 export const getUserCurrentlyPlaying = async () => {
-  const accessToken = await getUserAccessToken();
-  const url = `https://api.spotify.com/v1/me/player/currently-playing`;
-  const response = await axios.get(url, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  return response.data;
+  return makeUserAuthorizedRequest('/me/player/currently-playing', 'GET');
 }
 
 export const skipToNextTrack = async () => {
-  const accessToken = await getUserAccessToken();
-  const url = `https://api.spotify.com/v1/me/player/next`;
-  const response = await axios.post(url, null, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  return response.data;
+  return makeUserAuthorizedRequest('/me/player/next', 'POST');
 }
 
 export const skipToPreviousTrack = async () => {
-  const accessToken = await getUserAccessToken();
-  const url = `https://api.spotify.com/v1/me/player/previous`;
-  const response = await axios.post(url, null, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  return response.data;
+  return makeUserAuthorizedRequest('/me/player/previous', 'POST');
 }
 
 export const togglePlayPause = async (isPlaying: boolean) => {
-  const accessToken = await getUserAccessToken();
-  const url = `https://api.spotify.com/v1/me/player/${isPlaying ? 'pause' : 'play'}`;
-  const response = await axios.put(url, null, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  return response.data;
+  return makeUserAuthorizedRequest(`/me/player/${isPlaying ? 'pause' : 'play'}`, 'PUT');
 }
 
 export const getTopItems = async (type: 'artists' | 'tracks', time_range: 'short_term' | 'medium_term' | 'long_term', limit: number = 20) => {
-  const accessToken = await getUserAccessToken();
-  const url = `https://api.spotify.com/v1/me/top/${type}?time_range=${time_range}&limit=${limit}`;
-  const response = await axios.get(url, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  return response.data;
+  return makeUserAuthorizedRequest(`/me/top/${type}?time_range=${time_range}&limit=${limit}`, 'GET');
 }

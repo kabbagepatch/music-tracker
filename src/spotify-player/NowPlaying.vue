@@ -38,7 +38,7 @@
 
 <script setup>
 import { ref } from "vue";
-import Card from "./Card.vue";
+import Card from "../components/Card.vue";
 import playButton from "../assets/play-bgremoved.png";
 import forwardButton from "../assets/forward-bgremoved.png";
 import reverseButton from "../assets/reverse-bgremoved.png";

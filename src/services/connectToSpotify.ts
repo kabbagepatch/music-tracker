@@ -21,13 +21,20 @@ const currentToken = {
 
   save: function (response : any) {
     const { access_token, refresh_token, expires_in } = response;
-    localStorage.setItem('access_token', access_token);
-    localStorage.setItem('refresh_token', refresh_token);
-    localStorage.setItem('expires_in', expires_in);
+    window.localStorage.setItem('access_token', access_token);
+    window.localStorage.setItem('refresh_token', refresh_token);
+    window.localStorage.setItem('expires_in', expires_in);
 
     const now = new Date();
     const expiry = new Date(now.getTime() + (expires_in * 1000));
-    localStorage.setItem('expires', expiry.toString());
+    window.localStorage.setItem('expires', expiry.toString());
+  },
+
+  reset: function () {
+    window.localStorage.removeItem('access_token');
+    window.localStorage.removeItem('refresh_token');
+    window.localStorage.removeItem('expires_in');
+    window.localStorage.removeItem('expires');
   }
 };
 
@@ -55,8 +62,7 @@ export const conntectToSpotify = async () => {
   const hashed = await sha256(codeVerifier)
   const codeChallenge = base64encode(hashed);
 
-  localStorage.removeItem('access_token');
-
+  currentToken.reset();
   window.localStorage.setItem('code_verifier', codeVerifier);
 
   const params = new URLSearchParams({
@@ -74,16 +80,29 @@ export const conntectToSpotify = async () => {
 }
 
 export const getUserAccessToken = async (code : string = '') => {
-  const existingToken = localStorage.getItem('access_token');
+  const existingToken = currentToken.access_token
+  const expires = currentToken.expires ? new Date(currentToken.expires) : null;
+  const now = new Date();
   if (existingToken) {
-    return existingToken;
+    if (expires && now < expires) {
+      return existingToken;
+    }
+    console.log("Access token expired, refreshing...");
+    const newToken = await refreshToken();
+    if (newToken) {
+      return newToken;
+    }
+    console.log("Failed to refresh token, need to re-authenticate.");
   }
 
+  return await generateToken(code);
+}
+
+const generateToken = async (code : string) => {
   if (!code) {
     console.log("No code found in URL.");
     return null;
   }
-  console.log("Code found:", code);
 
   const url = new URL(window.location.href);
   url.searchParams.delete("code");
@@ -105,6 +124,7 @@ export const getUserAccessToken = async (code : string = '') => {
       code,
       redirect_uri: REDIRECT_URI,
       code_verifier: codeVerifier,
+      expires_in: '10',
     }),
   }
 
@@ -112,7 +132,34 @@ export const getUserAccessToken = async (code : string = '') => {
   const response = await body.json();
 
   console.log("Token response:", response);
-  localStorage.setItem('access_token', response.access_token);
+  currentToken.save(response);
+  return response.access_token;
+}
+
+const refreshToken = async () => {
+  const refresh_token = currentToken.refresh_token;
+  if (!refresh_token) {
+    console.log("No refresh token available.");
+    return null;
+  }
+  const tokenEndpoint = "https://accounts.spotify.com/api/token";
+  const payload = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      client_id: CLIENT_ID,
+      grant_type: 'refresh_token',
+      refresh_token,
+    }),
+  }
+
+  const body = await fetch(tokenEndpoint, payload);
+  const response = await body.json();
+  console.log("Refresh token response:", response);
+  currentToken.save(response);
+  return response.access_token;
 }
 
 const urlParams = new URLSearchParams(window.location.search);

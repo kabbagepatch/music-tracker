@@ -3,11 +3,8 @@
     <div v-if="curComponent === 'NowPlaying'">
       <h1>Now Playing</h1>
       <div class="albumart">
-        <img :src="curTrack?.album?.images[1].url" alt="Album Art" />
+        <img v-if="curTrack?.album?.images[1].url" :src="curTrack?.album?.images[1].url" alt="Album Art" />
       </div>
-    </div>
-    <div v-else-if="curComponent === 'Playlist'">
-      <Playlist :playlist="playlist" :curIndex="curIndex" :trackClick="trackClick" />
     </div>
 
     <!-- :artists="curTrack?.artists.map((a: any) => a.name).join(',')" -->
@@ -24,27 +21,15 @@
 
 <script setup lang="ts">
 import { ref } from "vue"
-import NowPlaying from "./components/NowPlaying.vue";
-import Playlist from "./components/Playlist.vue";
-import { getUserPlaybackState, getUserQueue, skipToNextTrack, skipToPreviousTrack, togglePlayPause } from './services/spotify';
+import NowPlaying from "./NowPlaying.vue";
+import { getUserPlaybackState, getUserQueue, skipToNextTrack, skipToPreviousTrack, togglePlayPause } from '../services/spotify';
 
 const curComponent = ref('NowPlaying');
 
-const playlist: any = ref({});
 const playState: any = ref({});
 const tracks: any = ref([]);
 const curIndex = ref(0);
-const curTrack: any = ref();
-
-// getPlaylist('1uRFGSIGuNELeRkNktwHRR').then(playlistres => {
-//   playlist.value = playlistres;
-//   tracks.value = playlistres.tracks.items
-//     .filter((item: any) => item.track.id)
-//     .map((item: any) => item.track);
-//   curTrack.value = tracks.value[curIndex.value];
-// }).catch(err => {
-//   console.error("Error fetching Spotify access token:", err);
-// });
+const curTrack: any = ref(); 
 
 const getPlaybackState = () => {
   getUserPlaybackState().then(playbackRes => {
@@ -60,6 +45,7 @@ const getQueue = () => {
   getUserQueue().then(queueRes => {
     console.log("User queue:", queueRes);
     tracks.value = [queueRes.currently_playing, ...queueRes.queue];
+    curIndex.value = 0;
   }).catch(err => {
     console.error("Error fetching user queue:", err);
   });
@@ -76,11 +62,11 @@ const forwardClick = () => {
     if (curIndex.value > 15) {
       setTimeout(() => {
         getQueue();
-      }, 300);
+      }, 500);
     }
     setTimeout(() => {
       getPlaybackState();
-    }, 300);
+    }, 500);
   }).catch(err => {
     console.error("Error skipping to next track:", err);
   });
@@ -96,7 +82,7 @@ const backClick = () => {
     setTimeout(() => {
       getQueue();
       getPlaybackState();
-    }, 300);
+    }, 500);
   }).catch(err => {
     console.error("Error skipping to previous track:", err);
   });
@@ -106,22 +92,13 @@ const playClick = () => {
   togglePlayPause(playState?.value.is_playing).then(() => {
     console.log("Toggled play/pause successfully");
     setTimeout(() => {
-      getQueue(true);
+      getQueue();
       getPlaybackState();
-    }, 300);
+    }, 500);
   }).catch(err => {
     console.error("Error toggling play/pause:", err);
   });
   playState.value.is_playing = !playState.value.is_playing;
-};
-
-// const nowPlayingClick = () => {
-//   curComponent.value = 'NowPlaying';
-// };
-
-const trackClick = (track: any, index: number) => {
-  curIndex.value = index;
-  curTrack.value = track;
 };
 
 </script>
@@ -129,6 +106,7 @@ const trackClick = (track: any, index: number) => {
 <style scoped>
 .albumart {
   max-width: 800px;
+  height: 358px;
   display: flex;
   border-radius: 28px;
   margin-bottom: 10px;
