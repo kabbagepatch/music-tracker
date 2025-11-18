@@ -6,8 +6,8 @@
     <div class="player">
       <div class="player-left">
         <button class="icon over" @click="backClick">
-          <!-- <img :style="{ width: '35px', marginTop: '8px' }" src="../assets/reverse-bgremoved.png"> -->
-          ⏮
+          <img :style="{ width: '40px', marginTop: '8px' }" src="../assets/rewind.png">
+          <!-- ⏮ -->
         </button>
         <div class="divider" />
         <button class="under" @click="menuClick">Home</button>
@@ -15,21 +15,23 @@
       <div class="play-button-container">
         <div class="play-button" @click="playClick">
           <div class="play-button-inner icon">
-            <div v-if="!playing">▶</div>
-            <div v-else>⏸</div>
-            <!-- <img v-if="!playing" :style="{ width: '50px', marginLeft: '5px' }" src="../assets/play-bgremoved.png">
-            <div v-else :style="{ width: '0px', marginLeft: '0px' }">⏸️</div> -->
+            <!-- <div v-if="!playing">▶</div>
+            <div v-else>⏸</div> -->
+            <img v-if="!playing" :style="{ width: '50px', marginLeft: '5px' }" src="../assets/play-button.png">
+            <img v-else :style="{ width: '50px' }" src="../assets/pause-button.png">
           </div>
         </div>
       </div>
       <div class="player-right">
         <button class="icon over" @click="forwardClick">
-          <!-- <img :style="{ width: '35px', marginTop: '8px' }" src="../assets/forward-bgremoved.png"> -->
-          ⏭
+          <img :style="{ width: '40px', marginTop: '8px' }" src="../assets/fast-forward.png">
+          <!-- ⏭ -->
         </button>
         <div class="divider" />
         <button class="under heart" @click="liked = !liked">
-          {{ liked ? "💖" : "🤍" }}
+          <img v-if="!liked" :style="{ width: '30px' }" src="../assets/heart.png">
+          <img v-else :style="{ width: '30px' }" src="../assets/heart-filled.png">
+          <!-- {{ liked ? "💖" : "🤍" }} -->
         </button>
       </div>
     </div>
@@ -134,7 +136,6 @@ defineProps({
 }
 
 .play-button {
-  text-shadow: none;
   background: var(--tertiary-color);
   border-radius: 50%;
   width: 80px;
@@ -175,10 +176,8 @@ defineProps({
 }
 
 .over, .under {
+  width: 45px;
   height: 45px;
-}
-
-.heart {
-  text-shadow: none;
+  font-size: 28px;
 }
 </style>

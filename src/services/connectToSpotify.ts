@@ -79,7 +79,7 @@ export const conntectToSpotify = async () => {
   window.location.href = authUrl.toString();
 }
 
-export const getUserAccessToken = async (code : string = '') => {
+export const getUserAccessToken = async () => {
   const existingToken = currentToken.access_token
   const expires = currentToken.expires ? new Date(currentToken.expires) : null;
   const now = new Date();
@@ -95,10 +95,12 @@ export const getUserAccessToken = async (code : string = '') => {
     console.log("Failed to refresh token, need to re-authenticate.");
   }
 
-  return await generateToken(code);
+  return await generateToken();
 }
 
-const generateToken = async (code : string) => {
+const generateToken = async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  let code = urlParams.get('code') || '';
   if (!code) {
     console.log("No code found in URL.");
     return null;
@@ -162,6 +164,6 @@ const refreshToken = async () => {
   return response.access_token;
 }
 
-const urlParams = new URLSearchParams(window.location.search);
-let code = urlParams.get('code') || '';
-await getUserAccessToken(code);
+// const urlParams = new URLSearchParams(window.location.search);
+// let code = urlParams.get('code') || '';
+// getUserAccessToken(code);

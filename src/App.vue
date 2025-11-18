@@ -4,13 +4,14 @@
       <div class="header">
         <img class="icon" src="./assets/vinyl-transparent.png" />
         <h1 class="title">Music Player and Tracker</h1>
+        <div class="theme-toggle" @click="toggleTheme" />
       </div>
       <button @click="spotifyPlayerClick">
-        <title-card title="Spotify Player" iconName="vinyl-transparent" />
+        <title-card title="Spotify Player" iconName="note-transparent" />
       </button>
       <br />
       <button @click="spotifyTrackerClick">
-        <title-card title="Top Played" iconName="award-transparent" />
+        <title-card title="Spotify Stats" iconName="award-transparent" />
       </button>
       <br />
       <button @click="connectToSpotifyClick">
@@ -65,6 +66,52 @@ const backToHome = () => {
   curComponent.value = 'Home';
 };
 
+let curTheme = 'Coffee';
+const setTheme = (vars : { [key: string]: string }) => {
+  const root = document.documentElement;
+
+  Object.entries(vars).forEach(([key, value]) => {
+    root.style.setProperty(`--${key}`, value);
+  });
+}
+
+const toggleTheme = () => {
+  if (curTheme === 'Coffee') {
+    setTheme({
+      'primary-color': 'hsl(336, 89%, 93%)',
+      'primary-color-shadow': 'hsl(336, 47%, 62%)',
+      'secondary-color': 'hsl(336, 100%, 70%)',
+      'tertiary-color': 'hsl(58, 55%, 86%)',
+      'background-color': 'hsl(282, 56%, 84%)',
+      'text-color': 'white',
+      'text-outline': 'hsl(276, 100%, 25%)'
+    });
+    curTheme = 'Pink';
+  } else if (curTheme === 'Forest') {
+    setTheme({
+      'primary-color': 'hsl(39, 59%, 78%)',
+      'primary-color-shadow': 'hsl(39, 59%, 58%)',
+      'secondary-color': 'hsl(18, 71%, 27%)',
+      'tertiary-color': 'hsl(31, 51%, 34%)',
+      'background-color': 'hsl(26, 42%, 19%)',
+      'text-color': 'hsl(0, 0%, 100%)',
+      'text-outline': 'hsl(26, 42%, 19%)',
+    });
+    curTheme = 'Coffee';
+  } else {
+    setTheme({
+      'primary-color': 'hsl(60, 63%, 89%)',
+      'primary-color-shadow': 'hsl(60, 63%, 69%)',
+      'secondary-color': 'hsl(77, 14%, 45%)',
+      'tertiary-color': 'hsl(31, 43%, 53%)',
+      'background-color': 'hsl(227, 8%, 22%)',
+      'text-color': 'hsl(0, 0%, 100%)',
+      'text-outline': 'hsl(26, 62%, 18%)'
+    });
+    curTheme = 'Forest';
+  }
+}
+
 </script>
 
 <style scoped>
@@ -108,6 +155,14 @@ const backToHome = () => {
   font-size: 32px;
 }
 
+.theme-toggle {
+  background-color: var(--primary-color);
+  width: 37px;
+  height: 30px;
+  border-radius: 5px;
+  margin-right: 5px;
+}
+
 </style>
 <style>
 @font-face {
@@ -124,7 +179,7 @@ const backToHome = () => {
   font-size: 20px;
   line-height: 24px;
   font-weight: 400;
-  text-shadow: -1px -1px 0 var(--text-outline), 1px -1px 0 var(--text-outline), -1px 1px 0 var(--text-outline), 1px 1px 0 var(--text-outline);
+  text-shadow: -1.5px -1.5px 0 var(--text-outline), 1.5px -1.5px 0 var(--text-outline), -1.5px 1.5px 0 var(--text-outline), 1.5px 1.5px 0 var(--text-outline);
   background-color: var(--background-color);
   background-repeat: no-repeat;
   background-size: cover;
@@ -139,21 +194,21 @@ const backToHome = () => {
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  /* --primary-color: hsl(336, 100%, 94%);
-  --primary-color-shadow: hsl(336, 47%, 62%);
-  --secondary-color: hsl(336, 100%, 70%);
-  --tertiary-color: hsl(58, 55%, 86%);
-  --background-color: hsl(282, 56%, 84%);
-  --text-color: white;
-  --text-outline: hsl(276, 100%, 25%); */
+  --primary-color: hsl(60, 63%, 89%);
+  --primary-color-shadow: hsl(60, 63%, 69%);
+  --secondary-color: hsl(77, 14%, 45%);
+  --tertiary-color: hsl(31, 43%, 53%);
+  --background-color: hsl(227, 8%, 22%);
+  --text-color: hsl(0, 0%, 100%);
+  --text-outline: hsl(26, 62%, 18%);
 
   --primary-color: hsl(39, 59%, 78%);
   --primary-color-shadow: hsl(39, 59%, 58%);
-  --secondary-color: #743014;
-  --tertiary-color: #84592B;
-  --background-color: #442D1C;
+  --secondary-color: hsl(18, 71%, 27%);
+  --tertiary-color: hsl(31, 51%, 34%);
+  --background-color: hsl(26, 42%, 19%);
   --text-color: hsl(0, 0%, 100%);
-  --text-outline: #442D1C;
+  --text-outline: hsl(26, 42%, 19%);
 }
 
 .container {
@@ -180,7 +235,7 @@ button {
   background: none;
   outline: none;
   color: var(--text-color);
-  text-shadow: -1px -1px 0 var(--text-outline), 1px -1px 0 var(--text-outline), -1px 1px 0 var(--text-outline), 1px 1px 0 var(--text-outline);
+  text-shadow: -1.5px -1.5px 0 var(--text-outline), 1.5px -1.5px 0 var(--text-outline), -1.5px 1.5px 0 var(--text-outline), 1.5px 1.5px 0 var(--text-outline);
   font-size: 24px;
   font-family: Pixels, Inter, Avenir, Helvetica, Arial, sans-serif;
 }

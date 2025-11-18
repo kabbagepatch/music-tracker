@@ -60,6 +60,10 @@ export const getUserRecentlyPlayed = async () => {
   return makeUserAuthorizedRequest('/me/player/recently-played', 'GET', null, { limit: 1 });
 }
 
+export const getDevices = async () => {
+  return makeUserAuthorizedRequest('/me/player/devices', 'GET');
+}
+
 export const getUserQueue = async () => {
   return makeUserAuthorizedRequest('/me/player/queue', 'GET');
 }
@@ -76,8 +80,8 @@ export const skipToPreviousTrack = async () => {
   return makeUserAuthorizedRequest('/me/player/previous', 'POST');
 }
 
-export const togglePlayPause = async (isPlaying: boolean) => {
-  return makeUserAuthorizedRequest(`/me/player/${isPlaying ? 'pause' : 'play'}`, 'PUT');
+export const togglePlayPause = async (isPlaying: boolean, deviceId = '') => {
+  return makeUserAuthorizedRequest(`/me/player/${isPlaying ? 'pause' : 'play'}`, 'PUT', { device_id: deviceId });
 }
 
 export const getTopItems = async (type: 'artists' | 'tracks', time_range: 'short_term' | 'medium_term' | 'long_term', limit: number = 20) => {

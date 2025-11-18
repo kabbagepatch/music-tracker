@@ -22,33 +22,47 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import NowPlaying from "./NowPlaying.vue";
-import { getUserPlaybackState, getUserQueue, skipToNextTrack, skipToPreviousTrack, togglePlayPause } from '../services/spotify';
+import { getDevices, getUserPlaybackState, getUserQueue, getUserRecentlyPlayed, skipToNextTrack, skipToPreviousTrack, togglePlayPause } from '../services/spotify';
 
 const curComponent = ref('NowPlaying');
 
 const playState: any = ref({});
 const tracks: any = ref([]);
 const curIndex = ref(0);
-const curTrack: any = ref(); 
+const curTrack: any = ref();
 
 const getPlaybackState = () => {
-  getUserPlaybackState().then(playbackRes => {
-    console.log("User playback state:", playbackRes);
-    playState.value = playbackRes;
-    curTrack.value = playbackRes.item;
+  getUserPlaybackState().then(res => {
+    console.log("User playback state:", res);
+    playState.value = res;
+    curTrack.value = res.item;
+    if (!res || !res.item) {
+      getRecentlyPlayed();
+    }
   }).catch(err => {
     console.error("Error fetching user playback state:", err);
   });
 }
 
 const getQueue = () => {
-  getUserQueue().then(queueRes => {
-    console.log("User queue:", queueRes);
-    tracks.value = [queueRes.currently_playing, ...queueRes.queue];
+  getUserQueue().then(res => {
+    console.log("User queue:", res);
+    tracks.value = [res.currently_playing, ...res.queue];
     curIndex.value = 0;
   }).catch(err => {
     console.error("Error fetching user queue:", err);
   });
+}
+
+const getRecentlyPlayed = () => {
+  getUserRecentlyPlayed().then(res => {
+    if (!res.items || res.items.length === 0) return;
+    console.log("User recently played:", res.items[0]);
+    curTrack.value = res.items[0].track;
+    curIndex.value = 0;
+  }).catch(err => {
+    console.error("Error getting recently played:", err);
+  })
 }
 
 getQueue();
