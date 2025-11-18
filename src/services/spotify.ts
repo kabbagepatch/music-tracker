@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { getUserAccessToken } from "./connectToSpotify";
 
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
@@ -49,7 +49,15 @@ export const getPlaylist = async (playlistId: string) => {
 }
 
 export const getUser = async () => {
-  return makeUserAuthorizedRequest('/me', 'GET');
+  try {
+    const data = await makeUserAuthorizedRequest('/me', 'GET');
+    console.log("User data:", data);
+  } catch (err : any) {
+    if (err.response && err.response.status === 401) {
+      console.log("User is not authorized. Please connect to Spotify.");
+      localStorage.removeItem('access_token');
+    }
+  };
 }
 
 export const getUserPlaybackState = async () => {

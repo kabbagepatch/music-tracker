@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <Header />
     <div class="titleContainer">
       <h1 @click="switchItemType">{{ itemType === 'artists' ? 'Artists' : 'Tracks' }}</h1>
       <h1 @click="switchLimit">Top {{ limit }}</h1>
@@ -11,6 +12,8 @@
 
 <script setup lang="ts">
 import { Ref, ref } from "vue"
+
+import Header from "../Header.vue";
 import TrackList from "../components/TrackList.vue";
 import { getTopItems } from '../services/spotify';
 
@@ -80,7 +83,8 @@ const switchLimit = () => {
 
 .titleContainer {
   display: flex;
-  width: 340px;
+  width: 100%;
+  justify-content: space-between;
 }
 
 h1 {
@@ -88,6 +92,6 @@ h1 {
   font-size: 32px;
   color: white;
   cursor: pointer;
-  width: 100%;
+  width: auto;
 }
 </style>

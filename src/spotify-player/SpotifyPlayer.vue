@@ -1,7 +1,7 @@
 <template>
   <div>
+    <Header />
     <div v-if="curComponent === 'NowPlaying'">
-      <h1>Now Playing</h1>
       <div class="albumart">
         <img v-if="curTrack?.album?.images[1].url" :src="curTrack?.album?.images[1].url" alt="Album Art" />
       </div>
@@ -22,7 +22,8 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import NowPlaying from "./NowPlaying.vue";
-import { getDevices, getUserPlaybackState, getUserQueue, getUserRecentlyPlayed, skipToNextTrack, skipToPreviousTrack, togglePlayPause } from '../services/spotify';
+import { getUserPlaybackState, getUserQueue, getUserRecentlyPlayed, skipToNextTrack, skipToPreviousTrack, togglePlayPause } from '../services/spotify';
+import Header from "../Header.vue";
 
 const curComponent = ref('NowPlaying');
 
@@ -132,7 +133,7 @@ const playClick = () => {
 
 .albumart img {
   width: 356px;
-  height: 356px;
+  height: 354px;
   will-change: filter;
   transition: 0.75s;
   border-radius: 28px;
