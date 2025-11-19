@@ -1,97 +1,49 @@
 <template>
-  <div class="container">
+  <div class="home">
     <Header />
-    <div class="titleContainer">
-      <h1 @click="switchItemType">{{ itemType === 'artists' ? 'Artists' : 'Tracks' }}</h1>
-      <h1 @click="switchLimit">Top {{ limit }}</h1>
-      <h1 @click="switchTimeRange">{{ timeRange === 'long_term' ? '1 Year' : (timeRange === 'medium_term' ? '6 Months' : '4 Weeks') }}</h1>
-    </div>
-    <TrackList :tracks="items" />
+    <button>
+      <router-link to="/tracker/basic">
+        <title-card
+          title="Basic Stats"
+          iconName="stats"
+          :subtitles="[
+            'Get Top Tracks and Artists from up to the last year.',
+            'Requires a connection to Spotify'
+          ]"
+        />
+      </router-link>
+    </button>
+    <br />
+    <button>
+      <router-link to="/tracker/extended">
+        <title-card
+          title="Extended Stats"
+          iconName="cells"
+          :subtitles="[
+            'Explore your full Spotify Music History.',
+            'Requires your extended history from Spotify'
+          ]"
+        />
+      </router-link>
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Ref, ref } from "vue"
-
+import { storeToRefs } from "pinia";
 import Header from "../Header.vue";
-import TrackList from "../components/TrackList.vue";
-import { getTopItems } from '../services/spotify';
+import TitleCard from "../components/TitleCard.vue";
 
-const itemType : (Ref<'tracks' | 'artists'>) = ref('tracks');
-const timeRange : (Ref<'short_term' | 'medium_term' | 'long_term'>) = ref('short_term');
-const limit = ref(10);
+import { useUserStore } from "../stores/user";
 
-const items: any = ref([]);
-const dataCache: any = {}
-
-const setTopItems = () => {
-  const cached = dataCache[`${itemType.value}-${timeRange.value}`];
-  if (cached && cached.length >= limit.value) {
-    items.value = dataCache[`${itemType.value}-${timeRange.value}`].slice(0, limit.value);
-    return;
-  }
-
-  getTopItems(itemType.value, timeRange.value, limit.value).then(data => {
-    items.value = data.items;
-    dataCache[`${itemType.value}-${timeRange.value}`] = data.items;
-  }).catch(err => {
-    console.error("Error fetching top items:", err);
-  });
-}
-setTopItems();
-
-const switchItemType = () => {
-  if (itemType.value === 'tracks') {
-    itemType.value = 'artists';
-  } else {
-    itemType.value = 'tracks';
-  }
-  setTopItems();
-};
-
-const switchTimeRange = () => {
-  if (timeRange.value === 'long_term') {
-    timeRange.value = 'short_term';
-  } else if (timeRange.value === 'medium_term') {
-    timeRange.value = 'long_term';
-  } else {
-    timeRange.value = 'medium_term';
-  }
-  setTopItems();
-};
-
-const switchLimit = () => {
-  if (limit.value === 10) {
-    limit.value = 20;
-  } else if (limit.value === 20) {
-    limit.value = 50;
-  } else {
-    limit.value = 10;
-  }
-  setTopItems();
-}
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  margin-bottom: -10px;
-}
-
-.titleContainer {
-  display: flex;
+.home {
   width: 100%;
-  justify-content: space-between;
 }
 
-h1 {
-  margin-bottom: 10px;
-  font-size: 32px;
-  color: white;
-  cursor: pointer;
-  width: auto;
-}
 </style>

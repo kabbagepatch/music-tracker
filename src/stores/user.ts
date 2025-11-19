@@ -3,7 +3,7 @@ import { ref } from 'vue'
 
 export interface User {
   id: string
-  name: string
+  display_name: string
   email: string
   createdAt: Date
 }

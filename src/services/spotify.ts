@@ -49,15 +49,7 @@ export const getPlaylist = async (playlistId: string) => {
 }
 
 export const getUser = async () => {
-  try {
-    const data = await makeUserAuthorizedRequest('/me', 'GET');
-    console.log("User data:", data);
-  } catch (err : any) {
-    if (err.response && err.response.status === 401) {
-      console.log("User is not authorized. Please connect to Spotify.");
-      localStorage.removeItem('access_token');
-    }
-  };
+  return await makeUserAuthorizedRequest('/me', 'GET');
 }
 
 export const getUserPlaybackState = async () => {

@@ -5,7 +5,9 @@
         <img v-if="iconName" class="icon" :src="`/src/assets/${iconName}.png`" />
         <h1 class="title">{{ title }}</h1>
       </div>
-      <div v-if="subtitle" class="subtitle">{{ subtitle }}</div>
+      <div v-if="subtitles" class="subtitle">
+        <div v-for="(subtitle) in subtitles" >{{ subtitle }}</div>
+      </div>
     </div>
   </card>
 </template>
@@ -15,7 +17,7 @@ import Card from './Card.vue';
 
 defineProps<{
   title: string;
-  subtitle?: string;
+  subtitles?: string[];
   iconName?: string;
 }>();
 
@@ -49,5 +51,12 @@ defineProps<{
 .title {
   font-size: 32px;
   margin: 0;
+}
+
+.subtitle {
+  margin-top: 10px;
+  font-size: 14px;
+  font-family: Helvetica, Arial, sans-serif;
+  text-shadow: none;
 }
 </style>

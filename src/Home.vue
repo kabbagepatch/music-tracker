@@ -4,35 +4,71 @@
       <Header :rightButtonClick="toggleTheme" />
       <button>
         <router-link to="/player">
-          <title-card title="Spotify Player" iconName="note-transparent" />
+          <title-card
+            title="Spotify Player"
+            iconName="note-transparent"
+            :subtitles="[
+              'Control your Spotify music.',
+              'Requires an already active Spotify device'
+            ]"
+          />
         </router-link>
       </button>
       <br />
       <button>
         <router-link to="/tracker">
-          <title-card title="Spotify Stats" iconName="award-transparent" />
+          <title-card
+            title="Spotify Stats"
+            iconName="award-transparent"
+            :subtitles="['Explore your Spotify Music History.']"
+          />
         </router-link>
       </button>
       <br />
       <button @click="connectToSpotifyClick">
-        <title-card title="Connect To Spotify" iconName="network-transparent" />
+        <title-card
+          :title="(user ? 'Reconnect' : 'Connect') + ' To Spotify'"
+          iconName="network-transparent"
+          :subtitles="
+            ['Current Status: ' + (user ? 'Connected' : 'Not Connected')]
+          "
+        />
       </button>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import TitleCard from "./components/TitleCard.vue";
 import Header from "./Header.vue";
 
 import { conntectToSpotify } from "./services/connectToSpotify";
 import { getUser } from "./services/spotify";
+import { useUserStore } from "./stores/user";
+import { AxiosError } from "axios";
 
 const connectToSpotifyClick = () => {
   conntectToSpotify();
 };
 
-getUser();
+const userStore = useUserStore();
+userStore.setLoading(true);
+getUser().then(user => {
+  userStore.setUser(user);
+  userStore.setLoading(false);
+}).catch((err: AxiosError) => {
+  if (err.response && err.response.status === 401) {
+    const error = "User is not authorized. Please connect to Spotify.";
+    userStore.setError(error);
+    console.log(error);
+    localStorage.removeItem('access_token');
+  } else {
+    userStore.setError(err.message);
+  }
+});
+
+const { user } = storeToRefs(userStore);
 
 let curTheme = 'Coffee';
 const setTheme = (vars : { [key: string]: string }) => {

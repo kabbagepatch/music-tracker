@@ -2,7 +2,7 @@
   <div class="header">
     <img class="icon" :src="`/src/assets/${icon}.png`" />
     <h1 class="title">{{ title }}</h1>
-    <button :class="'right-button' + (rightIcon ? '' : ' right-button-background')" @click="onRightButtonClick">
+    <button :class="'right-button' + (rightIcon === 'back' ? '' : ' right-button-background')" @click="onRightButtonClick">
       <img v-if="rightIcon" class="icon" :src="`/src/assets/${rightIcon}.png`" />
     </button>
   </div>
@@ -17,7 +17,7 @@ const route = useRoute();
 
 const icon = ref('vinyl-transparent')
 const title = ref('Music Player and Tracker');
-const rightIcon = ref()
+const rightIcon = ref('paint-brush')
 switch(route.fullPath) {
   case '/player':
     icon.value = 'note-transparent'
@@ -25,12 +25,12 @@ switch(route.fullPath) {
     rightIcon.value = 'back'
     break;
   case '/tracker':
+  case '/tracker/basic':
+  case '/tracker/extended':
     icon.value = 'award-transparent'
     title.value = 'Spotify Tracker';
     rightIcon.value = 'back'
     break;
-  default:
-    rightIcon.value = undefined;
 }
 
 const props = defineProps({
@@ -40,11 +40,10 @@ const props = defineProps({
 })
 
 const onRightButtonClick = () => {
-  console.log(props.rightButtonClick);
   if (props.rightButtonClick) {
     props.rightButtonClick();
   } else {
-    router.push('/');
+    router.back();
   }
 }
 
