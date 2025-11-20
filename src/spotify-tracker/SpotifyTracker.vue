@@ -13,7 +13,6 @@
         />
       </router-link>
     </button>
-    <br />
     <button>
       <router-link to="/tracker/extended">
         <title-card
@@ -42,8 +41,8 @@ const { user } = storeToRefs(userStore);
 </script>
 
 <style scoped>
-.home {
-  width: 100%;
+button {
+  margin-top: 16px;
 }
 
 </style>

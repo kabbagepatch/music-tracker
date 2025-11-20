@@ -3,15 +3,19 @@ import { createPinia } from 'pinia'
 import { createRouter, createWebHistory } from 'vue-router'
 import App from "./App.vue";
 import Home from "./Home.vue";
+import { setTheme } from "./themes.ts";
 import SpotifyPlayer from "./spotify-player/SpotifyPlayer.vue";
 import SpotifyTracker from "./spotify-tracker/SpotifyTracker.vue";
 import BasicStats from "./spotify-tracker/BasicStats.vue";
+import ExtendedStats from "./spotify-tracker/ExtendedStats.vue";
+import Settings from "./Settings.vue";
 
 const routes = [
   { path: '/player', component: SpotifyPlayer },
   { path: '/tracker', component: SpotifyTracker },
   { path: '/tracker/basic', component: BasicStats },
-  { path: '/tracker/extended', component: BasicStats },
+  { path: '/tracker/extended', component: ExtendedStats },
+  { path: '/settings', component: Settings },
   { path: '/', component: Home },
 ]
 
@@ -25,3 +29,6 @@ const app = createApp(App)
 app.use(pinia);
 app.use(router);
 app.mount("#app");
+
+let curTheme = localStorage.getItem('theme') || 'Coffee';
+setTheme(curTheme)

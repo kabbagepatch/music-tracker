@@ -1,7 +1,7 @@
 <template>
   <main class="container">
     <div class="home">
-      <Header :rightButtonClick="toggleTheme" />
+      <Header :rightButtonClick="goToSettings" />
       <button>
         <router-link to="/player">
           <title-card
@@ -40,17 +40,24 @@
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
+import { AxiosError } from "axios";
+import { useRouter } from "vue-router";
+
 import TitleCard from "./components/TitleCard.vue";
 import Header from "./Header.vue";
 
 import { conntectToSpotify } from "./services/connectToSpotify";
 import { getUser } from "./services/spotify";
 import { useUserStore } from "./stores/user";
-import { AxiosError } from "axios";
 
 const connectToSpotifyClick = () => {
   conntectToSpotify();
 };
+
+const router = useRouter();
+const goToSettings = () => {
+  router.push('/settings');
+}
 
 const userStore = useUserStore();
 userStore.setLoading(true);
@@ -69,52 +76,6 @@ getUser().then(user => {
 });
 
 const { user } = storeToRefs(userStore);
-
-let curTheme = 'Coffee';
-const setTheme = (vars : { [key: string]: string }) => {
-  const root = document.documentElement;
-
-  Object.entries(vars).forEach(([key, value]) => {
-    root.style.setProperty(`--${key}`, value);
-  });
-}
-
-const toggleTheme = () => {
-  if (curTheme === 'Coffee') {
-    setTheme({
-      'primary-color': 'hsl(336, 89%, 93%)',
-      'primary-color-shadow': 'hsl(336, 47%, 62%)',
-      'secondary-color': 'hsl(336, 100%, 70%)',
-      'tertiary-color': 'hsl(58, 55%, 86%)',
-      'background-color': 'hsl(282, 56%, 84%)',
-      'text-color': 'white',
-      'text-outline': 'hsl(276, 100%, 25%)'
-    });
-    curTheme = 'Pink';
-  } else if (curTheme === 'Forest') {
-    setTheme({
-      'primary-color': 'hsl(39, 59%, 78%)',
-      'primary-color-shadow': 'hsl(39, 59%, 58%)',
-      'secondary-color': 'hsl(18, 71%, 27%)',
-      'tertiary-color': 'hsl(31, 51%, 34%)',
-      'background-color': 'hsl(26, 42%, 19%)',
-      'text-color': 'hsl(0, 0%, 100%)',
-      'text-outline': 'hsl(26, 42%, 19%)',
-    });
-    curTheme = 'Coffee';
-  } else {
-    setTheme({
-      'primary-color': 'hsl(60, 63%, 89%)',
-      'primary-color-shadow': 'hsl(60, 63%, 69%)',
-      'secondary-color': 'hsl(77, 14%, 45%)',
-      'tertiary-color': 'hsl(31, 43%, 53%)',
-      'background-color': 'hsl(227, 8%, 22%)',
-      'text-color': 'hsl(0, 0%, 100%)',
-      'text-outline': 'hsl(26, 62%, 18%)'
-    });
-    curTheme = 'Forest';
-  }
-}
 
 </script>
 

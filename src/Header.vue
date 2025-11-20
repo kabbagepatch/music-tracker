@@ -1,8 +1,8 @@
 <template>
   <div class="header">
     <img class="icon" :src="`/src/assets/${icon}.png`" />
-    <h1 class="title">{{ title }}</h1>
-    <button :class="'right-button' + (rightIcon === 'back' ? '' : ' right-button-background')" @click="onRightButtonClick">
+    <h1 class="title">{{ titleOverride || title }}</h1>
+    <button class="right-button" @click="onRightButtonClick">
       <img v-if="rightIcon" class="icon" :src="`/src/assets/${rightIcon}.png`" />
     </button>
   </div>
@@ -12,12 +12,21 @@
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
+const props = defineProps({
+  titleOverride: {
+    type: String,
+  },
+  rightButtonClick: {
+    type: Function,
+  }
+})
+
 const router = useRouter();
 const route = useRoute();
 
 const icon = ref('vinyl-transparent')
 const title = ref('Music Player and Tracker');
-const rightIcon = ref('paint-brush')
+const rightIcon = ref('settings')
 switch(route.fullPath) {
   case '/player':
     icon.value = 'note-transparent'
@@ -32,12 +41,6 @@ switch(route.fullPath) {
     rightIcon.value = 'back'
     break;
 }
-
-const props = defineProps({
-  rightButtonClick: {
-    type: Function,
-  }
-})
 
 const onRightButtonClick = () => {
   if (props.rightButtonClick) {
@@ -66,6 +69,7 @@ const onRightButtonClick = () => {
 
 .header .title {
   margin: 0;
+  font-size: 30px;
 }
 
 .header .right-button {

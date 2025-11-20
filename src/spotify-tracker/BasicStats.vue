@@ -2,11 +2,10 @@
   <div class="container">
     <Header />
     <div class="titleContainer">
-      <h1 @click="switchItemType">{{ itemType === 'artists' ? 'Artists' : 'Tracks' }}</h1>
-      <h1 @click="switchLimit">Top {{ limit }}</h1>
+      <h1 @click="switchItemType">Top {{ itemType === 'artists' ? 'Artists' : 'Tracks' }}</h1>
       <h1 @click="switchTimeRange">{{ timeRange === 'long_term' ? '1 Year' : (timeRange === 'medium_term' ? '6 Months' : '4 Weeks') }}</h1>
     </div>
-    <TrackList :tracks="items" />
+    <ItemList :items="items" :onMore="switchLimit" />
   </div>
 </template>
 
@@ -14,7 +13,7 @@
 import { Ref, ref } from "vue"
 
 import Header from "../Header.vue";
-import TrackList from "../components/TrackList.vue";
+import ItemList from "../components/ItemList.vue";
 import { getTopItems } from '../services/spotify';
 
 const itemType : (Ref<'tracks' | 'artists'>) = ref('tracks');
@@ -61,6 +60,7 @@ const switchTimeRange = () => {
 };
 
 const switchLimit = () => {
+  console.log("onMore");
   if (limit.value === 10) {
     limit.value = 20;
   } else if (limit.value === 20) {
@@ -85,11 +85,12 @@ const switchLimit = () => {
   display: flex;
   width: 100%;
   justify-content: space-between;
+  margin: 3px 0;
 }
 
 h1 {
   margin-bottom: 10px;
-  font-size: 32px;
+  font-size: 28px;
   color: white;
   cursor: pointer;
   width: auto;

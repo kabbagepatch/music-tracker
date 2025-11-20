@@ -7,7 +7,6 @@
       <div class="player-left">
         <button class="icon over" @click="backClick">
           <img :style="{ width: '40px', marginTop: '8px' }" src="../assets/rewind.png">
-          <!-- ⏮ -->
         </button>
         <div class="divider" />
         <button class="under" @click="menuClick">Home</button>
@@ -15,8 +14,6 @@
       <div class="play-button-container">
         <div class="play-button" @click="playClick">
           <div class="play-button-inner icon">
-            <!-- <div v-if="!playing">▶</div>
-            <div v-else>⏸</div> -->
             <img v-if="!playing" :style="{ width: '50px', marginLeft: '5px' }" src="../assets/play-button.png">
             <img v-else :style="{ width: '50px' }" src="../assets/pause-button.png">
           </div>
@@ -25,13 +22,11 @@
       <div class="player-right">
         <button class="icon over" @click="forwardClick">
           <img :style="{ width: '40px', marginTop: '8px' }" src="../assets/fast-forward.png">
-          <!-- ⏭ -->
         </button>
         <div class="divider" />
         <button class="under heart" @click="liked = !liked">
           <img v-if="!liked" :style="{ width: '30px' }" src="../assets/heart.png">
           <img v-else :style="{ width: '30px' }" src="../assets/heart-filled.png">
-          <!-- {{ liked ? "💖" : "🤍" }} -->
         </button>
       </div>
     </div>
@@ -41,9 +36,6 @@
 <script setup>
 import { ref } from "vue";
 import Card from "../components/Card.vue";
-import playButton from "../assets/play-bgremoved.png";
-import forwardButton from "../assets/forward-bgremoved.png";
-import reverseButton from "../assets/reverse-bgremoved.png";
 
 defineProps({
   songName: {

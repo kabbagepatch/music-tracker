@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { getUserAccessToken } from "./connectToSpotify";
 
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;

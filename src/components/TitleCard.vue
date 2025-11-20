@@ -58,5 +58,6 @@ defineProps<{
   font-size: 14px;
   font-family: Helvetica, Arial, sans-serif;
   text-shadow: none;
+  color: var(--background-color);
 }
 </style>
