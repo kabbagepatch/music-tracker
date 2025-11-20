@@ -1,10 +1,10 @@
 <template>
   <main class="container">
     <div class="home">
-      <Header :rightButtonClick="toggleTheme" />
+      <Header />
       <button @click="toggleTheme">
         <div class="theme-button">
-          <img class="icon" src="./assets/paint-brush.png" />
+          <img class="icon" src="./assets/icons/paint-brush.png" />
           <div class="theme-button-text">Toggle Theme</div>
         </div>
       </button>

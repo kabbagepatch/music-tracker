@@ -9,12 +9,16 @@ import SpotifyTracker from "./spotify-tracker/SpotifyTracker.vue";
 import BasicStats from "./spotify-tracker/BasicStats.vue";
 import ExtendedStats from "./spotify-tracker/ExtendedStats.vue";
 import Settings from "./Settings.vue";
+import YearlyStats from "./spotify-tracker/YearlyStats.vue";
+import MonthlyStats from "./spotify-tracker/MonthlyStats.vue";
 
 const routes = [
   { path: '/player', component: SpotifyPlayer },
   { path: '/tracker', component: SpotifyTracker },
   { path: '/tracker/basic', component: BasicStats },
   { path: '/tracker/extended', component: ExtendedStats },
+  { path: '/tracker/extended/:year', component: YearlyStats },
+  { path: '/tracker/extended/:year/:month', component: MonthlyStats },
   { path: '/settings', component: Settings },
   { path: '/', component: Home },
 ]

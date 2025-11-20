@@ -14,7 +14,6 @@
           />
         </router-link>
       </button>
-      <br />
       <button>
         <router-link to="/tracker">
           <title-card
@@ -24,35 +23,19 @@
           />
         </router-link>
       </button>
-      <br />
-      <button @click="connectToSpotifyClick">
-        <title-card
-          :title="(user ? 'Reconnect' : 'Connect') + ' To Spotify'"
-          iconName="network-transparent"
-          :subtitles="
-            ['Current Status: ' + (user ? 'Connected' : 'Not Connected')]
-          "
-        />
-      </button>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import { AxiosError } from "axios";
 import { useRouter } from "vue-router";
 
 import TitleCard from "./components/TitleCard.vue";
 import Header from "./Header.vue";
 
-import { conntectToSpotify } from "./services/connectToSpotify";
 import { getUser } from "./services/spotify";
 import { useUserStore } from "./stores/user";
-
-const connectToSpotifyClick = () => {
-  conntectToSpotify();
-};
 
 const router = useRouter();
 const goToSettings = () => {
@@ -74,8 +57,6 @@ getUser().then(user => {
     userStore.setError(err.message);
   }
 });
-
-const { user } = storeToRefs(userStore);
 
 </script>
 
@@ -101,31 +82,7 @@ const { user } = storeToRefs(userStore);
   margin: 0;
 }
 
-.button-container {
-  width: 100%;
-  height: 124px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+button {
+  margin-top: 20px;
 }
-
-.homeButton {
-  position: absolute;
-  right: 0;
-  margin-right: 10px;
-  margin-top: -5px;
-}
-
-.card-title {
-  font-size: 32px;
-}
-
-.theme-toggle {
-  background-color: var(--primary-color);
-  width: 37px;
-  height: 30px;
-  border-radius: 5px;
-  margin-right: 5px;
-}
-
 </style>

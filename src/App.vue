@@ -1,6 +1,6 @@
 <template>
   <main class="container">
-    <RouterView />
+    <RouterView :key="$route.fullPath" />
   </main>
 </template>
 
@@ -10,20 +10,20 @@
 <style>
 @font-face {
   font-family: "Pixels";
-  src: url('./assets/Jersey10-Regular.ttf');
+  src: url('./assets/fonts/Jersey10-Regular.ttf');
 }
 @font-face {
   font-family: "Bubbly";
-  src: url('./assets/Atop-R99O3.ttf');
+  src: url('./assets/fonts/Atop-R99O3.ttf');
 }
 
 :root {
-  font-family: Pixels, Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 20px;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 16px;
   line-height: 24px;
   font-weight: 400;
-  text-shadow: -1.5px -1.5px 0 var(--text-outline), 1.5px -1.5px 0 var(--text-outline), -1.5px 1.5px 0 var(--text-outline), 1.5px 1.5px 0 var(--text-outline);
   background-color: var(--background-color);
+  color: var(--text-color);
   background-repeat: no-repeat;
   background-size: cover;
   padding: 10px;
@@ -61,15 +61,21 @@
   justify-content: center;
 }
 
-h1 {
-  margin: 0 5px;
-  margin-bottom: 10px;
-  font-size: 28px;
-  width: 100%;
+h1, button, .h1 {
+  font-family: Pixels, Inter, Avenir, Helvetica, Arial, sans-serif;
+  text-shadow: -1.5px -1.5px 0 var(--text-outline), 1.5px -1.5px 0 var(--text-outline), -1.5px 1.5px 0 var(--text-outline), 1.5px 1.5px 0 var(--text-outline);
   color: var(--text-color);
 }
 
+h1 {
+  margin: 0;
+  margin-bottom: 10px;
+  font-size: 28px;
+  width: 100%;
+}
+
 button {
+  font-size: 24px;
   display: block;
   margin: 0;
   padding: 0;
@@ -77,10 +83,6 @@ button {
   border: none;
   background: none;
   outline: none;
-  color: var(--text-color);
-  text-shadow: -1.5px -1.5px 0 var(--text-outline), 1.5px -1.5px 0 var(--text-outline), -1.5px 1.5px 0 var(--text-outline), 1.5px 1.5px 0 var(--text-outline);
-  font-size: 24px;
-  font-family: Pixels, Inter, Avenir, Helvetica, Arial, sans-serif;
 }
 
 a {

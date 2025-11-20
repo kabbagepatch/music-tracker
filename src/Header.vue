@@ -1,9 +1,9 @@
 <template>
   <div class="header">
-    <img class="icon" :src="`/src/assets/${icon}.png`" />
+    <img class="icon" :src="`/src/assets/icons/${icon}.png`" />
     <h1 class="title">{{ titleOverride || title }}</h1>
     <button class="right-button" @click="onRightButtonClick">
-      <img v-if="rightIcon" class="icon" :src="`/src/assets/${rightIcon}.png`" />
+      <img v-if="rightIcon" class="icon" :src="`/src/assets/icons/${rightIcon}.png`" />
     </button>
   </div>
 </template>
@@ -24,22 +24,24 @@ const props = defineProps({
 const router = useRouter();
 const route = useRoute();
 
-const icon = ref('vinyl-transparent')
+const icon = ref('year')
 const title = ref('Music Player and Tracker');
-const rightIcon = ref('settings')
+const rightIcon = ref('back')
 switch(route.fullPath) {
+  case '/':
+    icon.value = 'vinyl-transparent'
+    rightIcon.value = 'settings'
   case '/player':
     icon.value = 'note-transparent'
     title.value = 'Now Playing';
-    rightIcon.value = 'back'
     break;
   case '/tracker':
   case '/tracker/basic':
   case '/tracker/extended':
     icon.value = 'award-transparent'
     title.value = 'Spotify Tracker';
-    rightIcon.value = 'back'
     break;
+    
 }
 
 const onRightButtonClick = () => {

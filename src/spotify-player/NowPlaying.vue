@@ -1,12 +1,12 @@
 <template>
   <card>
     <div class="song-name-container">
-      <div class="song-name" @click="nowPlayingClick">{{ artists }} - {{ songName }}</div>
+      <div class="song-name h1" @click="nowPlayingClick">{{ artists }} - {{ songName }}</div>
     </div>
     <div class="player">
       <div class="player-left">
         <button class="icon over" @click="backClick">
-          <img :style="{ width: '40px', marginTop: '8px' }" src="../assets/rewind.png">
+          <img :style="{ width: '40px', marginTop: '8px' }" src="../assets/icons/rewind.png">
         </button>
         <div class="divider" />
         <button class="under" @click="menuClick">Home</button>
@@ -14,19 +14,19 @@
       <div class="play-button-container">
         <div class="play-button" @click="playClick">
           <div class="play-button-inner icon">
-            <img v-if="!playing" :style="{ width: '50px', marginLeft: '5px' }" src="../assets/play-button.png">
-            <img v-else :style="{ width: '50px' }" src="../assets/pause-button.png">
+            <img v-if="!playing" :style="{ width: '50px', marginLeft: '5px' }" src="../assets/icons/play-button.png">
+            <img v-else :style="{ width: '50px' }" src="../assets/icons/pause-button.png">
           </div>
         </div>
       </div>
       <div class="player-right">
         <button class="icon over" @click="forwardClick">
-          <img :style="{ width: '40px', marginTop: '8px' }" src="../assets/fast-forward.png">
+          <img :style="{ width: '40px', marginTop: '8px' }" src="../assets/icons/fast-forward.png">
         </button>
         <div class="divider" />
         <button class="under heart" @click="liked = !liked">
-          <img v-if="!liked" :style="{ width: '30px' }" src="../assets/heart.png">
-          <img v-else :style="{ width: '30px' }" src="../assets/heart-filled.png">
+          <img v-if="!liked" :style="{ width: '30px' }" src="../assets/icons/heart.png">
+          <img v-else :style="{ width: '30px' }" src="../assets/icons/heart-filled.png">
         </button>
       </div>
     </div>
@@ -87,6 +87,7 @@ defineProps({
 }
 
 .song-name {
+  display: block;
   flex-wrap: nowrap;
   animation: move 10s linear infinite forwards;
   cursor: pointer;
