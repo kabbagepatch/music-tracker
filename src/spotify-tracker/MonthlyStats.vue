@@ -49,7 +49,7 @@ const forward = () => {
     newYear += 1
     nextMonth = 1;
   };
-  router.replace(`/tracker/extended/${newYear}/${nextMonth}`)
+  router.replace(`/tracker/extended/year/${newYear}/${nextMonth}`)
 }
 
 const back = () => {
@@ -59,7 +59,7 @@ const back = () => {
     newYear -= 1
     prevMonth = 12;
   };
-  router.replace(`/tracker/extended/${newYear}/${prevMonth}`)
+  router.replace(`/tracker/extended/year/${newYear}/${prevMonth}`)
 }
 
 </script>

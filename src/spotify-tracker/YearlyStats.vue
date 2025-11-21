@@ -43,13 +43,13 @@ import(`../assets/data/processed/yearly/${year}/topArtists.json`).then(module =>
 const forward = () => {
   const nextYear = parseInt(year, 10) + 1;
   if (nextYear > 2025) return;
-  router.replace(`/tracker/extended/${nextYear}`)
+  router.replace(`/tracker/extended/year/${nextYear}`)
 }
 
 const back = () => {
   const prevYear = parseInt(year, 10) - 1;
   if (prevYear < 2012) return;
-  router.replace(`/tracker/extended/${prevYear}`)
+  router.replace(`/tracker/extended/year/${prevYear}`)
 }
 
 </script>

@@ -24,24 +24,32 @@ const props = defineProps({
 const router = useRouter();
 const route = useRoute();
 
-const icon = ref('year')
+const icon = ref('vinyl-transparent')
 const title = ref('Music Player and Tracker');
 const rightIcon = ref('back')
-switch(route.fullPath) {
-  case '/':
-    icon.value = 'vinyl-transparent'
-    rightIcon.value = 'settings'
-  case '/player':
-    icon.value = 'note-transparent'
-    title.value = 'Now Playing';
-    break;
-  case '/tracker':
-  case '/tracker/basic':
-  case '/tracker/extended':
-    icon.value = 'award-transparent'
-    title.value = 'Spotify Tracker';
-    break;
-    
+const routeParts = route.fullPath.split('/');
+if (routeParts.length > 1) {
+  switch(routeParts[1]) {
+    case '':
+      icon.value = 'vinyl-transparent'
+      rightIcon.value = 'settings'
+    case 'player':
+      icon.value = 'note-transparent'
+      title.value = 'Now Playing';
+      break;
+    case 'tracker':
+      if (routeParts.length > 3 && (routeParts[3] === 'tracks' || routeParts[3] === 'artists')) {
+        icon.value = 'note-transparent';
+      } else if (routeParts.length > 4) {
+        icon.value = 'month'
+      } else if (routeParts.length > 2) {
+        icon.value = 'year'
+      } else {
+        icon.value = 'award-transparent'
+      }
+      title.value = 'Spotify Tracker';
+      break;
+  }
 }
 
 const onRightButtonClick = () => {
@@ -56,6 +64,7 @@ const onRightButtonClick = () => {
 
 <style scoped>
 .header {
+  width: 366px;
   display: flex;
   align-items: center;
   margin-top: -5px;

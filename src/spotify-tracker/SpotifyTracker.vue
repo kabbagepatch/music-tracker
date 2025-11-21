@@ -29,15 +29,8 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import Header from "../Header.vue";
 import TitleCard from "../components/TitleCard.vue";
-
-import { useUserStore } from "../stores/user";
-
-const userStore = useUserStore();
-const { user } = storeToRefs(userStore);
-
 </script>
 
 <style scoped>

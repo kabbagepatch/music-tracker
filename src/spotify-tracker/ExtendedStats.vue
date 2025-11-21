@@ -2,7 +2,7 @@
   <div class="container">
     <Header />
     <button>
-      <router-link to="/tracker/extended/2025">
+      <router-link to="/tracker/extended/year/2025">
         <title-card
           title="Yearly"
           iconName="year"
@@ -11,7 +11,7 @@
       </router-link>
     </button>
     <button>
-      <router-link to="/tracker/extended/2025/9">
+      <router-link to="/tracker/extended/year/2025/11">
         <title-card
           title="Monthly"
           iconName="month"
