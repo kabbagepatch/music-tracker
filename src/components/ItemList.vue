@@ -7,17 +7,16 @@
         :key="item.id"
         @click="itemClick(item, i)"
       >
-        <div class="item-index">{{ i + 1 }}</div>
         <img
           v-if="item.images || item.album?.images"
           class="item-thumbnail"
           :src="item.images ? item.images[2].url : item.album?.images[2].url"
           alt="Album Art"
         />
-        <div class="item-name" >{{ item.name }}</div>
+        <div class="item-name" >{{ item.name.length > 30 ? item.name.slice(0, 30) + '...' : item.name }}</div>
       </div>
       <div class="item" @click="onMore">
-        <div class="more" >{{ items.length < 50 ? 'More..' : 'Less' }}</div>
+        <div class="more" >{{ items.length < 50 ? 'More...' : 'Less' }}</div>
       </div>
     </div>
   </div>
@@ -54,7 +53,7 @@ defineProps({
   color: var(--text-color);
   margin-bottom: 8px;
   font-size: 16px;
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: monospace;
   text-shadow: none;
   color: var(--background-color);
 }
@@ -96,6 +95,7 @@ defineProps({
 .item-name, .item-index {
   padding: 2px 0;
   margin-left: 12px;
+  font-weight: bold;
 }
 
 .selected {

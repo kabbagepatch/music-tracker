@@ -1,9 +1,9 @@
 <template>
   <div class="container">
-    <Header titleOverride="Monthly Stats" />
-    <Stats
+    <Header title="Monthly Stats" icon="month" />
+    <TimeStats
       :title="`${monthString} ${year}`"
-      :topSongs="topSongs"
+      :topSongs="topTracks"
       :topArtists="topArtists"
       :totalSongs="totalSongs"
       :totalTime="totalTime"
@@ -14,33 +14,33 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, ref } from "vue";
+import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Header from "../Header.vue";
-import Stats from "../components/Stats.vue";
+import TimeStats from "../components/TimeStats.vue";
+import { TrackTotals, useTrackerStore } from "../stores/tracker";
 
+const trackerStore = useTrackerStore();
 const router = useRouter();
 const route = useRoute();
 const month = route.params.month as string;
 const monthString = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][parseInt(month) - 1];
 const year = route.params.year as string;
 
-type Entry = { msPlayed: number; playCount: number; }
-const topSongs : Ref<[ string, Entry ][]> = ref([]);
+const topTracks = ref<[ string, TrackTotals ][]>([]);
+const topArtists = ref<[ string, TrackTotals ][]>([]);
 const totalSongs = ref(0);
 const totalTime = ref(0);
-import(`../assets/data/processed/yearly/${year}/${month}/topSongs.json`).then(module => {
-  topSongs.value = module.default;
-  topSongs.value.forEach(song => {
+trackerStore.getTopTracks(year, month).then(data => {
+  topTracks.value = data;
+  topTracks.value.forEach(song => {
     totalSongs.value += song[1].playCount;
     totalTime.value += song[1].msPlayed;
   });
 });
-
-const topArtists : Ref<[ string, Entry ][]> = ref([]);
-import(`../assets/data/processed/yearly/${year}/${month}/topArtists.json`).then(module => {
-  topArtists.value = module.default;
-})
+trackerStore.getTopArtists(year, month).then(data => {
+  topArtists.value = data;
+});
 
 const forward = () => {
   let newYear = parseInt(year, 10);

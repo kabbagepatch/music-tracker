@@ -11,7 +11,7 @@
       </router-link>
     </button>
     <button>
-      <router-link to="/tracker/extended/year/2025/11">
+      <router-link to="/tracker/extended/year/2025/9">
         <title-card
           title="Monthly"
           iconName="month"

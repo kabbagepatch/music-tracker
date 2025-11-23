@@ -1,34 +1,40 @@
 <template>
   <div class="container">
-    <div class="header">
-      <button @click="back"><</button>
-      <h1>{{ title }}</h1>
-      <button @click="forward">></button>
-    </div>
     <div v-if="displaySummary" class="summary">
-      <div>Total Number of Song Plays: <span class="summary-title">{{ totalSongs }}</span></div>
-      <div>Total Time Listened: <span class="summary-title">{{ (totalTime / 3600000).toFixed(2) }} hrs</span></div>
-      <div>Number of Distinct Songs: <span class="summary-title">{{ topSongs.length }}</span></div>
-      <div>Number of Distinct Artists: <span class="summary-title">{{ topArtists.length }}</span></div>
+      <div v-for="item in summary">
+        <div>{{ item.key }}: <span class="summary-title">{{ item.value }}</span></div>
+      </div>
     </div>
-    <div class="section" v-if="displaySongs">
+    <div class="section" v-if="cardOne.entries.length && displayCardOne">
       <card>
-        <button class="title-button" @click="toggleSongs"><h1 class="title">Top Songs</h1></button>
-        <div v-for="song in (displaySummary ? topSongs.slice(0, 5) : topSongs)">
+        <button class="title-button" @click="toggleCardOne"><h1 class="title">{{ cardOne.title }}</h1></button>
+        <div v-for="entry in (displaySummary ? cardOne.entries.slice(0, 5) : cardOne.entries)">
           <div class="entry">
-            <router-link :to="`/tracker/extended/tracks/${song[0]}`">{{ song[0].length > 35 ? song[0].slice(0,35) + '...' : song[0] }}</router-link>
-            <div>{{ song[1].playCount }}</div>
+            <router-link
+              v-if="entry.link"
+              :to="`/tracker/extended/${cardOne.linkType}/${encodeURIComponent(entry.link)}`"
+            >
+              {{ entry.left.length > 28 ? entry.left.slice(0,28).trim() + '...' : entry.left }}
+            </router-link>
+            <div v-else >{{ entry.left.length > 28 ? entry.left.slice(0,28).trim() + '...' : entry.left }}</div>
+            <div>{{ entry.right }}</div>
           </div>
         </div>
       </card>
     </div>
-    <div class="section" v-if="displayArtists">
+    <div class="section" v-if="cardTwo.entries.length && displayCardTwo">
       <card>
-        <button class="title-button" @click="toggleArtists"><h1 class="title">Top Artists</h1></button>
-        <div v-for="artist in (displaySummary ? topArtists.slice(0, 5) : topArtists)">
+        <button class="title-button" @click="toggleCardTwo"><h1 class="title">{{ cardTwo.title }}</h1></button>
+        <div v-for="entry in (displaySummary ? cardTwo.entries.slice(0, 5) : cardTwo.entries)">
           <div class="entry">
-            <router-link :to="`/tracker/extended/artists/${artist[0]}`">{{ artist[0] }}</router-link>
-            <div>{{ artist[1].playCount }}</div>
+            <router-link
+              v-if="entry.link"
+              :to="`/tracker/extended/${cardTwo.linkType}/${encodeURIComponent(entry.link)}`"
+            >
+              {{ entry.left.length > 21 ? entry.left.slice(0,21).trim() + '...' : entry.left }}
+            </router-link>
+            <div v-else >{{ entry.left.length > 21 ? entry.left.slice(0,21).trim() + '...' : entry.left }}</div>
+            <div>{{ entry.right }}</div>
           </div>
         </div>
       </card>
@@ -40,33 +46,24 @@
 import { ref } from "vue";
 import Card from "../components/Card.vue";
 
-type Entry = { msPlayed: number; playCount: number; }
 defineProps<{
-  title: string,
-  totalSongs: number,
-  totalTime: number,
-  topSongs: [ string, Entry ][],
-  topArtists: [ string, Entry ][],
-  back: () => void,
-  forward: () => void,
+  summary: { key: string; value: string | number | undefined }[],
+  cardOne: { title: string; entries: { left: string, right: string | number | undefined, link?: string }[], linkType?: 'tracks' | 'artists' },
+  cardTwo: { title: string; entries: { left: string, right: string | number | undefined, link?: string }[], linkType?: 'tracks' | 'artists' },
 }>();
 
-const displaySummary = ref(!localStorage.getItem("displaySummary") || localStorage.getItem("displaySummary") === "true");
-const displaySongs = ref(!localStorage.getItem("displaySongs") || localStorage.getItem("displaySongs") === "true");
-const displayArtists = ref(!localStorage.getItem("displayArtists") || localStorage.getItem("displayArtists") === "true");
+const displaySummary = ref(true);
+const displayCardOne = ref(true);
+const displayCardTwo = ref(true);
 
-const toggleSongs = () => {
+const toggleCardOne = () => {
   displaySummary.value = !displaySummary.value;
-  displayArtists.value = !displayArtists.value;
-  localStorage.setItem('displaySummary', displaySummary.value.toString())
-  localStorage.setItem('displayArtists', displayArtists.value.toString())
+  displayCardTwo.value = !displayCardTwo.value;
 }
 
-const toggleArtists = () => {
+const toggleCardTwo = () => {
   displaySummary.value = !displaySummary.value;
-  displaySongs.value = !displaySongs.value;
-  localStorage.setItem('displaySummary', displaySummary.value.toString())
-  localStorage.setItem('displaySongs', displaySongs.value.toString())
+  displayCardOne.value = !displayCardOne.value;
 }
 
 </script>
@@ -85,7 +82,8 @@ const toggleArtists = () => {
 }
 
 .summary {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  margin-left: 10px;
 }
 
 .summary-title {
@@ -114,7 +112,6 @@ const toggleArtists = () => {
 }
 
 .title {
-  float: left;
   text-align: left;
   margin-left: 10px;
 }
@@ -127,6 +124,7 @@ const toggleArtists = () => {
   color: var(--background-color);
   margin: 0;
   font-weight: bold;
+  font-family: monospace;
 }
 
 .entry a {

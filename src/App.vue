@@ -87,5 +87,6 @@ button {
 
 a {
   text-decoration: none;
+  color: var(--background-color);
 }
 </style>

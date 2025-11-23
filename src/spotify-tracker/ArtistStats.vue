@@ -1,77 +1,50 @@
 <template>
   <div class="container">
-    <Header :titleOverride="artistKey" />
-    <div class="summary">
-      <div>Artist: <span class="summary-title">{{ artistKey }}</span></div>
-      <div>Number of distinct tracks played: <span class="summary-title">{{ Object.keys(artist).length }}</span></div>
-    </div>
-    <card class="plays-card">
-      <h1>Top Tracks</h1>
-      <div class="plays" v-for="track in topTracks">
-        {{ track }}
-      </div>
-    </card>
-    <br />
-    <card class="plays-card">
-      <h1>First Tracks</h1>
-      <div class="plays" v-for="track in firstTracks">
-        {{ track }}
-      </div>
-    </card>
+    <Header :title="artistKey" icon="note-transparent" />
+    <Stats
+      v-if="artist"
+      :summary="[
+        { key: 'Discovered on', value: artist.firstTracks[0].firstPlayed },
+        { key: 'Distinct tracks played', value: artist.topTracks.length },
+        { key: 'Total number of plays', value: artist.totalPlays },
+        { key: 'Total Time played', value: artist.timePlayed },
+      ]"
+      :cardOne="{ title: 'Top Tracks', entries: artist.topTracks.map(track => ({ left: track.trackName, right: track.playCount, link: track.key })), linkType: 'tracks' }"
+      :cardTwo="{ title: 'First Tracks', entries: artist.firstTracks.map(track => ({ left: track.trackName, right: track.firstPlayed, link: track.key })), linkType: 'tracks' }"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Ref, ref } from "vue";
+import { ref } from "vue";
 import { useRoute } from "vue-router";
 import Header from "../Header.vue";
 import Card from "../components/Card.vue";
+import Stats from "../components/Stats.vue";
+import { ArtistStats, useTrackerStore } from "../stores/tracker";
 
+const trackerStore = useTrackerStore();
 const route = useRoute();
 const artistKey = route.params.artist as string;
 
-type TrackData = {
-  id?: string;
-  trackName?: string;
-  artistName?: string;
-  albumName?: string;
-}
-type TrackStats = {
-  [key: string]: {
-    info?: TrackData,
-    plays?: {
-      timeStamp: string;
-      msPlayed: number;
-    }[]
-  }
-}
-type ArtistStats = { [artistName: string]: TrackStats };
-
-const allArtists : Ref<ArtistStats> = ref({});
-const artist : Ref<ArtistStats['']> = ref({});
-const topTracks : Ref<String[]> = ref([]);
-const firstTracks : Ref<String[]> = ref([]);
-import('../assets/data/processed/fullArtistStats.json').then((module : any) => {
-  allArtists.value = module.default;
-  artist.value = allArtists.value[artistKey];
-
-  Object.entries(artist.value).sort((a, b) => b[1].plays.length - a[1].plays.length).slice(0, 5).forEach(([key, entry]) => {
-    if (!entry?.plays) return;
-    topTracks.value.push(`${key.split(' - ')[0]} - ${entry.plays.length} plays`);
-  });
-
-  let firstTimestamps : { [key : string]: number } = {};
-  Object.keys(artist.value).forEach(key => {
-    const songData = artist.value[key];
-    if (!songData?.info?.trackName || !songData.plays) return;
-    firstTimestamps[songData.info.trackName] = songData.plays.map(play => new Date(play.timeStamp).getTime()).sort((a, b) => a - b)[0];
-  });
-  
-  Object.entries(firstTimestamps).sort((a, b) => (a[1] - b[1])).slice(0, 5).forEach(([key, timeStamp]) => {
-    const date = new Date(timeStamp);
-    firstTracks.value.push(`${key} - ${date.toDateString()}`);
-  });
+const artist = ref<ArtistStats['']>();
+trackerStore.getArtistStats(artistKey).then(data => {
+  artist.value = data;
 });
+
+const displaySummary = ref(true);
+const displayTopTracks = ref(true);
+const displayFirstTracks = ref(true);
+
+const toggleTopTracks = () => {
+  displaySummary.value = !displaySummary.value;
+  displayFirstTracks.value = !displayFirstTracks.value;
+}
+
+const toggleFirstTracks = () => {
+  displaySummary.value = !displaySummary.value;
+  displayTopTracks.value = !displayTopTracks.value;
+}
 
 </script>
 
@@ -79,7 +52,7 @@ import('../assets/data/processed/fullArtistStats.json').then((module : any) => {
 .summary {
   font-size: 18px;
   line-height: 28px;
-  margin-bottom: 10px;
+  margin-left: 10px;
 }
 
 .summary-title {
@@ -89,14 +62,32 @@ import('../assets/data/processed/fullArtistStats.json').then((module : any) => {
 .plays-card {
   text-align: left;
   font-weight: bold;
-}
-
-.plays-card h1 {
-  margin-left: 2px;
+  margin: 10px 0;
 }
 
 .plays {
   color: var(--background-color);
-  margin-bottom: 2px;  
+  margin-bottom: 2px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.title-button {
+  display: block;
+  height: 30px;
+  width: 105%;
+  margin-top: -5px;
+  margin-left: -10px;
+  margin-bottom: 5px;
+  border-radius: 15px;
+}
+
+.title-button:hover {
+  background-color: hsla(227, 8%, 22%, 25%);
+}
+
+.title {
+  text-align: left;
+  margin-left: 10px;
 }
 </style>

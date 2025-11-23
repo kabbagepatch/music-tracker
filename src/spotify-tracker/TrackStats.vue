@@ -1,59 +1,52 @@
 <template>
   <div class="container">
-    <Header :titleOverride="trackKey.split(' - ')[0]" />
-    <div class="summary">
-      <div>Track Name: <span class="summary-title">{{ track.info?.trackName }}</span></div>
-      <div>Artist: <span class="summary-title">{{ track.info?.artistName }}</span></div>
-      <div>Album: <span class="summary-title">{{ track.info?.albumName }}</span></div>
-      <div>Number of times played: <span class="summary-title">{{ track.plays?.length }}</span></div>
-      <div>First Played on: <span class="summary-title">{{ new Date(track.plays?.[0].timeStamp).toLocaleDateString() }}</span></div>
+    <Header :title="trackKey.split(' - ')[0]" icon="note-transparent" />
+    <div v-if="track" class="summary">
+      <div>Track Name: <span class="summary-title">{{ track.info.trackName }}</span></div>
+      <div>Artist: <router-link :to="`/tracker/extended/artists/${encodeURIComponent(track.info.artistName)}`"><span class="summary-title">{{ track.info.artistName }}</span></router-link></div>
+      <div>Album: <span class="summary-title">{{ track.info.albumName }}</span></div>
+      <div>Number of times played: <span class="summary-title">{{ track.plays.length }}</span></div>
+      <div>First Played on: <span class="summary-title">{{ track.firstPlayed }}</span></div>
     </div>
-    <card class="plays-card">
+    <card v-if="track" class="plays-card">
       <h1>Plays</h1>
-      <div class="plays" v-for="play in track.plays?.reverse()">
-        On {{ new Date(play.timeStamp).toLocaleDateString() }} at {{ new Date(play.timeStamp).toLocaleTimeString() }} for {{ (play.msPlayed / 60000).toFixed(2) }} mins
+      <div class="plays" v-for="play in (showAll ? track.plays : track.plays.slice(0, 10))">
+        <div>{{ play.dateString }}</div>
+        <div>{{ play.timeString }} for {{ play.timePlayed }}</div>
       </div>
+      <button class="plays" @click="showAll = !showAll">
+        <div>
+          {{ showAll ? 'Less' : 'More' }}...
+        </div>
+      </button>
     </card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Ref, ref } from "vue";
+import { ref } from "vue";
 import { useRoute } from "vue-router";
 import Header from "../Header.vue";
 import Card from "../components/Card.vue";
+import { TrackStats, useTrackerStore } from "../stores/tracker";
 
+const trackerStore = useTrackerStore();
 const route = useRoute();
 const trackKey = route.params.track as string;
 
-type TrackData = {
-  id?: string;
-  trackName?: string;
-  artistName?: string;
-  albumName?: string;
-}
-type TrackStats = {
-  [key: string]: {
-    info?: TrackData,
-    plays?: {
-      timeStamp: string;
-      msPlayed: number;
-    }[]
-  }
-}
-
-const track : Ref<TrackStats['']> = ref({})
-import('../assets/data/processed/fullSongStats.json').then((module : any) => {
-  track.value = module.default[trackKey];
+const track = ref<TrackStats['']>();
+trackerStore.getTrackStats(trackKey).then(data => {
+  track.value = data;
 });
+
+const showAll = ref(false);
 
 </script>
 
 <style scoped>
 .summary {
-  font-size: 18px;
-  line-height: 28px;
   margin-bottom: 10px;
+  margin-left: 10px;
 }
 
 .summary-title {
@@ -65,12 +58,14 @@ import('../assets/data/processed/fullSongStats.json').then((module : any) => {
   font-weight: bold;
 }
 
-.plays-card h1 {
-  margin-left: 5px;
-}
-
 .plays {
   color: var(--background-color);
   margin-bottom: 5px;  
+  display: flex;
+  justify-content: space-between;
+  font-family: monospace;
+  font-size: 16px;
+  text-shadow: none;
+  font-weight: 600;
 }
 </style>

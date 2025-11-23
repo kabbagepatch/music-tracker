@@ -1,9 +1,9 @@
 <template>
   <div class="container">
-    <Header titleOverride="Yearly Stats" />
-    <Stats
+    <Header title="Yearly Stats" icon="year" />
+    <TimeStats
       :title="year"
-      :topSongs="topSongs"
+      :topSongs="topTracks"
       :topArtists="topArtists"
       :totalSongs="totalSongs"
       :totalTime="totalTime"
@@ -14,31 +14,32 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, ref } from "vue";
+import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Header from "../Header.vue";
-import Stats from "../components/Stats.vue";
+import TimeStats from "../components/TimeStats.vue";
+import { TrackTotals, useTrackerStore } from "../stores/tracker";
 
 const router = useRouter();
 const route = useRoute();
 const year = route.params.year as string;
 
-type Entry = { msPlayed: number; playCount: number; }
-const topSongs : Ref<[ string, Entry ][]> = ref([]);
+const trackerStore = useTrackerStore();
+
+const topTracks = ref<[ string, TrackTotals ][]>([]);
+const topArtists = ref<[ string, TrackTotals ][]>([]);
 const totalSongs = ref(0);
 const totalTime = ref(0);
-import(`../assets/data/processed/yearly/${year}/topSongs.json`).then(module => {
-  topSongs.value = module.default;
-  topSongs.value.forEach(song => {
+trackerStore.getTopTracks(year).then(data => {
+  topTracks.value = data;
+  topTracks.value.forEach(song => {
     totalSongs.value += song[1].playCount;
     totalTime.value += song[1].msPlayed;
   });
 });
-
-const topArtists : Ref<[ string, Entry ][]> = ref([]);
-import(`../assets/data/processed/yearly/${year}/topArtists.json`).then(module => {
-  topArtists.value = module.default;
-})
+trackerStore.getTopArtists(year).then(data => {
+  topArtists.value = data;
+});
 
 const forward = () => {
   const nextYear = parseInt(year, 10) + 1;

@@ -1,7 +1,7 @@
 <template>
   <div class="header">
-    <img class="icon" :src="`/src/assets/icons/${icon}.png`" />
-    <h1 class="title">{{ titleOverride || title }}</h1>
+    <img class="icon" :src="`/src/assets/icons/${icon || defaultIcon}.png`" />
+    <h1 class="title">{{ title || defaultTitle }}</h1>
     <button class="right-button" @click="onRightButtonClick">
       <img v-if="rightIcon" class="icon" :src="`/src/assets/icons/${rightIcon}.png`" />
     </button>
@@ -13,7 +13,10 @@ import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const props = defineProps({
-  titleOverride: {
+  icon: {
+    type: String,
+  },
+  title: {
     type: String,
   },
   rightButtonClick: {
@@ -24,30 +27,23 @@ const props = defineProps({
 const router = useRouter();
 const route = useRoute();
 
-const icon = ref('vinyl-transparent')
-const title = ref('Music Player and Tracker');
+const defaultIcon = ref('vinyl-transparent')
+const defaultTitle = ref('Music Player and Tracker');
 const rightIcon = ref('back')
 const routeParts = route.fullPath.split('/');
 if (routeParts.length > 1) {
   switch(routeParts[1]) {
-    case '':
-      icon.value = 'vinyl-transparent'
-      rightIcon.value = 'settings'
     case 'player':
-      icon.value = 'note-transparent'
-      title.value = 'Now Playing';
+      defaultIcon.value = 'note-transparent'
+      defaultTitle.value = 'Now Playing';
       break;
     case 'tracker':
-      if (routeParts.length > 3 && (routeParts[3] === 'tracks' || routeParts[3] === 'artists')) {
-        icon.value = 'note-transparent';
-      } else if (routeParts.length > 4) {
-        icon.value = 'month'
-      } else if (routeParts.length > 2) {
-        icon.value = 'year'
-      } else {
-        icon.value = 'award-transparent'
-      }
-      title.value = 'Spotify Tracker';
+      defaultIcon.value = 'award-transparent'
+      defaultTitle.value = 'Spotify Tracker';
+      break;
+    default: 
+      defaultIcon.value = 'vinyl-transparent'
+      rightIcon.value = 'settings'
       break;
   }
 }
