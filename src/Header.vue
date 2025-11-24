@@ -83,7 +83,6 @@ const onRightButtonClick = () => {
   width: 37px;
   height: 30px;
   border-radius: 5px;
-  margin-right: 5px;
 }
 
 .header .right-button-background {

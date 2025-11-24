@@ -4,7 +4,8 @@ export const themes : { [theme: string]: { [key: string]: string } } = {
     'primary-color-shadow': 'hsl(336, 47%, 62%)',
     'secondary-color': 'hsl(336, 100%, 70%)',
     'tertiary-color': 'hsl(58, 55%, 86%)',
-    'background-color': 'hsl(282, 56%, 84%)',
+    'background-color': 'hsla(307, 47%, 18%, 1.00)',
+    'background-color-dark': 'hsl(307, 47%, 15%)',
     'text-color': 'white',
     'text-outline': 'hsl(276, 100%, 25%)'
   },
@@ -14,6 +15,7 @@ export const themes : { [theme: string]: { [key: string]: string } } = {
     'secondary-color': 'hsl(18, 71%, 27%)',
     'tertiary-color': 'hsl(31, 51%, 34%)',
     'background-color': 'hsl(26, 42%, 19%)',
+    'background-color-dark': 'hsl(26, 42%, 15%)',
     'text-color': 'hsl(0, 0%, 100%)',
     'text-outline': 'hsl(26, 42%, 19%)',
   },
@@ -23,6 +25,7 @@ export const themes : { [theme: string]: { [key: string]: string } } = {
     'secondary-color': 'hsl(77, 14%, 45%)',
     'tertiary-color': 'hsl(31, 43%, 53%)',
     'background-color': 'hsl(227, 8%, 22%)',
+    'background-color-dark': 'hsl(227, 8%, 18%)',
     'text-color': 'hsl(0, 0%, 100%)',
     'text-outline': 'hsl(26, 62%, 18%)'
   }

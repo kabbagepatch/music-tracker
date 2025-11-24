@@ -1,14 +1,28 @@
 <template>
   <div class="container">
-    <div class="header">
+    <div class="header custom-header" v-if="custom">
+      <div>
+        <dropdown :title="months[parseInt(custom.fromMonth, 10) - 1]" :options="months" :selectOption="selectFromMonth" />&nbsp;
+        <dropdown :title="custom.fromYear" :options="years" :selectOption="selectFromYear" />
+      </div>
+      <div class="hyphen">-</div>
+      <div>
+        <dropdown :title="months[parseInt(custom.toMonth, 10) - 1]" :options="months" :selectOption="selectToMonth" />&nbsp;
+        <dropdown :title="custom.toYear" :options="years" :selectOption="selectToYear" />
+      </div>
+    </div>
+    <div class="header" v-else>
       <button @click="back"><</button>
-      <h1>{{ title }}</h1>
+      <div>
+        <dropdown v-if="month" :title="month" :options="months" :selectOption="selectMonth" />&nbsp;
+        <dropdown v-if="year" :title="year" :options="years" :selectOption="selectYear" />
+      </div>
       <button @click="forward">></button>
     </div>
     <Stats
       :summary="[
         { key: 'Total Number of Song Plays', value: totalSongs },
-        { key: 'Total Time Listened', value: (totalTime / 3600000).toFixed(2) + ' hrs' },
+        { key: 'Total Time Listened', value: `${Math.floor(totalTime / 3600000)}h ${Math.floor((totalTime % 3600000) / 60000)}m ${Math.floor((totalTime % 60000) / 1000)}s` },
         { key: 'Number of Distinct Songs', value: topSongs.length },
         { key: 'Number of Distinct Artists', value: topArtists.length },
       ]"
@@ -19,18 +33,57 @@
 </template>
 
 <script setup lang="ts">
-import Stats from "../components/Stats.vue";
+import { useRouter } from "vue-router";
+import Stats from "./Stats.vue";
+import Dropdown from "./Dropdown.vue";
+import { TotalsList } from "../stores/tracker";
 
-type Entry = { msPlayed: number; playCount: number; }
-defineProps<{
-  title: string,
+const router = useRouter();
+
+const props = defineProps<{
+  custom?: {
+    fromMonth: string,
+    fromYear: string,
+    toMonth: string,
+    toYear: string,
+  },
+  month?: string,
+  year?: string,
   totalSongs: number,
   totalTime: number,
-  topSongs: [ string, Entry ][],
-  topArtists: [ string, Entry ][],
-  back: () => void,
-  forward: () => void,
+  topSongs: TotalsList,
+  topArtists: TotalsList,
+  back?: () => void,
+  forward?: () => void,
 }>();
+
+const years = Array.from({ length: 2025 - 2012 + 1 }, (_, i) => (2012 + i).toString()).reverse();
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+const selectYear = (year: string) => {
+  if (props.month)
+    router.replace(`/tracker/extended/year/${year}/${months.indexOf(props.month) + 1}`);
+  else
+    router.replace(`/tracker/extended/year/${year}`);
+}
+const selectMonth = (month: string) => {
+  router.replace(`/tracker/extended/year/${props.year}/${months.indexOf(month) + 1}`);
+}
+
+const selectFromYear = (year: string) => {
+  router.replace(`/tracker/extended/custom?from=${props.custom?.fromMonth}-${year}&to=${props.custom?.toMonth}-${props.custom?.toYear}`);
+}
+const selectFromMonth = (month: string) => {
+  const monthIndex = (months.indexOf(month) + 1).toString();
+  router.replace(`/tracker/extended/custom?from=${monthIndex}-${props.custom?.fromYear}&to=${props.custom?.toMonth}-${props.custom?.toYear}`);
+}
+const selectToYear = (year: string) => {
+  router.replace(`/tracker/extended/custom?from=${props.custom?.fromMonth}-${props.custom?.fromYear}&to=${props.custom?.toMonth}-${year}`);
+}
+const selectToMonth = (month: string) => {
+  const monthIndex = (months.indexOf(month) + 1).toString();
+  router.replace(`/tracker/extended/custom?from=${props.custom?.fromMonth}-${props.custom?.fromYear}&to=${monthIndex}-${props.custom?.toYear}`);
+}
 
 </script>
 
@@ -39,65 +92,23 @@ defineProps<{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+}
+
+.custom-header {
+  justify-content: space-evenly;
 }
 
 .header h1 {
   text-align: center;
   margin: 0;
-}
-
-.summary {
-  margin-bottom: 10px;
-  margin-left: 10px;
-}
-
-.summary-title {
-  color: var(--primary-color);
-}
-
-.section {
-  margin-bottom: 20px;
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-}
-
-.title-button {
-  display: block;
-  height: 30px;
-  width: 105%;
+  height: 24px;
   margin-top: -5px;
-  margin-left: -10px;
-  margin-bottom: 5px;
-  border-radius: 15px;
+  padding: 0;
 }
 
-.title-button:hover {
-  background-color: hsla(227, 8%, 22%, 25%);
-}
-
-.title {
-  text-align: left;
-  margin-left: 10px;
-}
-
-.entry {
-  display: flex;
-  justify-content: space-between;
-  text-align: left;
-  text-shadow: none;
-  color: var(--background-color);
-  margin: 0;
+.hyphen {
+  font-size: 20px;
   font-weight: bold;
-}
-
-.entry a {
-  color: var(--background-color);
-}
-
-.entry a:hover {
-  background-color: hsla(227, 8%, 22%, 5%);
-  color: hsl(227, 8%, 42%);
 }
 </style>

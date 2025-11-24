@@ -82,8 +82,10 @@ const toggleCardTwo = () => {
 }
 
 .summary {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   margin-left: 10px;
+  font-family: monospace;
+  font-weight: bold;
 }
 
 .summary-title {
@@ -95,6 +97,10 @@ const toggleCardTwo = () => {
   font-family: Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 24px;
+}
+
+.section:nth-last-child(1) {
+  margin-bottom: 0;
 }
 
 .title-button {

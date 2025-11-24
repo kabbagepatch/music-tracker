@@ -37,6 +37,8 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
+  scrollbar-width: none;
+
   --primary-color: hsl(60, 63%, 89%);
   --primary-color-shadow: hsl(60, 63%, 69%);
   --secondary-color: hsl(77, 14%, 45%);

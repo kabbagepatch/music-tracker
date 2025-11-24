@@ -2,7 +2,8 @@
   <div class="container">
     <Header title="Monthly Stats" icon="month" />
     <TimeStats
-      :title="`${monthString} ${year}`"
+      :month="monthString"
+      :year="year"
       :topSongs="topTracks"
       :topArtists="topArtists"
       :totalSongs="totalSongs"
@@ -18,7 +19,7 @@ import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Header from "../Header.vue";
 import TimeStats from "../components/TimeStats.vue";
-import { TrackTotals, useTrackerStore } from "../stores/tracker";
+import { TotalsList, useTrackerStore } from "../stores/tracker";
 
 const trackerStore = useTrackerStore();
 const router = useRouter();
@@ -27,8 +28,8 @@ const month = route.params.month as string;
 const monthString = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][parseInt(month) - 1];
 const year = route.params.year as string;
 
-const topTracks = ref<[ string, TrackTotals ][]>([]);
-const topArtists = ref<[ string, TrackTotals ][]>([]);
+const topTracks = ref<TotalsList>([]);
+const topArtists = ref<TotalsList>([]);
 const totalSongs = ref(0);
 const totalTime = ref(0);
 trackerStore.getTopTracks(year, month).then(data => {

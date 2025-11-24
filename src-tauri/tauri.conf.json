@@ -13,8 +13,9 @@
     "windows": [
       {
         "title": "Music Tracker",
-        "width": 600,
-        "height": 600
+        "width": 400,
+        "height": 600,
+        "resizable": false
       }
     ],
     "security": {

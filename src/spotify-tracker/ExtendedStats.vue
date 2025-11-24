@@ -20,7 +20,7 @@
       </router-link>
     </button>
     <button>
-      <router-link to="/tracker/extended/custom">
+      <router-link to="/tracker/extended/custom?from=9-2012&to=9-2025">
         <title-card
           title="Custom"
           iconName="calendar"
@@ -38,6 +38,7 @@ import Header from "../Header.vue";
 
 <style scoped>
 button {
-  margin-top: 16px;
+  margin-top: 4px;
+  margin-bottom: 12px;
 }
 </style>

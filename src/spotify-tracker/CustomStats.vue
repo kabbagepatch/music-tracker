@@ -1,57 +1,47 @@
 <template>
   <div class="container">
-    <Header title="Yearly Stats" icon="year" />
+    <Header title="Custom Range" icon="calendar" />
     <TimeStats
-      :year="year"
+      :custom="{
+        fromMonth: from.split('-')[0],
+        fromYear: from.split('-')[1],
+        toMonth: to.split('-')[0],
+        toYear: to.split('-')[1],
+      }"
       :topSongs="topTracks"
       :topArtists="topArtists"
       :totalSongs="totalSongs"
       :totalTime="totalTime"
-      :back="back"
-      :forward="forward"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import Header from "../Header.vue";
 import TimeStats from "../components/TimeStats.vue";
 import { TotalsList, useTrackerStore } from "../stores/tracker";
 
-const router = useRouter();
-const route = useRoute();
-const year = route.params.year as string;
-
 const trackerStore = useTrackerStore();
+const route = useRoute();
+const from = route.query.from as string || '9-2012';
+const to = route.query.to as string || '9-2025';
 
 const topTracks = ref<TotalsList>([]);
 const topArtists = ref<TotalsList>([]);
 const totalSongs = ref(0);
 const totalTime = ref(0);
-trackerStore.getTopTracks(year).then(data => {
+trackerStore.getTopItems('tracks', from, to).then(data => {
   topTracks.value = data;
   topTracks.value.forEach(song => {
     totalSongs.value += song[1].playCount;
     totalTime.value += song[1].msPlayed;
   });
 });
-trackerStore.getTopArtists(year).then(data => {
+trackerStore.getTopItems('artists', from, to).then(data => {
   topArtists.value = data;
 });
-
-const forward = () => {
-  const nextYear = parseInt(year, 10) + 1;
-  if (nextYear > 2025) return;
-  router.replace(`/tracker/extended/year/${nextYear}`)
-}
-
-const back = () => {
-  const prevYear = parseInt(year, 10) - 1;
-  if (prevYear < 2012) return;
-  router.replace(`/tracker/extended/year/${prevYear}`)
-}
 
 </script>
 

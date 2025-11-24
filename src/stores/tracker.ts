@@ -2,8 +2,9 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export interface TrackTotals { msPlayed: number; playCount: number; }
-export interface YearlyTotals { [year: string]: [ string, TrackTotals ][]; }
-export interface MonthlyTotals { [year: string]: { [month: string]: [ string, TrackTotals ][] }; }
+export type TotalsList = [ string, TrackTotals ][];
+export interface YearlyTotals { [year: string]: TotalsList; }
+export interface MonthlyTotals { [year: string]: { [month: string]: TotalsList }; }
 
 export interface TrackData {
   id: string;
@@ -50,45 +51,99 @@ export const useTrackerStore = defineStore('tracker', () => {
   const fullArtistStats = ref<ArtistStats>({});
 
   const getTopTracks = async (year : string, month : string | undefined = undefined) => {
-    if (month) {
-      if (monthlyTopTracks.value[year] && monthlyTopTracks.value[year][month]) {
+    try {
+        if (month) {
+        if (monthlyTopTracks.value[year] && monthlyTopTracks.value[year][month]) {
+          return monthlyTopTracks.value[year][month];
+        }
+        const module = await import(`../assets/data/processed/yearly/${year}/${month}/topSongs.json`)
+        if (!monthlyTopTracks.value[year]) {
+          monthlyTopTracks.value[year] = {};
+        }
+        monthlyTopTracks.value[year][month] = module.default;
         return monthlyTopTracks.value[year][month];
       }
-      const module = await import(`../assets/data/processed/yearly/${year}/${month}/topSongs.json`)
-      if (!monthlyTopTracks.value[year]) {
-        monthlyTopTracks.value[year] = {};
+      
+      if (yearlyTopTracks.value[year]) {
+        return yearlyTopTracks.value[year];
       }
-      monthlyTopTracks.value[year][month] = module.default;
-      return monthlyTopTracks.value[year][month];
-    }
-    
-    if (yearlyTopTracks.value[year]) {
+      const module = await import(`../assets/data/processed/yearly/${year}/topSongs.json`);
+      yearlyTopTracks.value[year] = module.default as TotalsList;
       return yearlyTopTracks.value[year];
+    } catch (error) {
+      console.log(`Error loading top tracks for ${year}${month ? `/${month}` : ''}`);
+      return [];
     }
-    const module = await import(`../assets/data/processed/yearly/${year}/topSongs.json`);
-    yearlyTopTracks.value[year] = module.default as [ string, TrackTotals ][];
-    return yearlyTopTracks.value[year];
   }
 
   const getTopArtists = async (year : string, month : string | undefined = undefined) => {
-    if (month) {
-      if (monthlyTopArtists.value[year] && monthlyTopArtists.value[year][month]) {
+    try {
+      if (month) {
+        if (monthlyTopArtists.value[year] && monthlyTopArtists.value[year][month]) {
+          return monthlyTopArtists.value[year][month];
+        }
+        const module = await import(`../assets/data/processed/yearly/${year}/${month}/topArtists.json`)
+        if (!monthlyTopArtists.value[year]) {
+          monthlyTopArtists.value[year] = {};
+        }
+        monthlyTopArtists.value[year][month] = module.default;
         return monthlyTopArtists.value[year][month];
       }
-      const module = await import(`../assets/data/processed/yearly/${year}/${month}/topArtists.json`)
-      if (!monthlyTopArtists.value[year]) {
-        monthlyTopArtists.value[year] = {};
+      
+      if (yearlyTopArtists.value[year]) {
+        return yearlyTopArtists.value[year];
       }
-      monthlyTopArtists.value[year][month] = module.default;
-      return monthlyTopArtists.value[year][month];
-    }
-    
-    if (yearlyTopArtists.value[year]) {
+      const module = await import(`../assets/data/processed/yearly/${year}/topArtists.json`);
+      yearlyTopArtists.value[year] = module.default as TotalsList;
       return yearlyTopArtists.value[year];
+    } catch (error) {
+      console.log(`Error loading top artists for ${year}${month ? `/${month}` : ''}`);
+      return [];
     }
-    const module = await import(`../assets/data/processed/yearly/${year}/topArtists.json`);
-    yearlyTopArtists.value[year] = module.default as [ string, TrackTotals ][];
-    return yearlyTopArtists.value[year];
+  }
+
+  const getTopItems = async (type : 'tracks' | 'artists', from : string, to : string) => {
+    const fromParts = from.split('-');
+    const fromMonth = parseInt(fromParts[0], 10);
+    const fromYear = parseInt(fromParts[1], 10);
+    const toParts = to.split('-');
+    const toMonth = parseInt(toParts[0], 10);
+    const toYear = parseInt(toParts[1], 10);
+    const combinedTotals: TotalsList = [];
+
+    for (let year = fromYear; year <= toYear; year += 1) {
+      if (year > fromYear && year < toYear) {
+        const yearlyData = type === 'tracks' ? await getTopTracks(year.toString()) : await getTopArtists(year.toString());
+        yearlyData.forEach(([trackKey, totals]) => {
+          const existingEntry = combinedTotals.find(entry => entry[0] === trackKey);
+          if (existingEntry) {
+            existingEntry[1].msPlayed += totals.msPlayed;
+            existingEntry[1].playCount += totals.playCount;
+          } else {
+            combinedTotals.push([trackKey, { msPlayed: totals.msPlayed, playCount: totals.playCount }]);
+          }
+        });
+        continue;
+      }
+
+      const startMonth = (year === fromYear) ? fromMonth : 1;
+      const endMonth = (year === toYear) ? toMonth : 12;
+      for (let month = startMonth; month <= endMonth; month += 1) {
+        const monthlyData = type === 'tracks' ? await getTopTracks(year.toString(), month.toString()) : await getTopArtists(year.toString(), month.toString());
+        monthlyData.forEach(([trackKey, totals]) => {
+          const existingEntry = combinedTotals.find(entry => entry[0] === trackKey);
+          if (existingEntry) {
+            existingEntry[1].msPlayed += totals.msPlayed;
+            existingEntry[1].playCount += totals.playCount;
+          } else {
+            combinedTotals.push([trackKey, { msPlayed: totals.msPlayed, playCount: totals.playCount }]);
+          }
+        });
+      }
+    }
+
+    combinedTotals.sort((a, b) => b[1].playCount - a[1].playCount);
+    return combinedTotals;
   }
 
   const getTrackStats = async (trackKey: string) => {
@@ -174,6 +229,7 @@ export const useTrackerStore = defineStore('tracker', () => {
 
   return {
     getTopTracks,
+    getTopItems,
     getTopArtists,
     getTrackStats,
     getArtistStats

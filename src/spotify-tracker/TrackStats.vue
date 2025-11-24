@@ -47,6 +47,8 @@ const showAll = ref(false);
 .summary {
   margin-bottom: 10px;
   margin-left: 10px;
+  font-family: monospace;
+  font-weight: bold;
 }
 
 .summary-title {
