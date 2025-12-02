@@ -41,6 +41,9 @@ if (routeParts.length > 1) {
       defaultIcon.value = 'award-transparent'
       defaultTitle.value = 'Spotify Tracker';
       break;
+    case 'settings':
+      rightIcon.value = 'back'
+      break;
     default: 
       defaultIcon.value = 'vinyl-transparent'
       rightIcon.value = 'settings'

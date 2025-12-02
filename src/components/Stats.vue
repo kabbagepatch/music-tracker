@@ -8,8 +8,8 @@
     <div class="section" v-if="cardOne.entries.length && displayCardOne">
       <card>
         <button class="title-button" @click="toggleCardOne"><h1 class="title">{{ cardOne.title }}</h1></button>
-        <div v-for="entry in (displaySummary ? cardOne.entries.slice(0, 5) : cardOne.entries)">
-          <div class="entry">
+        <div v-for="(entry, i) in (displaySummary ? cardOne.entries.slice(0, 5) : cardOne.entries)">
+          <div :class="'entry ' + (i === 0 ? 'first-entry' : '')">
             <router-link
               v-if="entry.link"
               :to="`/tracker/extended/${cardOne.linkType}/${encodeURIComponent(entry.link)}`"
@@ -25,8 +25,8 @@
     <div class="section" v-if="cardTwo.entries.length && displayCardTwo">
       <card>
         <button class="title-button" @click="toggleCardTwo"><h1 class="title">{{ cardTwo.title }}</h1></button>
-        <div v-for="entry in (displaySummary ? cardTwo.entries.slice(0, 5) : cardTwo.entries)">
-          <div class="entry">
+        <div v-for="(entry, i) in (displaySummary ? cardTwo.entries.slice(0, 5) : cardTwo.entries)">
+          <div :class="'entry ' + (i === 0 ? 'first-entry' : '')">
             <router-link
               v-if="entry.link"
               :to="`/tracker/extended/${cardTwo.linkType}/${encodeURIComponent(entry.link)}`"
@@ -140,5 +140,13 @@ const toggleCardTwo = () => {
 .entry a:hover {
   background-color: hsla(227, 8%, 22%, 5%);
   color: hsl(227, 8%, 42%);
+}
+
+.first-entry {
+  color: var(--tertiary-color);
+}
+
+.first-entry a {
+  color: var(--tertiary-color);
 }
 </style>

@@ -5,7 +5,7 @@
   "identifier": "com.kavish.music-tracker",
   "build": {
     "beforeDevCommand": "yarn dev",
-    "devUrl": "http://localhost:1420",
+    "devUrl": "http://[::1]:1420",
     "beforeBuildCommand": "yarn build",
     "frontendDist": "../dist"
   },
@@ -14,8 +14,8 @@
       {
         "title": "Music Tracker",
         "width": 400,
-        "height": 600,
-        "resizable": false
+        "height": 620,
+        "alwaysOnTop": true
       }
     ],
     "security": {

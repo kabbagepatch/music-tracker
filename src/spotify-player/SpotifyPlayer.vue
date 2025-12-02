@@ -32,6 +32,8 @@ const tracks: any = ref([]);
 const curIndex = ref(0);
 const curTrack: any = ref();
 
+let timeout : NodeJS.Timeout;
+let autoplaying = false;
 const getPlaybackState = () => {
   getUserPlaybackState().then(res => {
     console.log("User playback state:", res);
@@ -39,6 +41,13 @@ const getPlaybackState = () => {
     curTrack.value = res.item;
     if (!res || !res.item) {
       getRecentlyPlayed();
+    } else {
+      if (res.is_playing) {
+          timeout = setTimeout(() => {
+          autoplaying = true;
+          getPlaybackState();
+        }, res.item.duration_ms - res.progress_ms);
+      }
     }
   }).catch(err => {
     console.error("Error fetching user playback state:", err);
@@ -70,11 +79,15 @@ getQueue();
 getPlaybackState();
 
 const forwardClick = () => {
-  curTrack.value = tracks.value[(curIndex.value + 1) % tracks.value.length];
-  curIndex.value = (curIndex.value + 1) % tracks.value.length;
+  if (timeout) clearTimeout(timeout);
+  if (!autoplaying) {
+    curTrack.value = tracks.value[(curIndex.value + 1) % tracks.value.length];
+    curIndex.value = (curIndex.value + 1) % tracks.value.length;
+  }
+  autoplaying = false;
   skipToNextTrack().then(() => {
     console.log("Skipped to next track successfully");
-    if (curIndex.value > 15) {
+    if (curIndex.value > 2) {
       setTimeout(() => {
         getQueue();
       }, 500);
@@ -88,10 +101,12 @@ const forwardClick = () => {
 };
 
 const backClick = () => {
-  if (curIndex.value > 0) {
+  if (timeout) clearTimeout(timeout);
+  if (curIndex.value > 0 && !autoplaying) {
     curIndex.value = (curIndex.value - 1 + tracks.value.length) % tracks.value.length;
     curTrack.value = tracks.value[curIndex.value];
   }
+  autoplaying = false;
   skipToPreviousTrack().then(() => {
     console.log("Skipped to previous track successfully");
     setTimeout(() => {
