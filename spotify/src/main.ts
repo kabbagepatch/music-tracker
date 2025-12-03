@@ -14,6 +14,7 @@ import MonthlyStats from "./spotify-tracker/MonthlyStats.vue";
 import TrackStats from "./spotify-tracker/TrackStats.vue";
 import ArtistStats from "./spotify-tracker/ArtistStats.vue";
 import CustomStats from "./spotify-tracker/CustomStats.vue";
+import AlbumStats from "./spotify-tracker/AlbumStats.vue";
 
 const routes = [
   { path: '/player', component: SpotifyPlayer },
@@ -24,6 +25,7 @@ const routes = [
   { path: '/tracker/extended/year/:year/:month', component: MonthlyStats },
   { path: '/tracker/extended/tracks/:track', component: TrackStats },
   { path: '/tracker/extended/artists/:artist', component: ArtistStats },
+  { path: '/tracker/extended/albums/:album', component: AlbumStats },
   { path: '/tracker/extended/custom', component: CustomStats },
   { path: '/settings', component: Settings },
   { path: '/', component: Home },

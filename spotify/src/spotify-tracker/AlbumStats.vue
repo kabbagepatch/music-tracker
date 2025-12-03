@@ -1,16 +1,16 @@
 <template>
   <div class="container">
-    <Header :title="artistKey" icon="note-transparent" />
+    <Header :title="albumKey.split(' - ')[0]" icon="note-transparent" />
     <Stats
-      v-if="artist"
+      v-if="album"
       :summary="[
-        { key: 'Discovered on', value: artist.firstTracks[0].firstPlayed },
-        { key: 'Distinct tracks played', value: artist.topTracks.length },
-        { key: 'Total number of plays', value: artist.totalPlays },
-        { key: 'Total Time played', value: artist.timePlayed },
+        { key: 'Discovered on', value: album.firstTracks[0].firstPlayed },
+        { key: 'Distinct tracks played', value: album.topTracks.length },
+        { key: 'Total number of plays', value: album.totalPlays },
+        { key: 'Total Time played', value: album.timePlayed },
       ]"
-      :cardOne="{ title: 'Top Tracks', entries: artist.topTracks.map(track => ({ left: track.trackName, right: track.playCount, link: track.key })), linkType: 'tracks' }"
-      :cardTwo="{ title: 'First Tracks', entries: artist.firstTracks.map(track => ({ left: track.trackName, right: track.firstPlayed, link: track.key })), linkType: 'tracks' }"
+      :cardOne="{ title: 'Times Played', entries: album.topTracks.map(track => ({ left: track.trackName, right: track.playCount, link: track.key })), linkType: 'tracks' }"
+      :cardTwo="{ title: 'First Played', entries: album.firstTracks.map(track => ({ left: track.trackName, right: track.firstPlayed, link: track.key })), linkType: 'tracks' }"
     />
   </div>
 </template>
@@ -20,15 +20,15 @@ import { ref } from "vue";
 import { useRoute } from "vue-router";
 import Header from "../Header.vue";
 import Stats from "../components/Stats.vue";
-import { ArtistStats, useTrackerStore } from "../stores/tracker";
+import { AlbumStats, useTrackerStore } from "../stores/tracker";
 
 const trackerStore = useTrackerStore();
 const route = useRoute();
-const artistKey = route.params.artist as string;
+const albumKey = route.params.album as string;
 
-const artist = ref<ArtistStats['']>();
-trackerStore.getArtistStats(artistKey).then(data => {
-  artist.value = data;
+const album = ref<AlbumStats['']>();
+trackerStore.getAlbumStats(albumKey).then(data => {
+  album.value = data;
 });
 
 </script>

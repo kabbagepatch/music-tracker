@@ -39,13 +39,7 @@
 
   scrollbar-width: none;
 
-  --primary-color: hsl(60, 63%, 89%);
-  --primary-color-shadow: hsl(60, 63%, 69%);
-  --secondary-color: hsl(77, 14%, 45%);
-  --tertiary-color: hsl(31, 43%, 53%);
-  --background-color: hsl(227, 8%, 22%);
-  --text-color: hsl(0, 0%, 100%);
-  --text-outline: hsl(26, 62%, 18%);
+  --width: 364px;
 
   --primary-color: hsl(39, 59%, 78%);
   --primary-color-shadow: hsl(39, 59%, 58%);
@@ -54,6 +48,12 @@
   --background-color: hsl(26, 42%, 19%);
   --text-color: hsl(0, 0%, 100%);
   --text-outline: hsl(26, 42%, 19%);
+}
+
+ @media (min-width: 768px) {
+  :root {
+    --width: 500px;
+  }
 }
 
 .container {

@@ -2,38 +2,55 @@
   <div class="container">
     <div v-if="displaySummary" class="summary">
       <div v-for="item in summary">
-        <div>{{ item.key }}: <span class="summary-title">{{ item.value }}</span></div>
+        <div><span class="summary-value">{{ item.value }}</span> {{ item.key }}</div>
       </div>
     </div>
     <div class="section" v-if="cardOne.entries.length && displayCardOne">
       <card>
         <button class="title-button" @click="toggleCardOne"><h1 class="title">{{ cardOne.title }}</h1></button>
-        <div v-for="(entry, i) in (displaySummary ? cardOne.entries.slice(0, 5) : cardOne.entries)">
+        <div v-for="(entry, i) in (displaySummary ? cardOne.entries.slice(0, 5) : cardOne.entries.slice(0, 200))">
           <div :class="'entry ' + (i === 0 ? 'first-entry' : '')">
             <router-link
               v-if="entry.link"
               :to="`/tracker/extended/${cardOne.linkType}/${encodeURIComponent(entry.link)}`"
             >
-              {{ entry.left.length > 28 ? entry.left.slice(0,28).trim() + '...' : entry.left }}
+              <span class="left-entry">{{ entry.left }}</span>
             </router-link>
-            <div v-else >{{ entry.left.length > 28 ? entry.left.slice(0,28).trim() + '...' : entry.left }}</div>
+            <div v-else ><span class="left-entry">{{ entry.left }}</span></div>
             <div>{{ entry.right }}</div>
           </div>
         </div>
       </card>
     </div>
-    <div class="section" v-if="cardTwo.entries.length && displayCardTwo">
+    <div class="section" v-if="cardTwo?.entries?.length && displayCardTwo">
       <card>
         <button class="title-button" @click="toggleCardTwo"><h1 class="title">{{ cardTwo.title }}</h1></button>
-        <div v-for="(entry, i) in (displaySummary ? cardTwo.entries.slice(0, 5) : cardTwo.entries)">
+        <div v-for="(entry, i) in (displaySummary ? cardTwo.entries.slice(0, 5) : cardTwo.entries.slice(0, 200))">
           <div :class="'entry ' + (i === 0 ? 'first-entry' : '')">
             <router-link
               v-if="entry.link"
               :to="`/tracker/extended/${cardTwo.linkType}/${encodeURIComponent(entry.link)}`"
             >
-              {{ entry.left.length > 21 ? entry.left.slice(0,21).trim() + '...' : entry.left }}
+              <span class="left-entry left-entry-smaller">{{ entry.left }}</span>
             </router-link>
-            <div v-else >{{ entry.left.length > 21 ? entry.left.slice(0,21).trim() + '...' : entry.left }}</div>
+            <div v-else ><span class="left-entry">{{ entry.left }}</span></div>
+            <div>{{ entry.right }}</div>
+          </div>
+        </div>
+      </card>
+    </div>
+    <div class="section" v-if="cardThree?.entries?.length && displayCardThree">
+      <card>
+        <button class="title-button" @click="toggleCardThree"><h1 class="title">{{ cardThree.title }}</h1></button>
+        <div v-for="(entry, i) in (displaySummary ? cardThree.entries.slice(0, 5) : cardThree.entries.slice(0, 200))">
+          <div :class="'entry ' + (i === 0 ? 'first-entry' : '')">
+            <router-link
+              v-if="entry.link"
+              :to="`/tracker/extended/${cardThree.linkType}/${encodeURIComponent(entry.link)}`"
+            >
+              <span class="left-entry">{{ entry.left }}</span>
+            </router-link>
+            <div v-else ><span class="left-entry">{{ entry.left }}</span></div>
             <div>{{ entry.right }}</div>
           </div>
         </div>
@@ -48,22 +65,32 @@ import Card from "../components/Card.vue";
 
 defineProps<{
   summary: { key: string; value: string | number | undefined }[],
-  cardOne: { title: string; entries: { left: string, right: string | number | undefined, link?: string }[], linkType?: 'tracks' | 'artists' },
-  cardTwo: { title: string; entries: { left: string, right: string | number | undefined, link?: string }[], linkType?: 'tracks' | 'artists' },
+  cardOne: { title: string; entries: { left: string, right: string | number | undefined, link?: string }[], linkType?: 'tracks' | 'artists' | 'albums' },
+  cardTwo?: { title: string; entries: { left: string, right: string | number | undefined, link?: string }[], linkType?: 'tracks' | 'artists' | 'albums' },
+  cardThree?: { title: string; entries: { left: string, right: string | number | undefined, link?: string }[], linkType?: 'tracks' | 'artists' | 'albums' },
 }>();
 
 const displaySummary = ref(true);
 const displayCardOne = ref(true);
 const displayCardTwo = ref(true);
+const displayCardThree = ref(true);
 
 const toggleCardOne = () => {
   displaySummary.value = !displaySummary.value;
   displayCardTwo.value = !displayCardTwo.value;
+  displayCardThree.value = !displayCardThree.value;
 }
 
 const toggleCardTwo = () => {
   displaySummary.value = !displaySummary.value;
   displayCardOne.value = !displayCardOne.value;
+  displayCardThree.value = !displayCardThree.value;
+}
+
+const toggleCardThree = () => {
+  displaySummary.value = !displaySummary.value;
+  displayCardOne.value = !displayCardOne.value;
+  displayCardTwo.value = !displayCardTwo.value;
 }
 
 </script>
@@ -88,7 +115,7 @@ const toggleCardTwo = () => {
   font-weight: bold;
 }
 
-.summary-title {
+.summary-value {
   color: var(--primary-color);
 }
 
@@ -148,5 +175,17 @@ const toggleCardTwo = () => {
 
 .first-entry a {
   color: var(--tertiary-color);
+}
+
+.left-entry {
+  width: calc(var(--width) - 100px);
+  display: flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow-x: hidden;
+}
+
+.left-entry-smaller {
+  width: calc(var(--width) - 150px);
 }
 </style>

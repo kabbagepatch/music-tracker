@@ -4,8 +4,9 @@
     <TimeStats
       :year="year"
       :topSongs="topTracks"
-      :topArtists="topArtists"
       :totalSongs="totalSongs"
+      :topArtists="topArtists"
+      :topAlbums="topAlbums"
       :totalTime="totalTime"
       :back="back"
       :forward="forward"
@@ -28,6 +29,7 @@ const trackerStore = useTrackerStore();
 
 const topTracks = ref<TotalsList>([]);
 const topArtists = ref<TotalsList>([]);
+const topAlbums = ref<TotalsList>([]);
 const totalSongs = ref(0);
 const totalTime = ref(0);
 trackerStore.getTopTracks(year).then(data => {
@@ -39,6 +41,9 @@ trackerStore.getTopTracks(year).then(data => {
 });
 trackerStore.getTopArtists(year).then(data => {
   topArtists.value = data;
+});
+trackerStore.getTopAlbums(year).then(data => {
+  topAlbums.value = data;
 });
 
 const forward = () => {

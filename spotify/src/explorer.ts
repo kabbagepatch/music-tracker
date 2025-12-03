@@ -35,23 +35,27 @@ type SongStats = {
     }[]
   }
 }
-
 type ArtistStats = { [artistName: string]: SongStats };
+type AlbumStats = { [albumName: string]: SongStats };
 
-const EXTENDED_HISTORY_PATH = './data/bri streaming history/Spotify Extended Streaming History/';
+const EXTENDED_HISTORY_PATH = './data/Spotify Extended Streaming History/';
 const PROCESSSED_DATA_PATH = './data/processed';
 const FULL_SONGS_STATS_PATH = './data/processed/fullSongStats.json';
 const FULL_ARTISTS_STATS_PATH = './data/processed/fullArtistStats.json';
+const FULL_ALBUM_STATS_PATH = './data/processed/fullAlbumStats.json';
 const YEARLY_DATA_PATH = (year : string | number) => `${PROCESSSED_DATA_PATH}/yearly/${year}`;
-const MONTHLY_DATA_PATH = (year : string | number, month: string | number) => `${PROCESSSED_DATA_PATH}/yearly/${year}/${month}`;
-const SONG_STATS_PATH = (year : string | number, month: string | number) => `${YEARLY_DATA_PATH(year)}/${month}/songStats.json`;
-const ARTIST_STATS_PATH = (year : string | number, month: string | number) => `${YEARLY_DATA_PATH(year)}/${month}/artistStats.json`;
+const MONTHLY_DATA_PATH = (year : string | number, month: string | number) => `${YEARLY_DATA_PATH(year)}/${month}`;
+const SONG_STATS_PATH = (year : string | number, month: string | number) => `${MONTHLY_DATA_PATH(year, month)}/songStats.json`;
+const ARTIST_STATS_PATH = (year : string | number, month: string | number) => `${MONTHLY_DATA_PATH(year, month)}/artistStats.json`;
+const ALBUM_STATS_PATH = (year : string | number, month: string | number) => `${MONTHLY_DATA_PATH(year, month)}/albumStats.json`;
 
 const processExtendedData = () => {
   let songStats = {} as SongStats;
   let artistStats = {} as ArtistStats;
+  let albumStats = {} as ArtistStats;
   const yearlySongStats = {} as YearlyStats;
   const yearlyArtistStats = {} as YearlyStats;
+  const yearlyAlbumStats = {} as YearlyStats;
 
   const files = fs.readdirSync(EXTENDED_HISTORY_PATH, { withFileTypes: true });
   files.forEach((file : any) => {
@@ -75,13 +79,15 @@ const processExtendedData = () => {
         const date = new Date(entry.timeStamp);
         const year = date.getFullYear().toString();
         let month = (date.getMonth() + 1);
-        const key = `${entry.song.trackName} - ${entry.song.artistName}`;
+
+        const songKey = `${entry.song.trackName} - ${entry.song.artistName}`;
+        const albumKey = `${entry.song.albumName} - ${entry.song.artistName}`;
 
         if (!yearlySongStats[year]) yearlySongStats[year] = {};
         if (!yearlySongStats[year][month]) yearlySongStats[year][month] = {};
-        if (!yearlySongStats[year][month][key]) yearlySongStats[year][month][key] = { msPlayed: 0, playCount: 0 };
-        yearlySongStats[year][month][key].msPlayed += entry.msPlayed;
-        yearlySongStats[year][month][key].playCount += 1;
+        if (!yearlySongStats[year][month][songKey]) yearlySongStats[year][month][songKey] = { msPlayed: 0, playCount: 0 };
+        yearlySongStats[year][month][songKey].msPlayed += entry.msPlayed;
+        yearlySongStats[year][month][songKey].playCount += 1;
 
         if (!yearlyArtistStats[year]) yearlyArtistStats[year] = {};
         if (!yearlyArtistStats[year][month]) yearlyArtistStats[year][month] = {};
@@ -89,14 +95,28 @@ const processExtendedData = () => {
         yearlyArtistStats[year][month][entry.song.artistName].msPlayed += entry.msPlayed;
         yearlyArtistStats[year][month][entry.song.artistName].playCount += 1;
 
-        if (!songStats[key]) songStats[key] = { info: entry.song, plays: [] };
-        songStats[key].plays.push({
+        if (!yearlyAlbumStats[year]) yearlyAlbumStats[year] = {};
+        if (!yearlyAlbumStats[year][month]) yearlyAlbumStats[year][month] = {};
+        if (!yearlyAlbumStats[year][month][albumKey]) yearlyAlbumStats[year][month][albumKey] = { msPlayed: 0, playCount: 0 };
+        yearlyAlbumStats[year][month][albumKey].msPlayed += entry.msPlayed;
+        yearlyAlbumStats[year][month][albumKey].playCount += 1;
+
+        if (!songStats[songKey]) songStats[songKey] = { info: entry.song, plays: [] };
+        songStats[songKey].plays.push({
           timeStamp: entry.timeStamp,
           msPlayed: entry.msPlayed,
         });
+
         if (!artistStats[entry.song.artistName]) artistStats[entry.song.artistName] = {};
-        if (!artistStats[entry.song.artistName][key]) artistStats[entry.song.artistName][key] = { info: entry.song, plays: [] };
-        artistStats[entry.song.artistName][key].plays.push({
+        if (!artistStats[entry.song.artistName][songKey]) artistStats[entry.song.artistName][songKey] = { info: entry.song, plays: [] };
+        artistStats[entry.song.artistName][songKey].plays.push({
+          timeStamp: entry.timeStamp,
+          msPlayed: entry.msPlayed,
+        });
+
+        if (!albumStats[albumKey]) albumStats[albumKey] = {};
+        if (!albumStats[albumKey][songKey]) albumStats[albumKey][songKey] = { info: entry.song, plays: [] };
+        albumStats[albumKey][songKey].plays.push({
           timeStamp: entry.timeStamp,
           msPlayed: entry.msPlayed,
         });
@@ -112,10 +132,12 @@ const processExtendedData = () => {
       if (!fs.existsSync(MONTHLY_DATA_PATH(year, month))) fs.mkdirSync(MONTHLY_DATA_PATH(year, month));
       fs.writeFileSync(SONG_STATS_PATH(year, month), JSON.stringify(yearlySongStats[year][month], null, 2));
       fs.writeFileSync(ARTIST_STATS_PATH(year, month), JSON.stringify(yearlyArtistStats[year][month], null, 2));
+      fs.writeFileSync(ALBUM_STATS_PATH(year, month), JSON.stringify(yearlyAlbumStats[year][month], null, 2));
     }
   }
   fs.writeFileSync(FULL_SONGS_STATS_PATH, JSON.stringify(songStats, null, 2));
   fs.writeFileSync(FULL_ARTISTS_STATS_PATH, JSON.stringify(artistStats, null, 2));
+  fs.writeFileSync(FULL_ALBUM_STATS_PATH, JSON.stringify(albumStats, null, 2));
 }
 
 processExtendedData();
@@ -125,14 +147,15 @@ const saveTopItemsData = () => {
   yearFolders.forEach((year : string) => {
     const yearlySongAggregates: { [key: string]: Entry } = {};
     const yearlyArtistAggregates: { [key: string]: Entry } = {};
+    const yearlyAlbumAggregates: { [key: string]: Entry } = {};
 
     const monthFolders = fs.readdirSync(YEARLY_DATA_PATH(year), { withFileTypes: true }).filter((d:any) => d.isDirectory()).map((d:any) => parseInt(d.name, 10));
     monthFolders.forEach((month : number) => {
       const monthlySongAggregates: { [key: string]: Entry } = {};
       const monthlyArtistAggregates: { [key: string]: Entry } = {};
+      const monthlyAlbumAggregates: { [key: string]: Entry } = {};
 
-      let songStatsFileName = `${MONTHLY_DATA_PATH(year, month)}/songStats.json`
-      const songStats = JSON.parse(fs.readFileSync(songStatsFileName, 'utf8')) as YearlyStats[''][0];
+      const songStats = JSON.parse(fs.readFileSync(SONG_STATS_PATH(year, month), 'utf8')) as YearlyStats[''][0];
       for (const key in songStats) {
         if (!yearlySongAggregates[key]) yearlySongAggregates[key] = { msPlayed: 0, playCount: 0 };
         yearlySongAggregates[key].msPlayed += songStats[key].msPlayed;
@@ -141,8 +164,8 @@ const saveTopItemsData = () => {
         monthlySongAggregates[key].msPlayed += songStats[key].msPlayed;
         monthlySongAggregates[key].playCount += songStats[key].playCount;
       }
-      let artistStatsFileName = `${MONTHLY_DATA_PATH(year, month)}/artistStats.json`
-      const artistStats = JSON.parse(fs.readFileSync(artistStatsFileName, 'utf8')) as YearlyStats[''][0];
+
+      const artistStats = JSON.parse(fs.readFileSync(ARTIST_STATS_PATH(year, month), 'utf8')) as YearlyStats[''][0];
       for (const key in artistStats) {
         if (!yearlyArtistAggregates[key]) yearlyArtistAggregates[key] = { msPlayed: 0, playCount: 0 };
         yearlyArtistAggregates[key].msPlayed += artistStats[key].msPlayed;
@@ -152,22 +175,36 @@ const saveTopItemsData = () => {
         monthlyArtistAggregates[key].playCount += artistStats[key].playCount;
       }
 
+      const albumStats = JSON.parse(fs.readFileSync(ALBUM_STATS_PATH(year, month), 'utf8')) as YearlyStats[''][0];
+      for (const key in albumStats) {
+        if (!yearlyAlbumAggregates[key]) yearlyAlbumAggregates[key] = { msPlayed: 0, playCount: 0 };
+        yearlyAlbumAggregates[key].msPlayed += albumStats[key].msPlayed;
+        yearlyAlbumAggregates[key].playCount += albumStats[key].playCount;
+        if (!monthlyAlbumAggregates[key]) monthlyAlbumAggregates[key] = { msPlayed: 0, playCount: 0 };
+        monthlyAlbumAggregates[key].msPlayed += albumStats[key].msPlayed;
+        monthlyAlbumAggregates[key].playCount += albumStats[key].playCount;
+      }
+
       let sortedSongs = Object.entries(monthlySongAggregates).sort((a, b) => b[1].playCount - a[1].playCount);
-      fs.writeFileSync(`${MONTHLY_DATA_PATH(year, month)}/topSongs.json`, JSON.stringify(sortedSongs, null, 2))
+      fs.writeFileSync(`${MONTHLY_DATA_PATH(year, month)}/topSongs.json`, JSON.stringify(sortedSongs, null, 2));
       let sortedArtists = Object.entries(monthlyArtistAggregates).sort((a, b) => b[1].playCount - a[1].playCount);
-      fs.writeFileSync(`${MONTHLY_DATA_PATH(year, month)}/topArtists.json`, JSON.stringify(sortedArtists, null, 2))
+      fs.writeFileSync(`${MONTHLY_DATA_PATH(year, month)}/topArtists.json`, JSON.stringify(sortedArtists, null, 2));
+      let sortedAlbums = Object.entries(monthlyAlbumAggregates).sort((a, b) => b[1].playCount - a[1].playCount);
+      fs.writeFileSync(`${MONTHLY_DATA_PATH(year, month)}/topAlbums.json`, JSON.stringify(sortedAlbums, null, 2));
     });
 
     let sortedSongs = Object.entries(yearlySongAggregates).sort((a, b) => b[1].playCount - a[1].playCount);
-    fs.writeFileSync(`${YEARLY_DATA_PATH(year)}/topSongs.json`, JSON.stringify(sortedSongs, null, 2))
+    fs.writeFileSync(`${YEARLY_DATA_PATH(year)}/topSongs.json`, JSON.stringify(sortedSongs, null, 2));
     let sortedArtists = Object.entries(yearlyArtistAggregates).sort((a, b) => b[1].playCount - a[1].playCount);
-    fs.writeFileSync(`${YEARLY_DATA_PATH(year)}/topArtists.json`, JSON.stringify(sortedArtists, null, 2))
+    fs.writeFileSync(`${YEARLY_DATA_PATH(year)}/topArtists.json`, JSON.stringify(sortedArtists, null, 2));
+    let sortedAlbums = Object.entries(yearlyAlbumAggregates).sort((a, b) => b[1].playCount - a[1].playCount);
+    fs.writeFileSync(`${YEARLY_DATA_PATH(year)}/topAlbums.json`, JSON.stringify(sortedAlbums, null, 2));
   });
 }
 
 saveTopItemsData();
 
-const getTopItemsForYear = (items: 'songs' | 'artists', year: string | number, limit = 5, recalculate = false) => {
+const getTopItemsForYear = (items: 'songs' | 'artists' | 'albums', year: string | number, limit = 5, recalculate = false) => {
   const itemsName = items.charAt(0).toUpperCase() + items.slice(1);
   const fileName = `${YEARLY_DATA_PATH(year)}/top${itemsName}.json`;
   let sortedItems : ([ string, Entry ])[] = JSON.parse(fs.readFileSync(fileName));;
@@ -177,13 +214,14 @@ const getTopItemsForYear = (items: 'songs' | 'artists', year: string | number, l
   });
 }
 
-// for (let year = 2020; year <= 2025; year++) {
+// for (let year = 2024; year <= 2025; year++) {
 //   console.log(`\n=== Stats for ${year} ===`);
-//   getTopItemsForYear('artists', year, 5, true);
 //   getTopItemsForYear('songs', year, 5, true);
+//   getTopItemsForYear('artists', year, 5, true);
+//   getTopItemsForYear('albums', year, 5, true);
 // }
 
-const getTopItems = (items: 'songs' | 'artists', limit = 5, fromMonth = 0, fromYear = 0, toMonth = 0, toYear = 0) => {
+const getTopItems = (items: 'songs' | 'artists' | 'albums', limit = 5, fromMonth = 0, fromYear = 0, toMonth = 0, toYear = 0) => {
   const yearFolders = fs.readdirSync(`${PROCESSSED_DATA_PATH}/yearly/`, { withFileTypes: true }).filter((d:any) => d.isDirectory()).map((d:any) => d.name);
   const aggregates: { [key: string]: Entry } = {};
   yearFolders.forEach((year : any) => {
@@ -222,8 +260,9 @@ const getTopItems = (items: 'songs' | 'artists', limit = 5, fromMonth = 0, fromY
   });
 }
 
-getTopItems('songs', 5);
-getTopItems('artists', 5);
+getTopItems('songs', 5, 1, 2021);
+getTopItems('artists', 5, 1, 2021);
+getTopItems('albums', 5, 1, 2021);
 
 const getTopSongsBy = (artistName: string, limit=10) => {
   const statsFile = FULL_ARTISTS_STATS_PATH;

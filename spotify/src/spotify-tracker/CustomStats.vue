@@ -10,6 +10,7 @@
       }"
       :topSongs="topTracks"
       :topArtists="topArtists"
+      :topAlbums="topAlbums"
       :totalSongs="totalSongs"
       :totalTime="totalTime"
     />
@@ -30,6 +31,7 @@ const to = route.query.to as string || '9-2025';
 
 const topTracks = ref<TotalsList>([]);
 const topArtists = ref<TotalsList>([]);
+const topAlbums = ref<TotalsList>([]);
 const totalSongs = ref(0);
 const totalTime = ref(0);
 trackerStore.getTopItems('tracks', from, to).then(data => {
@@ -41,6 +43,9 @@ trackerStore.getTopItems('tracks', from, to).then(data => {
 });
 trackerStore.getTopItems('artists', from, to).then(data => {
   topArtists.value = data;
+});
+trackerStore.getTopItems('albums', from, to).then(data => {
+  topAlbums.value = data;
 });
 
 </script>

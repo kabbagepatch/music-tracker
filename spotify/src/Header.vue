@@ -63,7 +63,7 @@ const onRightButtonClick = () => {
 
 <style scoped>
 .header {
-  width: 366px;
+  width: var(--width);
   display: flex;
   align-items: center;
   margin-top: -5px;

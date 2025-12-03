@@ -48,7 +48,7 @@ defineProps({
 
 <style scoped>
 .items-container {
-  width: 364px;
+  width: var(--width);
   overflow-x: hidden;
   color: var(--text-color);
   margin-bottom: 8px;

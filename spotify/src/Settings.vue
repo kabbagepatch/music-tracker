@@ -90,7 +90,7 @@ button, label {
 }
 
 .theme-button {
-  width: 364px;
+  width: var(--width);
   display: flex;
   align-items: center;
   border-radius: 12px;

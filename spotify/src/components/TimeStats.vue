@@ -21,13 +21,15 @@
     </div>
     <Stats
       :summary="[
-        { key: 'Total Number of Song Plays', value: totalSongs },
-        { key: 'Total Time Listened', value: `${Math.floor(totalTime / 3600000)}h ${Math.floor((totalTime % 3600000) / 60000)}m ${Math.floor((totalTime % 60000) / 1000)}s` },
-        { key: 'Number of Distinct Songs', value: topSongs.length },
-        { key: 'Number of Distinct Artists', value: topArtists.length },
+        { key: 'Songs Played', value: totalSongs },
+        { key: 'Spent Listening', value: `${Math.floor(totalTime / 3600000)}h ${Math.floor((totalTime % 3600000) / 60000)}m ${Math.floor((totalTime % 60000) / 1000)}s` },
+        { key: 'Distinct Songs', value: topSongs.length },
+        { key: 'Distinct Artists', value: topArtists.length },
+        { key: 'Distinct Albums', value: topAlbums.length },
       ]"
       :cardOne="{ title: 'Top Songs', entries: topSongs.map(song => ({ left: song[0], right: song[1].playCount, link: song[0] })), linkType: 'tracks' }"
       :cardTwo="{ title: 'Top Artists', entries: topArtists.map(artist => ({ left: artist[0], right: artist[1].playCount, link: artist[0] })), linkType: 'artists' }"
+      :cardThree="{ title: 'Top Albums', entries: topAlbums.map(album => ({ left: album[0], right: album[1].playCount, link: album[0] })), linkType: 'albums' }"
     />
   </div>
 </template>
@@ -53,6 +55,7 @@ const props = defineProps<{
   totalTime: number,
   topSongs: TotalsList,
   topArtists: TotalsList,
+  topAlbums: TotalsList,
   back?: () => void,
   forward?: () => void,
 }>();

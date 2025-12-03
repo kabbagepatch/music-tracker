@@ -8,7 +8,7 @@
 
 <style scoped>
 .card {
-  width: 364px;
+  width: var(--width);
   min-height: 156px;
   background-color: var(--primary-color);
   border-radius: 28px;
