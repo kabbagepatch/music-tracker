@@ -28,7 +28,7 @@ const router = useRouter();
 const route = useRoute();
 
 const defaultIcon = ref('vinyl-transparent')
-const defaultTitle = ref('Music Player and Tracker');
+const defaultTitle = ref('Spotify Player and Tracker');
 const rightIcon = ref('back')
 const routeParts = route.fullPath.split('/');
 if (routeParts.length > 1) {

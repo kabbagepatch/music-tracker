@@ -1,4 +1,4 @@
-# Music Tracker and Player
+# Spotify Tracker and Player
 
 ## Spotify Extended History Tracker
 
