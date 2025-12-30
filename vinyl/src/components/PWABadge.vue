@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { useRegisterSW } from 'virtual:pwa-register/vue'
 
 // check for updates every few hours
-const period = 1000
+const period = 1000 * 60 * 60 * 5
 
 const swActivated = ref(false)
 
