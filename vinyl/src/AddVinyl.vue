@@ -16,11 +16,15 @@ const selectedVinyl = ref({ album: '', artist: '', imageUrl: '' });
 const selectVinyl = (vinyl: any) => {
   selectedVinyl.value = vinyl;
   showModal.value = true;
-  return;
 }
 
-const onSaveVinyl = (nSides: any, discColor: any) => {
-  axios.post(`${apiUrl}/vinyls`, { nSides, discColor, ...selectedVinyl.value }).then(result => {
+const manualAdd = () => {
+  selectedVinyl.value = { album: '', artist: '', imageUrl: '' };
+  showModal.value = true;
+}
+
+const onSaveVinyl = (data: any) => {
+  axios.post(`${apiUrl}/vinyls`, { ...selectedVinyl.value, ...data }).then(result => {
     console.log(result);
     showModal.value = false;
   }).catch(e => {
@@ -29,7 +33,7 @@ const onSaveVinyl = (nSides: any, discColor: any) => {
 }
 
 const results: any = ref([]);
-const search = ref(route.query?.search || localStorage.getItem('search-term') ||'Taylor Swift');
+const search = ref(route.query?.search || localStorage.getItem('search-term'));
 const searchAlbum = async () => {
   if (!search.value) return;
   localStorage.setItem('search-term', search.value as string);
@@ -68,7 +72,11 @@ searchAlbum();
     <input class="album-search" v-model="search" type="text" placeholder="Search for albums..." @change="onSearch" />
     <button class="search-button" @click="onSearch()">🔍</button>
   </div>
-  <VinylList :vinyls="results" v-on:add="selectVinyl" />
+  <VinylList :vinyls="results" @add="selectVinyl" />
+  <div class="manual-add-row">
+    Manually Add Vinyl
+    <button class="add-button" @click="manualAdd">+</button>
+  </div>
   <NavBar />
 </template>
 
@@ -106,5 +114,20 @@ searchAlbum();
     padding: 0;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+  }
+
+  .manual-add-row {
+    background-color: rgb(41, 41, 41);
+    padding: 6px 6px 6px 12px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .add-button {
+    font-size: 24px;
+    line-height: 1em;
+    padding: 6px 12px;
   }
 </style>

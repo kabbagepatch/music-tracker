@@ -26,8 +26,8 @@ watch(() => vinylId, (newValue) => {
 })
 getVinyl(vinylId);
 
-const updateVinyl = (nSides: any, disColor: any) => {
-  axios.put(`${apiUrl}/vinyls/${vinylId}`, { nSides, disColor }).then(result => {
+const updateVinyl = (data: any) => {
+  axios.put(`${apiUrl}/vinyls/${vinylId}`, data).then(result => {
     vinyl.value = result.data;
     showModal.value = false;
   }).catch(e => {

@@ -75,7 +75,6 @@ const modalClick = (e: any) => {
 }
 
 .modal-header {
-  padding-top: px;
   padding-right: 0px;
 }
 
