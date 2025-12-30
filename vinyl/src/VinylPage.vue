@@ -78,7 +78,7 @@ const playVinyl = async (sides: Boolean[]) => {
     <h1>Catalog</h1>
     <div>
       <button class="header-button" id="back" @click="$router.back()">←</button>
-      <button class="header-button" id="edit" @click="showEditModal = true">🖉</button>
+      <button class="header-button" id="edit" @click="showEditModal = true">✎</button>
       <button class="header-button" id="delete" @click="deleteVinyl">🗑</button>
     </div>
   </div>
@@ -114,54 +114,5 @@ const playVinyl = async (sides: Boolean[]) => {
     background-color: rgb(139, 46, 46);
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-  }
-
-  section {
-    margin-bottom: 24px;
-  }
-
-  .vinyl-header {
-    display: flex;
-  }
-
-  .vinyl-art {
-    width: 150px;
-    margin-right: 16px;
-  }
-
-  .album, .artist {
-    margin: 0;
-    line-height: 1.3em;
-  }
-
-  .album {
-    margin-bottom: 10px;
-  }
-
-  .published {
-    color: #b3b3b3
-  }
-
-  .tags {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .subheader {
-    margin-top: 0;
-    margin-bottom: 4px;
-  }
-
-  .tag {
-    border: 1px solid white;
-    font-size: 14px;
-    padding: 0 12px;
-    border-radius: 16px;
-  }
-
-  .track-index {
-    color: #b3b3b3;
-    margin-right: 8px;
   }
 </style>

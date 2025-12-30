@@ -61,7 +61,8 @@ defineProps<{
 
   .vinyl-art {
     width: 150px;
-    margin-right: 16px;
+    height: 150px;
+    margin-right: 12px;
   }
 
   .album, .artist {
