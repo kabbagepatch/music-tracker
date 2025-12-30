@@ -10,8 +10,8 @@ defineProps<{
   <div class="albums">
     <div class="album-tile" v-for="vinyl in vinyls" @click="$router.push(`/catalog/${vinyl.id}`)">
       <img class="album-art" :src="vinyl.imageUrl" :alt="vinyl.album">
-      <div class="album">{{ vinyl.album.length > 14 ? vinyl.album.slice(0, 13).trim() + '..' : vinyl.album }}</div>
-      <div class="artist">{{ vinyl.artist.length > 14 ? vinyl.artist.slice(0, 14).trim() + '..' : vinyl.artist }}</div>
+      <div class="album">{{ vinyl.album.length > 13 ? vinyl.album.slice(0, 12).trim() + '..' : vinyl.album }}</div>
+      <div class="artist">{{ vinyl.artist.length > 13 ? vinyl.artist.slice(0, 12).trim() + '..' : vinyl.artist }}</div>
     </div>
   </div>
 </template>
@@ -21,8 +21,7 @@ defineProps<{
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
-    gap: 20px;
-    /* justify-content: space-between; */
+    gap: 8px;
     padding: 16px 0;
   }
 

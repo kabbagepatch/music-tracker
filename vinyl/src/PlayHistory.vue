@@ -25,6 +25,11 @@ axios.get(`${apiUrl}/vinyls/history`).then(r => {
 <template>
   <h1>Activity</h1>
   <div class="plays">
+    <div class="play-item play-item-header">
+      <div class="vinyl-title">Vinyl</div>
+      <div>Side</div>
+      <div></div>
+    </div>
     <div class="play-item" v-for="row in playHistory">
       <div class="album-info" @click="$router.push(`/catalog/${row.vinylId}`)">
         <img class="album-art" :src="row.thumbnailUrl" :alt="row.album">
@@ -33,10 +38,10 @@ axios.get(`${apiUrl}/vinyls/history`).then(r => {
           <div class="artist">{{ row.artist }}</div>
         </div>
       </div>
-      <div>Side {{ row.side }}</div>
+      <div>{{ row.side }}</div>
       <div>
-        <div>{{ row.dateString }}</div>
-        <div>{{ row.timeString }}</div>
+        <div class="date">{{ row.dateString }}</div>
+        <div class="date">{{ row.timeString }}</div>
       </div>
     </div>
   </div>
@@ -46,6 +51,11 @@ axios.get(`${apiUrl}/vinyls/history`).then(r => {
 <style scoped>
   .plays {
     margin-bottom: 30px;
+  }
+
+  .vinyl-title {
+    width: 110px;
+    margin-left: 5px;
   }
 
   .play-item {
@@ -58,6 +68,11 @@ axios.get(`${apiUrl}/vinyls/history`).then(r => {
     justify-content: space-between;
     background-color: rgb(41, 41, 41);
     margin-bottom: 8px;
+  }
+
+  .play-item-header {
+    font-weight: bold;
+    padding: 4px 45px;
   }
 
   .album-info {
@@ -75,5 +90,10 @@ axios.get(`${apiUrl}/vinyls/history`).then(r => {
   .artist {
     color: rgb(190, 190, 190);
     font-size: 15px;
+  }
+
+  .date {
+    text-align: right;
+    margin-left: 4px;
   }
 </style>
