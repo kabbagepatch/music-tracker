@@ -52,7 +52,7 @@
     font-weight: bold;
     background-color: #1a1a1a;
     height: 60px;
-    margin-top: -5px;
+    margin-top: -10px;
   }
 
   button {
@@ -65,7 +65,7 @@
     height: 80px;
     font-size: 48px;
     padding: 0;
-    border: 1px solid #1a1a1a;
+    border: 2px solid #bebebe;
     margin: 5px;
   }
 </style>

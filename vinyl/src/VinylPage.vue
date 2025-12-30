@@ -5,13 +5,15 @@ import { useRoute, useRouter } from 'vue-router';
 import NavBar from './components/NavBar.vue';
 import VinylDetails from './components/VinylDetails.vue';
 import AddVinylModal from './components/AddVinylModal.vue';
+import PlayVinylModal from './components/PlayVinylModal.vue';
 
 const router = useRouter();
 const route = useRoute();
 const vinylId = route.params.id as string;
 
 const vinyl: any = ref({});
-const showModal = ref(false);
+const showEditModal = ref(false);
+const showPlayModal = ref(false);
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const getVinyl = (id: string) => {
@@ -29,7 +31,7 @@ getVinyl(vinylId);
 const updateVinyl = (data: any) => {
   axios.put(`${apiUrl}/vinyls/${vinylId}`, data).then(result => {
     vinyl.value = result.data;
-    showModal.value = false;
+    showEditModal.value = false;
   }).catch(e => {
     console.log(e);
   })
@@ -45,19 +47,42 @@ const deleteVinyl = () => {
   }
 }
 
+const openPlayModal = () => {
+  showPlayModal.value = true;
+}
+
+const playVinyl = async (sides: Boolean[]) => {
+  const allSidesTrue = sides.filter((s) => !s).length === 0
+  if (allSidesTrue) {
+    await axios.post(`${apiUrl}/vinyls/${vinylId}/plays`).catch(e => {
+      console.log(e);
+    });
+  } else {
+    for (const [i, s] of sides.entries()) {
+      if (s) {
+        await axios.post(`${apiUrl}/vinyls/${vinylId}/plays`, { side: (i + 1) }).catch(e => {
+          console.log(e);
+        });
+      }
+    }
+  }
+  router.push('/');
+}
+
 </script>
 
 <template>
-  <AddVinylModal v-if="showModal" v-on:close="showModal = false" :selected-vinyl="vinyl" v-on:save-vinyl="updateVinyl" />
+  <AddVinylModal v-if="showEditModal" @close="showEditModal = false" :selected-vinyl="vinyl" @save-vinyl="updateVinyl" />
+  <PlayVinylModal v-if="showPlayModal" @close="showPlayModal = false" :vinyl="vinyl" @play-vinyl="playVinyl" />
   <div class="header">
     <h1>Catalog</h1>
     <div>
       <button class="header-button" id="back" @click="$router.back()">←</button>
-      <button class="header-button" id="edit" @click="showModal = true">🖉</button>
+      <button class="header-button" id="edit" @click="showEditModal = true">🖉</button>
       <button class="header-button" id="delete" @click="deleteVinyl">🗑</button>
     </div>
   </div>
-  <VinylDetails v-if="vinyl.album" :vinyl="vinyl" />
+  <VinylDetails v-if="vinyl.album" :vinyl="vinyl" @play="openPlayModal" />
   <NavBar />
 </template>
 

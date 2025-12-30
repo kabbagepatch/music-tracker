@@ -1,6 +1,7 @@
 <script setup lang="ts">
 defineProps<{
-  vinyl: any
+  vinyl: any,
+  onPlay?: any,
 }>()
 </script>
 
@@ -11,6 +12,7 @@ defineProps<{
       <h2 class="album">{{ vinyl.album }}</h2>
       <h3 class="artist" :style="{ color: vinyl.discColor.startsWith('#000') ? 'white' : vinyl.discColor }">{{ vinyl.artist }}</h3>
       <div class="published">Released: {{ vinyl.published }}</div>
+      <button v-if="onPlay" :style="{ background: vinyl.discColor }" class="play-button" @click="onPlay">Play Vinyl</button>
     </div>
   </section>
   <section>
@@ -47,6 +49,10 @@ defineProps<{
 <style scoped>
   section {
     margin-bottom: 24px;
+  }
+  
+  .play-button {
+    margin: 10px 0;
   }
 
   .vinyl-header {
