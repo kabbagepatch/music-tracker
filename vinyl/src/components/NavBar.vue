@@ -16,7 +16,9 @@
       >
         Catalog
       </div>
-      <button>+</button>
+      <button
+        @click="$router.push('/catalog/add')"
+      >+</button>
     </div>
   </footer>
 </template>

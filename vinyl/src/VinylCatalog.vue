@@ -8,7 +8,6 @@ import NavBar from './components/NavBar.vue';
 const view = ref(localStorage.getItem('vinyl-catalog-view') || 'tile');
 
 const vinyls: any = ref([]);
-const search = ref('');
 let vinylData: any[] = [];
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
@@ -19,6 +18,7 @@ axios.get(`${apiUrl}/vinyls`).then(result => {
   console.log(e);
 })
 
+const search = ref('');
 const onSearch = () => {
   if (search.value)
     vinyls.value = vinylData.filter((v: any) => v.album.toLowerCase().includes(search.value.toLowerCase()));
@@ -42,7 +42,7 @@ const toggleView = (v : 'tile' | 'list') => {
       <button :class="`view-toggle ${view === 'tile' ? 'selected' : ''}`" @click="toggleView('tile')">⊞</button>
       <button :class="`view-toggle ${view === 'list' ? 'selected'  : ''}`" @click="toggleView('list')">☰</button>
     </div>
-    <VinylList v-if="view == 'list'" :vinyls="vinyls" />
+    <VinylList v-if="view == 'list'" :vinyls="vinyls" v-on:vinyl-select="(vinyl : any) => $router.push(`/catalog/${vinyl.id}`)" />
     <VinylTiles v-else :vinyls="vinyls" />
   </div>
   <NavBar />

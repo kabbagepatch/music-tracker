@@ -9,7 +9,6 @@ const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' } as con
 const timeOptions = { hour: 'numeric', minute: '2-digit' } as const;
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 axios.get(`${apiUrl}/vinyls/history`).then(r => {
-  console.log(r.data)
   playHistory.value = r.data.map((a: any) => {
     const date = new Date(a.timestamp);
     return {
@@ -32,7 +31,7 @@ axios.get(`${apiUrl}/vinyls/history`).then(r => {
     </div>
     <div class="play-item" v-for="row in playHistory">
       <div class="album-info" @click="$router.push(`/catalog/${row.vinylId}`)">
-        <img class="album-art" :src="row.thumbnailUrl" :alt="row.album">
+        <img class="album-art" :src="row.imageUrl" :alt="row.album">
         <div>
           <div class="album">{{ row.album.length > 20 ? row.album.slice(0, 18) + '..' : row.album }}</div>
           <div class="artist">{{ row.artist }}</div>

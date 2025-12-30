@@ -6,10 +6,12 @@ import './style.css'
 
 import PlayHistory from './PlayHistory.vue'
 import VinylCatalog from './VinylCatalog.vue'
-import VinylPage from './VinylDetails.vue';
+import VinylPage from './VinylPage.vue';
+import AddVinyl from './AddVinyl.vue'
 
 const routes = [
   { path: '/catalog', component: VinylCatalog },
+  { path: '/catalog/add', component: AddVinyl },
   { path: '/catalog/:id', component: VinylPage },
   { path: '/', component: PlayHistory },
 ]

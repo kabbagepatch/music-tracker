@@ -1,41 +1,16 @@
 <script setup lang="ts">
-import axios from 'axios';
-import { ref, watch } from 'vue'
-import { useRoute } from 'vue-router';
-import NavBar from './components/NavBar.vue';
-
-const route = useRoute();
-const vinylId = route.params.id as string;
-
-const vinyl: any = ref([]);
-
-const getVinyl = (id: string) => {
-  axios.get(`${apiUrl}/vinyls/${id}`).then(result => {
-    vinyl.value = result.data
-  }).catch(e => {
-    console.log(e);
-  })
-}
-
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
-watch(() => vinylId, (newValue) => {
-  getVinyl(newValue);
-})
-
-getVinyl(vinylId);
+defineProps<{
+  vinyl: any
+}>()
 </script>
 
 <template>
-  <div class="header">
-    <h1>Catalog</h1>
-    <div><button @click="$router.back()">←</button></div>
-  </div>
   <section class="vinyl-header">
     <img class="vinyl-art" :src="vinyl.imageUrl" :alt="vinyl.album">
     <div class="vinyl-details">
-        <h2 class="album">{{ vinyl.album }}</h2>
-        <h3 class="artist" :style="{ color: vinyl.discColor === '#000' ? 'white' : vinyl.discColor }">{{ vinyl.artist }}</h3>
-        <div class="published">Released: {{ vinyl.published }}</div>
+      <h2 class="album">{{ vinyl.album }}</h2>
+      <h3 class="artist" :style="{ color: vinyl.discColor.startsWith('#000') ? 'white' : vinyl.discColor }">{{ vinyl.artist }}</h3>
+      <div class="published">Released: {{ vinyl.published }}</div>
     </div>
   </section>
   <section>
@@ -45,8 +20,8 @@ getVinyl(vinylId);
         <div
           class="tag"
           :style="{
-            color: vinyl.discColor === '#000' ? 'white' : vinyl.discColor,
-            borderColor: vinyl.discColor === '#000' ? 'white' : vinyl.discColor
+            color: vinyl.discColor.startsWith('#000') ? 'white' : vinyl.discColor,
+            borderColor: vinyl.discColor.startsWith('#000') ? 'white' : vinyl.discColor
           }"
         >{{ tag }}</div>
       </div>
@@ -58,7 +33,7 @@ getVinyl(vinylId);
       <div v-for="(track, i) in vinyl.tracks">
         <div class="track">
           <span class="track-index">
-            {{String.fromCharCode(65 + i / Math.ceil(vinyl.tracks.length / vinyl.nSides))}}{{(i % Math.ceil(vinyl.tracks.length / vinyl.nSides)) + 1}}.
+            {{String.fromCharCode(65 + (i as any) / Math.ceil(vinyl.tracks.length / vinyl.nSides))}}{{((i as any) % Math.ceil(vinyl.tracks.length / vinyl.nSides)) + 1}}.
           </span>
           <span>
             {{ track }}
@@ -67,20 +42,9 @@ getVinyl(vinylId);
       </div>
     </div>
   </section>
-  <NavBar />
 </template>
 
 <style scoped>
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .header button {
-    margin-bottom: 20px;
-  }
-
   section {
     margin-bottom: 24px;
   }
