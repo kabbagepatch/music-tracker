@@ -26,7 +26,7 @@ axios.get(`${apiUrl}/vinyls/history`).then(r => {
   <div class="plays">
     <div class="play-item play-item-header">
       <div class="vinyl-title">Vinyl</div>
-      <div>Side</div>
+      <div>Sides</div>
       <div></div>
     </div>
     <div class="play-item" v-for="row in playHistory">
@@ -37,10 +37,10 @@ axios.get(`${apiUrl}/vinyls/history`).then(r => {
           <div class="artist">{{ row.artist }}</div>
         </div>
       </div>
-      <div>{{ row.side }}</div>
+      <div>{{ row.sides.join(', ') }}</div>
       <div>
         <div class="date">{{ row.dateString }}</div>
-        <div class="date">{{ row.timeString }}</div>
+        <div class="time">{{ row.timeString }}</div>
       </div>
     </div>
   </div>
@@ -91,8 +91,14 @@ axios.get(`${apiUrl}/vinyls/history`).then(r => {
     font-size: 15px;
   }
 
-  .date {
+  .date, .time {
     text-align: right;
     margin-left: 4px;
+    font-size: 15px;
+  }
+
+  .time {
+    color: #b3b3b3;
+    font-size: 14px;
   }
 </style>

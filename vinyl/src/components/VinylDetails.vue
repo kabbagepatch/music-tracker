@@ -10,20 +10,20 @@ defineProps<{
     <img class="vinyl-art" :src="vinyl.imageUrl" :alt="vinyl.album">
     <div class="vinyl-details">
       <h2 class="album">{{ vinyl.album }}</h2>
-      <h3 class="artist" :style="{ color: vinyl.discColor.startsWith('#000') ? 'white' : vinyl.discColor }">{{ vinyl.artist }}</h3>
+      <h3 class="artist" :style="{ color: 'white' }">{{ vinyl.artist }}</h3>
       <div class="published">Released: {{ vinyl.published }}</div>
-      <button v-if="onPlay" :style="{ background: vinyl.discColor }" class="play-button" @click="onPlay">Play Vinyl</button>
+      <button v-if="onPlay" :style="{ background: 'black' }" class="play-button" @click="onPlay">Play Vinyl</button>
     </div>
   </section>
   <section>
-    <h3 class="subheader">Tags</h3>
+    <h3 class="subheader">Genres</h3>
     <div class="tags">
-      <div v-for="tag in vinyl.tags">
+      <div v-for="tag in vinyl.genres">
         <div
           class="tag"
           :style="{
-            color: vinyl.discColor.startsWith('#000') ? 'white' : vinyl.discColor,
-            borderColor: vinyl.discColor.startsWith('#000') ? 'white' : vinyl.discColor
+            color: 'white',
+            borderColor: 'white'
           }"
         >{{ tag }}</div>
       </div>
@@ -32,13 +32,13 @@ defineProps<{
   <section>
     <h3 class="subheader">Track List</h3>
     <div class="tracks">
-      <div v-for="(track, i) in vinyl.tracks">
+      <div v-for="(track) in vinyl.tracks">
         <div class="track">
           <span class="track-index">
-            {{String.fromCharCode(65 + (i as any) / Math.ceil(vinyl.tracks.length / vinyl.nSides))}}{{((i as any) % Math.ceil(vinyl.tracks.length / vinyl.nSides)) + 1}}.
+            {{ track.position }}.
           </span>
           <span>
-            {{ track }}
+            {{ track.title }}
           </span>
         </div>
       </div>
@@ -60,8 +60,8 @@ defineProps<{
   }
 
   .vinyl-art {
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     margin-right: 12px;
   }
 
@@ -98,6 +98,6 @@ defineProps<{
 
   .track-index {
     color: #b3b3b3;
-    margin-right: 8px;
+    margin-right: 4px;
   }
 </style>

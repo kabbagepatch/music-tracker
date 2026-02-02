@@ -43,7 +43,7 @@
         <div class="modal-input-container">
           <label for="disc-color">Disc Color</label>
           <input
-            :style="{ background: discColor }"
+            :style="{ background: 'black' }"
             id="disc-color"
             class="modal-input"
             v-model="discColor"

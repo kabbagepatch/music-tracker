@@ -18,7 +18,7 @@ const addClick = (e: any, vinyl: any) => {
     <div class="album-item" v-for="vinyl in vinyls" @click="onVinylSelect(vinyl)">
       <div class="album-info">
         <img v-if="vinyl.imageUrl" class="album-art" :src="vinyl.imageUrl" :alt="vinyl.album">
-        <div v-else class="album-art" :style="{ backgroundColor: vinyl.discColor }" />
+        <div v-else class="album-art" :style="{ backgroundColor: 'black' }" />
         <div class="album-name">
           <div class="album">{{ vinyl.album }}</div>
           <div class="artist">{{ vinyl.artist }}</div>

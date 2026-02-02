@@ -11,7 +11,7 @@ const router = useRouter();
 const route = useRoute();
 
 const showModal = ref(false);
-const selectedVinyl = ref({ album: '', artist: '', imageUrl: '' });
+const selectedVinyl = ref({ album: '', artist: '', imageUrl: '', discogsId: undefined });
 
 const selectVinyl = (vinyl: any) => {
   selectedVinyl.value = vinyl;
@@ -19,14 +19,16 @@ const selectVinyl = (vinyl: any) => {
 }
 
 const manualAdd = () => {
-  selectedVinyl.value = { album: '', artist: '', imageUrl: '' };
+  selectedVinyl.value = { album: '', artist: '', imageUrl: '', discogsId: undefined };
   showModal.value = true;
 }
 
-const onSaveVinyl = (data: any) => {
-  axios.post(`${apiUrl}/vinyls`, { ...selectedVinyl.value, ...data }).then(result => {
+const onSaveVinyl = () => {
+  axios.post(`${apiUrl}/vinyls`, { discogsId: selectedVinyl.value.discogsId }).then(result => {
     console.log(result);
     showModal.value = false;
+    localStorage.removeItem('search-term');
+    router.push('/catalog');
   }).catch(e => {
     console.log(e);
   });
@@ -37,8 +39,12 @@ const search = ref(route.query?.search || localStorage.getItem('search-term'));
 const searchAlbum = async () => {
   if (!search.value) return;
   localStorage.setItem('search-term', search.value as string);
-  axios.get(`${apiUrl}/vinyls/album/search?album=${search.value}`).then(result => {
-    results.value = result.data
+  axios.get(`${apiUrl}/vinyls/album/discogs/search?album=${search.value}`).then(result => {
+    results.value = result.data.map((v: any) => ({
+      album: v.title,
+      artist: v.discColor,
+      ...v
+    }))
   }).catch(e => {
     console.log(e);
   });
