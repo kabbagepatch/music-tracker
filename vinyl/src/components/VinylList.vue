@@ -59,8 +59,6 @@ const addClick = (e: any, vinyl: any) => {
 
   .artist {
     color: rgb(190, 190, 190);
-    white-space: nowrap;
-    overflow-x: hidden;
     font-size: 15px;
   }
 

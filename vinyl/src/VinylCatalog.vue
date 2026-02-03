@@ -35,7 +35,7 @@ const toggleView = (v : 'tile' | 'list') => {
 </script>
 
 <template>
-  <h1>Catalog</h1>
+  <h2>Catalog</h2>
   <div class="content">
     <div class="action-bar">
       <input class="album-search" v-model="search" type="text" placeholder="Search catalog..." @input="onSearch" />
@@ -51,7 +51,7 @@ const toggleView = (v : 'tile' | 'list') => {
 <style scoped>
   .content {
     width: 100%;
-    margin: 20px 0;
+    margin-bottom: 50px;
   }
 
   .action-bar {

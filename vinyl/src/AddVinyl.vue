@@ -70,10 +70,6 @@ searchAlbum();
     v-on:close="showModal = false"
   />
 
-  <div class="header">
-    <h1>Add To Catalog</h1>
-    <div><button @click="$router.back()">←</button></div>
-  </div>
   <div class="action-bar">
     <input class="album-search" v-model="search" type="text" placeholder="Search for albums..." @change="onSearch" />
     <button class="search-button" @click="onSearch()">🔍</button>

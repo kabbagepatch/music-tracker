@@ -38,11 +38,11 @@ const updateVinyl = (data: any) => {
 }
 
 const deleteVinyl = () => {
-  if (confirm('Are you sure you want to delete this vinyl from your catalog?\n\nAny listening history for vinyl will be deleted')) {
+  if (confirm('Are you sure you want to delete this vinyl from your catalog?')) {
     axios.delete(`${apiUrl}/vinyls/${vinylId}`).then(_ => {
       router.replace('/catalog');
     }).catch(e => {
-      console.log(e);
+      alert(e.response.data);
     });
   }
 }
@@ -52,7 +52,7 @@ const openPlayModal = () => {
 }
 
 const playVinyl = async (sides: Boolean[]) => {
-  const sidesPlayed = sides.map((_, i) => i)
+  const sidesPlayed = sides.map((_, i) => i + 1)
   await axios.post(`${apiUrl}/vinyls/${vinylId}/plays`, { sides: sidesPlayed }).catch(e => { console.log(e); });
   router.push('/');
 }
@@ -63,8 +63,8 @@ const playVinyl = async (sides: Boolean[]) => {
   <AddVinylModal v-if="showEditModal" @close="showEditModal = false" :selected-vinyl="vinyl" @save-vinyl="updateVinyl" />
   <PlayVinylModal v-if="showPlayModal" @close="showPlayModal = false" :vinyl="vinyl" @play-vinyl="playVinyl" />
   <div class="header">
-    <h1>Catalog</h1>
-    <div>
+    <h2>Catalog</h2>
+    <div class="button-container">
       <button class="header-button" id="back" @click="$router.back()">←</button>
       <button class="header-button" id="edit" @click="showEditModal = true">✎</button>
       <button class="header-button" id="delete" @click="deleteVinyl">🗑</button>
@@ -81,16 +81,22 @@ const playVinyl = async (sides: Boolean[]) => {
     justify-content: space-between;
   }
 
-  .header-button {
+  .button-container {
+    height: 30px;
     margin-bottom: 20px;
+  }
+
+  .header-button {
     width: 40px;
-    padding-left: 0;
-    padding-right: 0;
+    height: 30px;
+    padding: 0;
+    line-height: 0;
   }
 
   #back {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+    height: 32px;
   }
 
   #edit {

@@ -22,14 +22,14 @@ axios.get(`${apiUrl}/vinyls/history`).then(r => {
 </script>
 
 <template>
-  <h1>Activity</h1>
+  <h2>Activity</h2>
   <div class="plays">
     <div class="play-item" v-for="row in playHistory">
       <div class="album-info" @click="$router.push(`/catalog/${row.vinylId}`)">
         <img class="album-art" :src="row.imageUrl" :alt="row.album">
         <div>
           <div class="album">
-            <span class="album-name">{{ row.album.length > 20 ? row.album.slice(0, 18) + '..' : row.album }}</span>
+            <span class="album-name">{{ row.album.length > 30 ? row.album.slice(0, 28) + '..' : row.album }}</span>
             <span class="album-sides" v-if="row.sides.length < row.nSides">{{ row.sides.join(', ') }}</span>
           </div>
           <div class="artist">{{ row.artist }}</div>

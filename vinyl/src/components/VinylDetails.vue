@@ -48,7 +48,7 @@ defineProps<{
 
 <style scoped>
   section {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
   }
   
   .play-button {
@@ -60,8 +60,8 @@ defineProps<{
   }
 
   .vinyl-art {
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
     margin-right: 12px;
   }
 
