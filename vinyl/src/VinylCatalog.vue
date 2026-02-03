@@ -12,6 +12,7 @@ let vinylData: any[] = [];
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 axios.get(`${apiUrl}/vinyls`).then(result => {
+  result.data.sort((a: any, b: any) => a.artist > b.artist ? 1 : -1);
   vinyls.value = result.data
   vinylData = [].concat(result.data);
 }).catch(e => {
@@ -21,7 +22,7 @@ axios.get(`${apiUrl}/vinyls`).then(result => {
 const search = ref('');
 const onSearch = () => {
   if (search.value)
-    vinyls.value = vinylData.filter((v: any) => v.album.toLowerCase().includes(search.value.toLowerCase()));
+    vinyls.value = vinylData.filter((v: any) => (v.album.toLowerCase().includes(search.value.toLowerCase()) || v.artist.toLowerCase().includes(search.value.toLowerCase())));
   else {
     vinyls.value = ([] as any[]).concat(vinylData)
   }
