@@ -17,7 +17,7 @@
         Catalog
       </div>
       <button
-        @click="$router.push('/catalog/add')"
+        @click="$router.push($route.path.includes('catalog') ? '/catalog/add' : '/catalog')"
       >+</button>
     </div>
   </footer>
@@ -52,7 +52,7 @@
     font-weight: bold;
     background-color: #1a1a1a;
     height: 60px;
-    margin-top: -10px;
+    margin-top: -5px;
   }
 
   button {
@@ -61,11 +61,11 @@
     right: 0;
     bottom: 0;
     border-radius: 50%;
-    width: 80px;
-    height: 80px;
-    font-size: 48px;
+    width: 75px;
+    height: 75px;
+    font-size: 42px;
     padding: 0;
     border: 2px solid #bebebe;
-    margin: 5px;
+    margin: 4px;
   }
 </style>

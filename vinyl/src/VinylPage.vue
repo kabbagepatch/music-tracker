@@ -52,20 +52,8 @@ const openPlayModal = () => {
 }
 
 const playVinyl = async (sides: Boolean[]) => {
-  const allSidesTrue = sides.filter((s) => !s).length === 0
-  if (allSidesTrue) {
-    await axios.post(`${apiUrl}/vinyls/${vinylId}/plays`).catch(e => {
-      console.log(e);
-    });
-  } else {
-    for (const [i, s] of sides.entries()) {
-      if (s) {
-        await axios.post(`${apiUrl}/vinyls/${vinylId}/plays`, { side: (i + 1) }).catch(e => {
-          console.log(e);
-        });
-      }
-    }
-  }
+  const sidesPlayed = sides.map((_, i) => i)
+  await axios.post(`${apiUrl}/vinyls/${vinylId}/plays`, { sides: sidesPlayed }).catch(e => { console.log(e); });
   router.push('/');
 }
 
