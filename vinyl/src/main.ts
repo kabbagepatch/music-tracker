@@ -9,9 +9,10 @@ import VinylCatalog from './VinylCatalog.vue'
 import VinylPage from './VinylPage.vue';
 import AddVinyl from './AddVinyl.vue'
 import { currentUser, userLoaded } from './firebaseApp';
-import { signOut } from './services/users';
+import Login from './Login.vue';
 
 const routes = [
+  { path: '/login', component: Login },
   { path: '/catalog', component: VinylCatalog, meta: { requiresAuth: true }, },
   { path: '/catalog/add', component: AddVinyl, meta: { requiresAuth: true }, },
   { path: '/catalog/:id', component: VinylPage, meta: { requiresAuth: true }, },
@@ -35,6 +36,9 @@ router.beforeEach(async (to) => {
     });
   }
 
+  if (to.meta.requiresAuth && !currentUser.value) {
+    return '/login';
+  }
   console.log(to.meta.requiresAuth);
   console.log(currentUser.value?.uid);
 })

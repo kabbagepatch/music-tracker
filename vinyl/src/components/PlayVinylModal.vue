@@ -1,3 +1,15 @@
+<script setup lang="ts">
+import { ref } from 'vue';
+import Modal from './Modal.vue';
+
+const props = defineProps<{
+  vinyl: any,
+  onPlayVinyl: any,
+}>();
+
+const sides = ref(new Array(props.vinyl.nSides).fill(true));
+</script>
+
 <template>
   <Modal>
     <template #header>
@@ -23,18 +35,6 @@
     </template>
   </Modal>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue';
-import Modal from './Modal.vue';
-
-const props = defineProps<{
-  vinyl: any,
-  onPlayVinyl: any,
-}>();
-
-const sides = ref(new Array(props.vinyl.nSides).fill(true));
-</script>
 
 <style scoped>
   .modal-title {
