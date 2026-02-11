@@ -24,6 +24,7 @@ const addClick = (e: any, vinyl: any) => {
           <div class="artist">{{ vinyl.artist }}</div>
         </div>
       </div>
+      <div v-if="vinyl.favorite" class="icon-container"><img class="icon" src="../assets/icons/heart-filled.png" /></div>
       <button v-if="onAdd" class="add-button" @click="(e) => addClick(e, vinyl)">+</button>
     </div>
   </div>
@@ -60,6 +61,16 @@ const addClick = (e: any, vinyl: any) => {
   .artist {
     color: rgb(190, 190, 190);
     font-size: 15px;
+  }
+
+  .icon-container {
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+  }
+
+  .icon {
+    width: 20px;
   }
 
   .add-button {

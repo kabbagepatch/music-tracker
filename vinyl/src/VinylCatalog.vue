@@ -12,7 +12,8 @@ let vinylData: any[] = [];
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 axios.get(`${apiUrl}/vinyls`).then(result => {
-  result.data.sort((a: any, b: any) => a.artist > b.artist ? 1 : -1);
+  result.data.sort((a: any, b: any) => a.artist.toLowerCase() > b.artist.toLowerCase() ? 1 : -1);
+  result.data.sort((a: any, b: any) => a.favorite && !b.favorite ? -1 : 1);
   vinyls.value = result.data
   vinylData = [].concat(result.data);
 }).catch(e => {
@@ -22,7 +23,10 @@ axios.get(`${apiUrl}/vinyls`).then(result => {
 const search = ref('');
 const onSearch = () => {
   if (search.value)
-    vinyls.value = vinylData.filter((v: any) => (v.album.toLowerCase().includes(search.value.toLowerCase()) || v.artist.toLowerCase().includes(search.value.toLowerCase())));
+    vinyls.value = vinylData.filter((v: any) => (
+      v.album.toLowerCase().includes(search.value.toLowerCase()) 
+      || v.artist.toLowerCase().includes(search.value.toLowerCase())
+    ));
   else {
     vinyls.value = ([] as any[]).concat(vinylData)
   }
@@ -36,12 +40,15 @@ const toggleView = (v : 'tile' | 'list') => {
 </script>
 
 <template>
-  <h2>Catalog</h2>
   <div class="content">
     <div class="action-bar">
       <input class="album-search" v-model="search" type="text" placeholder="Search catalog..." @input="onSearch" />
-      <button :class="`view-toggle ${view === 'tile' ? 'selected' : ''}`" @click="toggleView('tile')">⊞</button>
-      <button :class="`view-toggle ${view === 'list' ? 'selected'  : ''}`" @click="toggleView('list')">☰</button>
+      <button :class="`view-toggle ${view === 'tile' ? 'selected' : ''}`" @click="toggleView('tile')">
+        <img class="icon" src="./assets/icons/catalog.png" />
+      </button>
+      <button :class="`view-toggle ${view === 'list' ? 'selected'  : ''}`" @click="toggleView('list')">
+        <img class="icon" src="./assets/icons/list.png" />
+      </button>
     </div>
     <VinylList v-if="view == 'list'" :vinyls="vinyls" v-on:vinyl-select="(vinyl : any) => $router.push(`/catalog/${vinyl.id}`)" />
     <VinylTiles v-else :vinyls="vinyls" />
@@ -71,9 +78,13 @@ const toggleView = (v : 'tile' | 'list') => {
   }
 
   .view-toggle {
-    font-size: 12px;
     height: 35px;
+    padding: 10px 12px;
     background-color: rgb(59, 59, 59);
+  }
+
+  .icon {
+    width: 15px;
   }
 
   .view-toggle.selected {

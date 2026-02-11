@@ -12,7 +12,8 @@ defineProps<{
       <img v-if="vinyl.imageUrl" class="album-art" :src="vinyl.imageUrl" :alt="vinyl.album">
       <div v-else class="album-art" :style="{ marginBottom: '10px', backgroundColor: 'black' }" />
       <div class="album">{{ vinyl.album.length > 13 ? vinyl.album.slice(0, 12).trim() + '..' : vinyl.album }}</div>
-      <div class="artist">{{ vinyl.artist.length > 13 ? vinyl.artist.slice(0, 12).trim() + '..' : vinyl.artist }}</div>
+      <div class="artist">{{ vinyl.artist.length > 14 ? vinyl.artist.slice(0, 13).trim() + '..' : vinyl.artist }}</div>
+      <div v-if="vinyl.favorite" class="icon-container"><img class="icon" src="../assets/icons/heart-filled.png" /></div>
     </div>
   </div>
 </template>
@@ -28,7 +29,7 @@ defineProps<{
   }
 
   .album-tile {
-    width: 100px;
+    width: 105px;
     height: 160px;
     background-color: rgb(41, 41, 41);
     padding: 6px;
@@ -42,8 +43,8 @@ defineProps<{
   }
 
   .album-art {
-    width: 100px;
-    height: 100px;
+    width: 102px;
+    height: 102px;
   }
 
   .album {
@@ -57,5 +58,16 @@ defineProps<{
     white-space: nowrap;
     overflow-x: hidden;
     font-size: 15px;
+  }
+
+  .icon-container {
+    text-align: right;
+    margin-top: -4px;
+    margin-right: -4px;
+  }
+  
+  .icon {
+    float: right;
+    width: 12px;
   }
 </style>
