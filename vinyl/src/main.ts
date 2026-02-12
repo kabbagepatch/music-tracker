@@ -39,8 +39,6 @@ router.beforeEach(async (to) => {
   if (to.meta.requiresAuth && !currentUser.value) {
     return '/login';
   }
-  console.log(to.meta.requiresAuth);
-  console.log(currentUser.value?.uid);
 })
 
 createApp(App).use(router).mount('#app')

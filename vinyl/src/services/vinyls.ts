@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { DiscogsVinyl, Vinyl, VinylPlay } from '../types';
 import { getAuth } from 'firebase/auth';
+import { setupCache, type CacheAxiosResponse, type CachedStorageValue } from 'axios-cache-interceptor';
 
 const service = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -9,14 +10,23 @@ service.interceptors.request.use(async (config) => {
   const token = await getAuth().currentUser?.getIdToken();
   config.headers['Authorization'] = `Bearer ${token}`;
   return config;
-})
+});
+setupCache(service);
 
 export const getVinyls = async () : Promise<Vinyl[]> => {
   try {
-    const response = await service.get('/vinyls');
+    // @ts-ignore
+    const response = await service.get('/vinyls', { id: 'list-vinyls' });
     const data = response.data;
-    data.sort((a: any, b: any) => a.artist.toLowerCase() > b.artist.toLowerCase() ? 1 : -1);
-    data.sort((a: any, b: any) => a.favorite && !b.favorite ? -1 : 1);
+    data.sort((a: any, b: any) => {
+      if (a.favorite && !b.favorite) return -1;
+      if (!a.favorite && b.favorite) return 1;
+      if (a.artist.toLowerCase() > b.artist.toLowerCase()) return 1
+      if (a.artist.toLowerCase() < b.artist.toLowerCase()) return -1
+      if (a.published > b.published) return 1
+
+      return -1
+    });
     return data;
   } catch (e) {
     console.log(e);
@@ -25,7 +35,19 @@ export const getVinyls = async () : Promise<Vinyl[]> => {
 };
 
 export const createVinyl = async (discogsId: string | undefined) => {
-  return service.post('/vinyls', { discogsId });
+  return service.post('/vinyls', { discogsId }, {
+    // @ts-ignore
+    cache: {
+      update: {
+        'list-vinyls': (listVinylsCache: CachedStorageValue,vinylResponse: CacheAxiosResponse) => {
+          if (listVinylsCache.state !== 'cached') return 'ignore';
+          listVinylsCache.data.data = [vinylResponse.data].concat(listVinylsCache.data.data);
+
+          return listVinylsCache;
+        }
+      }
+    }
+  });
 }
 
 export const getVinyl = async (id: string): Promise<Vinyl> => {
@@ -63,7 +85,8 @@ export const getDiscogsVinyl = async (discogsId: string) : Promise<Vinyl | undef
 
 export const getPlayHistory = async () : Promise<VinylPlay[]> => {
   try {
-    const response = await service.get('/vinyls/history');
+    // @ts-ignore
+    const response = await service.get('/vinyls/history', { id: 'list-vinyl-plays' });
     return response.data;
   } catch (e) {
     console.log(e);
@@ -72,5 +95,17 @@ export const getPlayHistory = async () : Promise<VinylPlay[]> => {
 }
 
 export const playVinyl = async (id: string, data: { sides: number[] }) => {
-  await service.post(`/vinyls/${id}/plays`, data);
+  await service.post(`/vinyls/${id}/plays`, data, {
+    // @ts-ignore
+    cache: {
+      update: {
+        'list-vinyl-plays': (listPlaysCache: CachedStorageValue, playResponse: CacheAxiosResponse) => {
+          if (listPlaysCache.state !== 'cached') return 'ignore';
+          listPlaysCache.data.data = [playResponse.data].concat(listPlaysCache.data.data);
+
+          return listPlaysCache;
+        }
+      }
+    }
+  });
 }

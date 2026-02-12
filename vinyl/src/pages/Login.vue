@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { currentUser, userLoaded } from '../firebaseApp';
 import { signIn, signUp } from '../services/users';
