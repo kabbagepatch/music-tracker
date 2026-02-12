@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { Vinyl } from '../types';
+
 
 defineProps<{
-  vinyls: any[]
+  vinyls: Vinyl[]
 }>()
 
 </script>

@@ -1,49 +1,48 @@
 <script setup lang="ts">
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
-import NavBar from './components/NavBar.vue';
-import VinylDetails from './components/VinylDetails.vue';
-import AddVinylModal from './components/AddVinylModal.vue';
-import PlayVinylModal from './components/PlayVinylModal.vue';
+import NavBar from '../components/NavBar.vue';
+import VinylDetails from '../components/VinylDetails.vue';
+import AddVinylModal from '../components/AddVinylModal.vue';
+import PlayVinylModal from '../components/PlayVinylModal.vue';
+import * as service from '../services/vinyls';
+import type { Vinyl } from '../types';
 
 const router = useRouter();
 const route = useRoute();
 const vinylId = route.params.id as string;
 
-const vinyl: any = ref({});
+const vinyl = ref<Vinyl>();
 const showEditModal = ref(false);
 const showPlayModal = ref(false);
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
-const getVinyl = (id: string) => {
-  axios.get(`${apiUrl}/vinyls/${id}`).then(result => {
-    vinyl.value = result.data
-  }).catch(e => {
+const getVinyl = async (id: string) => {
+  try {
+    vinyl.value = await service.getVinyl(id);
+  } catch (e) {
     console.log(e);
-  })
+  }
 }
-watch(() => vinylId, (newValue) => {
-  getVinyl(newValue);
-})
+watch(() => vinylId, getVinyl)
 getVinyl(vinylId);
 
-const updateVinyl = (data: any) => {
-  axios.put(`${apiUrl}/vinyls/${vinylId}`, data).then(result => {
-    vinyl.value = result.data;
-    showEditModal.value = false;
-  }).catch(e => {
+const updateVinyl = async (data: any) => {
+  try {
+    vinyl.value = await service.updateVinyl(vinylId, data);
+  } catch (e) {
     console.log(e);
-  })
+  }
 }
 
-const deleteVinyl = () => {
+const deleteVinyl = async () => {
   if (confirm('Are you sure you want to delete this vinyl from your catalog?')) {
-    axios.delete(`${apiUrl}/vinyls/${vinylId}`).then(_ => {
-      router.replace('/catalog');
-    }).catch(e => {
+    try {
+      await service.deleteVinyl(vinylId);(`${apiUrl}/vinyls/${vinylId}`)
+    } catch(e : any) {
       alert(e.response.data);
-    });
+    };
   }
 }
 
@@ -53,15 +52,19 @@ const openPlayModal = () => {
 
 const playVinyl = async (sides: Boolean[]) => {
   const sidesPlayed = sides.map((_, i) => i + 1)
-  await axios.post(`${apiUrl}/vinyls/${vinylId}/plays`, { sides: sidesPlayed }).catch(e => { console.log(e); });
-  router.push('/');
+  try {
+    await service.playVinyl(vinylId, { sides: sidesPlayed });
+    router.push('/');
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 </script>
 
 <template>
-  <AddVinylModal v-if="showEditModal" @close="showEditModal = false" :selected-vinyl="vinyl" @save-vinyl="updateVinyl" />
-  <PlayVinylModal v-if="showPlayModal" @close="showPlayModal = false" :vinyl="vinyl" @play-vinyl="playVinyl" />
+  <AddVinylModal v-if="showEditModal && vinyl" @close="showEditModal = false" :selected-vinyl="vinyl" @save-vinyl="updateVinyl" />
+  <PlayVinylModal v-if="showPlayModal && vinyl" @close="showPlayModal = false" :vinyl="vinyl" @play-vinyl="playVinyl" />
   <div class="header">
     <h2>Catalog</h2>
     <div class="button-container">
@@ -70,7 +73,7 @@ const playVinyl = async (sides: Boolean[]) => {
       <button class="header-button" id="delete" @click="deleteVinyl">🗑</button>
     </div>
   </div>
-  <VinylDetails v-if="vinyl.album" :vinyl="vinyl" @play="openPlayModal" />
+  <VinylDetails v-if="vinyl" :vinyl="vinyl" @play="openPlayModal" />
   <NavBar />
 </template>
 

@@ -1,37 +1,32 @@
 <script setup lang="ts">
-import axios from 'axios';
-import { ref } from 'vue'
-import VinylList from './components/VinylList.vue';
-import VinylTiles from './components/VinylTiles.vue';
-import NavBar from './components/NavBar.vue';
+import { ref } from 'vue';
 
-const view = ref(localStorage.getItem('vinyl-catalog-view') || 'tile');
+import VinylList from '../components/VinylList.vue';
+import VinylTiles from '../components/VinylTiles.vue';
+import NavBar from '../components/NavBar.vue';
+import { getVinyls } from '../services/vinyls';
+import type { Vinyl } from '../types';
 
-const vinyls: any = ref([]);
-let vinylData: any[] = [];
-
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
-axios.get(`${apiUrl}/vinyls`).then(result => {
-  result.data.sort((a: any, b: any) => a.artist.toLowerCase() > b.artist.toLowerCase() ? 1 : -1);
-  result.data.sort((a: any, b: any) => a.favorite && !b.favorite ? -1 : 1);
-  vinyls.value = result.data
-  vinylData = [].concat(result.data);
-}).catch(e => {
-  console.log(e);
-})
+const vinyls = ref<Vinyl[]>([]);
+let vinylData: Vinyl[] = [];
+getVinyls().then(data => {
+  vinyls.value = data
+  vinylData = ([] as Vinyl[]).concat(data);
+});
 
 const search = ref('');
 const onSearch = () => {
   if (search.value)
-    vinyls.value = vinylData.filter((v: any) => (
+    vinyls.value = vinylData.filter(v => (
       v.album.toLowerCase().includes(search.value.toLowerCase()) 
       || v.artist.toLowerCase().includes(search.value.toLowerCase())
     ));
   else {
-    vinyls.value = ([] as any[]).concat(vinylData)
+    vinyls.value = ([] as Vinyl[]).concat(vinylData)
   }
 }
 
+const view = ref(localStorage.getItem('vinyl-catalog-view') || 'tile');
 const toggleView = (v : 'tile' | 'list') => {
   view.value = v;
   localStorage.setItem('vinyl-catalog-view', v);
@@ -44,10 +39,10 @@ const toggleView = (v : 'tile' | 'list') => {
     <div class="action-bar">
       <input class="album-search" v-model="search" type="text" placeholder="Search catalog..." @input="onSearch" />
       <button :class="`view-toggle ${view === 'tile' ? 'selected' : ''}`" @click="toggleView('tile')">
-        <img class="icon" src="./assets/icons/catalog.png" />
+        <img class="icon" src="../assets/icons/catalog.png" />
       </button>
       <button :class="`view-toggle ${view === 'list' ? 'selected'  : ''}`" @click="toggleView('list')">
-        <img class="icon" src="./assets/icons/list.png" />
+        <img class="icon" src="../assets/icons/list.png" />
       </button>
     </div>
     <VinylList v-if="view == 'list'" :vinyls="vinyls" v-on:vinyl-select="(vinyl : any) => $router.push(`/catalog/${vinyl.id}`)" />

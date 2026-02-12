@@ -1,14 +1,15 @@
 <script setup lang="ts">
+import type { Vinyl } from '../types';
 
 const props = defineProps<{
-  vinyls: any[],
+  vinyls: Vinyl[],
   onVinylSelect?: any,
-  onAdd?: any
+  onAdd?: Function,
 }>()
 
-const addClick = (e: any, vinyl: any) => {
+const addClick = (e: PointerEvent, vinyl: Vinyl) => {
   e.stopPropagation();
-  props.onAdd(vinyl);
+  if (props.onAdd) props.onAdd(vinyl);
 }
 
 </script>

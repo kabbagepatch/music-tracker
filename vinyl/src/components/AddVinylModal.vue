@@ -1,25 +1,24 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import Modal from './Modal.vue';
-import axios from 'axios';
 import VinylDetails from './VinylDetails.vue';
+import type { Vinyl } from '../types';
+import { getDiscogsVinyl } from '../services/vinyls';
 
 const props = defineProps<{
-  selectedVinyl: any,
-  onSaveVinyl: any,
+  selectedVinyl: Vinyl,
+  onSaveVinyl: Function,
 }>();
 
-const album = ref(props.selectedVinyl?.album || '');
-const artist = ref(props.selectedVinyl?.artist || '');
-const nSides = ref(props.selectedVinyl?.nSides || '2');
-const discColor = ref(props.selectedVinyl?.discColor || '#000000');
+const album = ref(props.selectedVinyl.album || '');
+const artist = ref(props.selectedVinyl.artist || '');
+const nSides = ref(props.selectedVinyl.nSides || '2');
+const discColor = ref(props.selectedVinyl.discColor || '#000000');
 
 const vinyl: any = ref({});
 if (props.selectedVinyl.discogsId) {
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
-  axios.get(`${apiUrl}/vinyls/album/discogs/${props.selectedVinyl.discogsId}`).then(result => {
-    vinyl.value = result.data
-    console.log(result.data);
+  getDiscogsVinyl(props.selectedVinyl.discogsId).then(result => {
+    vinyl.value = result;
   }).catch(e => {
     console.log(e);
   })

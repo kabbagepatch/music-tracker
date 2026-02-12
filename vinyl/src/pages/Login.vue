@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { currentUser, userLoaded } from './firebaseApp';
-import { signIn, signUp } from './services/users';
+import { currentUser, userLoaded } from '../firebaseApp';
+import { signIn, signUp } from '../services/users';
 
 const EMAIL_REGEX = /^\S+@\S+\.\S+$/;
 

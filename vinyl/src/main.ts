@@ -1,15 +1,15 @@
 import { createApp, watch } from 'vue'
 import { createWebHistory, createRouter } from 'vue-router'
 
+import { currentUser, userLoaded } from './firebaseApp';
 import App from './App.vue'
 import './style.css';
 
-import PlayHistory from './PlayHistory.vue'
-import VinylCatalog from './VinylCatalog.vue'
-import VinylPage from './VinylPage.vue';
-import AddVinyl from './AddVinyl.vue'
-import { currentUser, userLoaded } from './firebaseApp';
-import Login from './Login.vue';
+import PlayHistory from './pages/PlayHistory.vue'
+import VinylCatalog from './pages/VinylCatalog.vue'
+import VinylPage from './pages/VinylPage.vue';
+import AddVinyl from './pages/AddVinyl.vue'
+import Login from './pages/Login.vue';
 
 const routes = [
   { path: '/login', component: Login },

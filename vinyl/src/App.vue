@@ -22,7 +22,7 @@ const onLogout = async () => {
   <div class="header">
     <div class="title">
       <img :style="{ width: '50px', height: '50px' }" src="./assets/vinyl.png" />
-      <h1>Vinyl Tracker</h1>
+      <a href="/" :style="{ color: 'white' }"><h1>Vinyl Tracker</h1></a>
     </div>
     <button v-if="userLoaded && currentUser" class="icon-button" @click="onLogout"><img class="icon" src="./assets/icons/logout.png" /></button>
   </div>

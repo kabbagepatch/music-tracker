@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import axios from 'axios';
 import { ref } from 'vue'
-import NavBar from './components/NavBar.vue';
+import NavBar from '../components/NavBar.vue';
+import { getPlayHistory } from '../services/vinyls';
 
 let playHistory: any = ref([]);
 
 const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' } as const;
 const timeOptions = { hour: 'numeric', minute: '2-digit' } as const;
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
-axios.get(`${apiUrl}/vinyls/history`).then(r => {
-  playHistory.value = r.data.map((a: any) => {
+getPlayHistory().then(result => {
+  playHistory.value = result.map((a: any) => {
     const date = new Date(a.timestamp);
     return {
       ...a,

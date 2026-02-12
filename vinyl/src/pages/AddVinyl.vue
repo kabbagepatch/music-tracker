@@ -1,53 +1,54 @@
 <script setup lang="ts">
-import axios from 'axios';
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import NavBar from './components/NavBar.vue';
-import VinylList from './components/VinylList.vue';
-import AddVinylModal from './components/AddVinylModal.vue';
+import NavBar from '../components/NavBar.vue';
+import VinylList from '../components/VinylList.vue';
+import AddVinylModal from '../components/AddVinylModal.vue';
+import type { Vinyl } from '../types';
+import { createVinyl, searchVinyls } from '../services/vinyls';
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const router = useRouter();
 const route = useRoute();
 
 const showModal = ref(false);
-const selectedVinyl = ref({ album: '', artist: '', imageUrl: '', discogsId: undefined });
+const selectedVinyl = ref<Vinyl>();
 
-const selectVinyl = (vinyl: any) => {
+const selectVinyl = (vinyl: Vinyl) => {
+  console.log(vinyl);
   selectedVinyl.value = vinyl;
   showModal.value = true;
 }
 
-const manualAdd = () => {
-  selectedVinyl.value = { album: '', artist: '', imageUrl: '', discogsId: undefined };
-  showModal.value = true;
-}
+// const manualAdd = () => {
+//   selectedVinyl.value = { album: '', artist: '' };
+//   showModal.value = true;
+// }
 
-const onSaveVinyl = () => {
-  axios.post(`${apiUrl}/vinyls`, { discogsId: selectedVinyl.value.discogsId }).then(result => {
-    console.log(result);
+const onSaveVinyl = async () => {
+  if (!selectedVinyl.value) return;
+
+  try {
+    await createVinyl(selectedVinyl.value.discogsId);
     showModal.value = false;
     localStorage.removeItem('search-term');
     router.push('/catalog');
-  }).catch(e => {
+  } catch (e) {
     console.log(e);
-  });
+  }
 }
 
-const results: any = ref([]);
-const search = ref(route.query?.search || localStorage.getItem('search-term'));
+const results = ref<any>([]);
+const search = ref(route.query?.search as string || localStorage.getItem('search-term'));
 const searchAlbum = async () => {
   if (!search.value) return;
   localStorage.setItem('search-term', search.value as string);
-  axios.get(`${apiUrl}/vinyls/album/discogs/search?album=${search.value}`).then(result => {
-    results.value = result.data.map((v: any) => ({
-      album: v.title,
-      artist: v.discColor,
-      ...v
-    }))
-  }).catch(e => {
-    console.log(e);
-  });
+  const vinylResults = await searchVinyls(search.value);
+  results.value = vinylResults.map(v => ({
+    discogsId: v.discogsId,
+    album: v.title,
+    artist: v.discColor,
+    imageUrl: v.imageUrl,
+  }));
 }
 const onSearch = () => {
   if (search.value) {
@@ -64,9 +65,9 @@ searchAlbum();
 
 <template>
   <AddVinylModal
+    v-if="showModal && selectedVinyl"
     :selectedVinyl="selectedVinyl"
     :onSaveVinyl="onSaveVinyl"
-    v-if="showModal"
     v-on:close="showModal = false"
   />
 
@@ -75,10 +76,10 @@ searchAlbum();
     <button class="search-button" @click="onSearch()">🔍</button>
   </div>
   <VinylList :vinyls="results" @add="selectVinyl" />
-  <div class="manual-add-row">
+  <!-- <div class="manual-add-row">
     Manually Add Vinyl
     <button class="add-button" @click="manualAdd">+</button>
-  </div>
+  </div> -->
   <NavBar />
 </template>
 
