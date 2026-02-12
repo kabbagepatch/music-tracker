@@ -76,7 +76,7 @@ export const searchVinyls = async (term: string) : Promise<DiscogsVinyl[]> => {
 
 export const getDiscogsVinyl = async (discogsId: string) : Promise<Vinyl | undefined> => {
   try {
-    const response = await service.get(`music/discogs/${discogsId}`);
+    const response = await service.get(`music/discogs/release/${discogsId}`);
     return response.data;
   } catch (e) {
     console.log(e);

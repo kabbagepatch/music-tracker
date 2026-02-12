@@ -13,9 +13,9 @@ defineProps<{
     <div class="album-tile" v-for="vinyl in vinyls" @click="$router.push(`/catalog/${vinyl.id}`)">
       <img v-if="vinyl.imageUrl" class="album-art" :src="vinyl.imageUrl" :alt="vinyl.album">
       <div v-else class="album-art" :style="{ marginBottom: '10px', backgroundColor: 'black' }" />
+      <div v-if="vinyl.favorite" class="icon-container"><img class="icon" src="../assets/icons/heart-filled.png" /></div>
       <div class="album">{{ vinyl.album.length > 13 ? vinyl.album.slice(0, 12).trim() + '..' : vinyl.album }}</div>
       <div class="artist">{{ vinyl.artist.length > 14 ? vinyl.artist.slice(0, 13).trim() + '..' : vinyl.artist }}</div>
-      <div v-if="vinyl.favorite" class="icon-container"><img class="icon" src="../assets/icons/heart-filled.png" /></div>
     </div>
   </div>
 </template>
@@ -31,6 +31,7 @@ defineProps<{
   }
 
   .album-tile {
+    position: relative;
     width: 105px;
     height: 160px;
     background-color: rgb(41, 41, 41);
@@ -45,6 +46,7 @@ defineProps<{
   }
 
   .album-art {
+    position: relative;
     width: 102px;
     height: 102px;
   }
@@ -63,9 +65,12 @@ defineProps<{
   }
 
   .icon-container {
+    position: absolute;
+    top: 0;
+    right: 0;
     text-align: right;
-    margin-top: -4px;
-    margin-right: -4px;
+    margin-top: 8px;
+    margin-right: 10px;
   }
   
   .icon {
