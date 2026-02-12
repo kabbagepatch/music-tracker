@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import axios, { AxiosError } from 'axios';
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import NavBar from '../components/NavBar.vue';
@@ -42,7 +41,7 @@ const deleteVinyl = async () => {
       await service.deleteVinyl(vinylId);(`${apiUrl}/vinyls/${vinylId}`)
     } catch(e : any) {
       alert(e.response.data);
-    };
+    }
   }
 }
 

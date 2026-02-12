@@ -70,3 +70,7 @@ export const getPlayHistory = async () : Promise<VinylPlay[]> => {
     return [];
   }
 }
+
+export const playVinyl = async (id: string, data: { sides: number[] }) => {
+  await service.post(`/vinyls/${id}/plays`, data);
+}
