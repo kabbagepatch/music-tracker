@@ -76,7 +76,7 @@ const addClick = (e: PointerEvent, vinyl: Vinyl) => {
 
   .add-button {
     font-size: 24px;
-    line-height: 1em;
+    line-height: 0.9em;
     padding: 6px 12px;
   }
 </style>

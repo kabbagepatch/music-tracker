@@ -8,13 +8,15 @@ import './style.css';
 import PlayHistory from './pages/PlayHistory.vue'
 import VinylCatalog from './pages/VinylCatalog.vue'
 import VinylPage from './pages/VinylPage.vue';
-import AddVinyl from './pages/AddVinyl.vue'
+import SearchVinyl from './pages/SearchVinyl.vue'
 import Login from './pages/Login.vue';
+import AddVinyl from './pages/AddVinyl.vue';
 
 const routes = [
   { path: '/login', component: Login },
   { path: '/catalog', component: VinylCatalog, meta: { requiresAuth: true }, },
-  { path: '/catalog/add', component: AddVinyl, meta: { requiresAuth: true }, },
+  { path: '/catalog/add', component: SearchVinyl, meta: { requiresAuth: true }, },
+  { path: '/catalog/add/:id', component: AddVinyl, meta: { requiresAuth: true }, },
   { path: '/catalog/:id', component: VinylPage, meta: { requiresAuth: true }, },
   { path: '/', component: PlayHistory, meta: { requiresAuth: true }, },
 ]

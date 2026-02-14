@@ -64,15 +64,7 @@ const playVinyl = async (sides: Boolean[]) => {
 <template>
   <AddVinylModal v-if="showEditModal && vinyl" @close="showEditModal = false" :selected-vinyl="vinyl" @save-vinyl="updateVinyl" />
   <PlayVinylModal v-if="showPlayModal && vinyl" @close="showPlayModal = false" :vinyl="vinyl" @play-vinyl="playVinyl" />
-  <div class="header">
-    <h2>Catalog</h2>
-    <div class="button-container">
-      <button class="header-button" id="back" @click="$router.back()">←</button>
-      <button class="header-button" id="edit" @click="showEditModal = true">✎</button>
-      <button class="header-button" id="delete" @click="deleteVinyl">🗑</button>
-    </div>
-  </div>
-  <VinylDetails v-if="vinyl" :vinyl="vinyl" @play="openPlayModal" />
+  <VinylDetails :vinyl="vinyl" @play="openPlayModal" />
   <NavBar />
 </template>
 

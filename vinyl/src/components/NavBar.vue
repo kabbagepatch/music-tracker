@@ -1,4 +1,37 @@
 <script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const showDropdown = ref(false);
+
+const toggleDropdown = () => {
+  showDropdown.value = !showDropdown.value;
+};
+
+const close = (e : any) => {
+  const className = e.target.classList[0];
+  if (!className?.includes('add-button')) {
+    showDropdown.value = false;
+  }
+};
+
+const addActivity = () => {
+  router.push('/catalog');
+}
+
+const addToCatalog = () => {
+  router.push('/catalog/add');
+}
+
+onMounted(() => {
+  document.addEventListener('click', close);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', close);
+});
 </script>
 
 <template>
@@ -18,12 +51,20 @@
         <img class="icon" src="../assets/icons/list.png" />
         <span class="tab-name">Catalog</span>
       </div>
-      <div :style="{ width: '120px', background: 'rgb(41, 41, 41)' }" />
-      <button
-        @click="$router.push($route.path.includes('catalog') ? '/catalog/add' : '/catalog')"
-      >
-        <img class="button-icon" src="../assets/icons/plus.png" />
-      </button>
+      <div :style="{ width: '250px', background: 'rgb(41, 41, 41)' }" />
+      <div class="add-button-container">
+        <div v-if="showDropdown" class="dropdown">
+          <button class="option" @click="addActivity">Add Activity</button>
+          <button class="option" @click="addToCatalog">Add to Catalog</button>
+        </div>
+        <button
+          class="add-button"
+          @click="toggleDropdown"
+          >
+          <!-- @click="$router.push($route.path.includes('catalog') ? '/catalog/add' : '/catalog')" -->
+          <img class="add-button-icon" src="../assets/icons/plus.png" />
+        </button>
+      </div>
     </div>
   </footer>
 </template>
@@ -40,7 +81,6 @@
 
   .tabs {
     display: flex;
-    /* width: calc(100% - 50px); */
   }
   
   .tab {
@@ -59,36 +99,65 @@
     font-weight: bold;
     background-color: #1a1a1a;
     height: 60px;
-    margin-top: -5px;
+    margin-top: -10px;
   }
   
   .icon {
-    margin-bottom: 30px;
     width: 20px;
   }
 
-  .tab-name {
+  .tab-name, .icon {
     margin-bottom: 30px;
   }
 
-  button {
+  .selected .tab-name, .selected .icon {
+    margin-bottom: 20px;
+  }
+
+  .dropdown {
+    width: 190px;
+    background-color: rgb(41, 41, 41);
+    padding: 10px;
+    margin-left: -130px;
+    margin-top: -110px;
+    position: fixed;
+    right: 40;
+    bottom: 40;
+    font-size: 18px;
+  }
+
+  .dropdown .option {
+    width: 100%;
+    text-align: left;
+    background-color: #1a1a1a;
+    padding: 10px 15px;
+    margin-top: 5px;
+  }
+
+  .add-button-container {
     background-color: rgb(41, 41, 41);
     position: fixed;
     right: 0;
     bottom: 0;
     border-radius: 50%;
+    width: 95px;
+    height: 95px;
+  }
+
+  .add-button {
+    background-color: #1a1a1a;
+    border-radius: 50%;
     width: 75px;
     height: 75px;
     font-size: 42px;
     padding: 0;
-    border: 2px solid #bebebe;
-    margin: 4px;
+    margin: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
-  .button-icon {
+  .add-button-icon {
     width: 32px;
   }
 </style>

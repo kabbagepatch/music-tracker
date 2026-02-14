@@ -1,6 +1,7 @@
 export interface Vinyl {
   id: string,
-  discogsId?: string,
+  discogsReleaseId?: string,
+  discogsMastersId?: string,
   userId: string,
   album: string,
   artist: string,
@@ -13,6 +14,8 @@ export interface Vinyl {
   albumImageUrl: string,
   vinylImageUrl: string,
   published: string,
+  discogsId?: string,
+  barcode?: string,
 };
 
 export interface VinylPlay {

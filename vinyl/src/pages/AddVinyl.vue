@@ -1,35 +1,33 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import NavBar from '../components/NavBar.vue';
-import VinylList from '../components/VinylList.vue';
-import AddVinylModal from '../components/AddVinylModal.vue';
+import VinylDetails from '../components/VinylDetails.vue';
+import * as service from '../services/vinyls';
 import type { Vinyl } from '../types';
-import { createVinyl, searchVinyls } from '../services/vinyls';
 
-const router = useRouter();
 const route = useRoute();
+const router = useRouter();
+const vinylId = route.params.id as string;
 
-const showModal = ref(false);
-const selectedVinyl = ref<Vinyl>();
+const vinyl = ref<Vinyl>();
 
-const selectVinyl = (vinyl: Vinyl) => {
-  console.log(vinyl);
-  selectedVinyl.value = vinyl;
-  showModal.value = true;
+const getDiscogsVinyl = async (id: string) => {
+  try {
+    vinyl.value = await service.getDiscogsVinyl(id);
+    console.log(vinyl.value);
+  } catch (e) {
+    console.log(e);
+  }
 }
+watch(() => vinylId, getDiscogsVinyl)
+getDiscogsVinyl(vinylId);
 
-// const manualAdd = () => {
-//   selectedVinyl.value = { album: '', artist: '' };
-//   showModal.value = true;
-// }
-
-const onSaveVinyl = async () => {
-  if (!selectedVinyl.value) return;
+const onAddVinyl = async () => {
+  if (!vinyl.value) return;
 
   try {
-    await createVinyl(selectedVinyl.value.discogsId);
-    showModal.value = false;
+    await service.createVinyl(vinyl.value.discogsId);
     localStorage.removeItem('search-term');
     router.push('/catalog');
   } catch (e) {
@@ -37,49 +35,10 @@ const onSaveVinyl = async () => {
   }
 }
 
-const results = ref<any>([]);
-const search = ref(route.query?.search as string || localStorage.getItem('search-term'));
-const searchAlbum = async () => {
-  if (!search.value) return;
-  localStorage.setItem('search-term', search.value as string);
-  const vinylResults = await searchVinyls(search.value);
-  results.value = vinylResults.map(v => ({
-    discogsId: v.discogsId,
-    album: v.title,
-    artist: v.discColor,
-    imageUrl: v.imageUrl,
-  }));
-}
-const onSearch = () => {
-  if (search.value) {
-    searchAlbum();
-    router.replace(`/catalog/add?search=${search.value}`)
-  } else {
-    results.value = [];
-    router.replace('/catalog/add')
-  }
-}
-searchAlbum();
-
 </script>
 
 <template>
-  <AddVinylModal
-    v-if="showModal && selectedVinyl"
-    :selectedVinyl="selectedVinyl"
-    :onSaveVinyl="onSaveVinyl"
-    v-on:close="showModal = false"
-  />
-
-  <div class="action-bar">
-    <input class="album-search" v-model="search" type="text" placeholder="Search for albums..." @change="onSearch" />
-    <button class="search-button" @click="onSearch()">🔍</button>
-  </div>
-  <VinylList :vinyls="results" @add="selectVinyl" />
-  <!-- <div class="manual-add-row">
-    Manually Add Vinyl
-    <button class="add-button" @click="manualAdd">+</button>
-  </div> -->
+  <VinylDetails :vinyl="vinyl" :onAdd="onAddVinyl" />
   <NavBar />
 </template>
 
@@ -90,47 +49,32 @@ searchAlbum();
     justify-content: space-between;
   }
 
-  .header button {
+  .button-container {
+    height: 30px;
     margin-bottom: 20px;
   }
 
-  .action-bar {
-    display: flex;
-    align-items: center;
+  .header-button {
+    width: 40px;
+    height: 30px;
+    padding: 0;
+    line-height: 0;
   }
 
-  .album-search {
-    margin: 8px 0;
-    width: calc(100% - 16px);
-    padding: 8px 0;
-    padding-left: 16px;
-    font-size: 16px;
-    border-radius: 20px;
-    border: none;
+  #back {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+    height: 32px;
   }
 
-  .search-button {
-    width: 40px;
-    height: 40px;
-    padding: 0;
+  #edit {
+    background-color: rgb(48, 50, 121);
+    border-radius: 0;
+  }
+
+  #delete {
+    background-color: rgb(139, 46, 46);
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-  }
-
-  .manual-add-row {
-    background-color: rgb(41, 41, 41);
-    padding: 6px 6px 6px 12px;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .add-button {
-    font-size: 24px;
-    line-height: 1em;
-    padding: 6px 12px;
   }
 </style>
