@@ -10,12 +10,12 @@ defineProps<{
 
 <template>
   <div class="albums">
-    <div class="album-tile" v-for="vinyl in vinyls" @click="$router.push(`/catalog/${vinyl.id}`)">
+    <div class="album-tile" v-for="vinyl in vinyls" @click="$router.push(`/catalog/${vinyl.id}`)"  :style="{ backgroundColor: vinyl?.albumColors?.length ? vinyl.albumColors[0] + '20' : 'rgb(41, 41, 41)' }">
       <img v-if="vinyl.imageUrl" class="album-art" :src="vinyl.imageUrl" :alt="vinyl.album">
       <div v-else class="album-art" :style="{ marginBottom: '10px', backgroundColor: 'black' }" />
       <div v-if="vinyl.favorite" class="icon-container"><img class="icon" src="../assets/icons/heart-filled.png" /></div>
       <div class="album">{{ vinyl.album.length > 13 ? vinyl.album.slice(0, 12).trim() + '..' : vinyl.album }}</div>
-      <div class="artist">{{ vinyl.artist.length > 14 ? vinyl.artist.slice(0, 13).trim() + '..' : vinyl.artist }}</div>
+      <div class="artist" :style="{ color: vinyl?.albumColors?.length ? vinyl.albumColors[0] : 'white', }">{{ vinyl.artist.length > 14 ? vinyl.artist.slice(0, 13).trim() + '..' : vinyl.artist }}</div>
     </div>
   </div>
 </template>
@@ -35,7 +35,7 @@ defineProps<{
     width: 105px;
     height: 160px;
     background-color: rgb(41, 41, 41);
-    padding: 6px;
+    padding: 6px 8px;
     border-radius: 5px;
     cursor: pointer;
     transition: box-shadow 0.25s;
@@ -70,7 +70,7 @@ defineProps<{
     right: 0;
     text-align: right;
     margin-top: 8px;
-    margin-right: 10px;
+    margin-right: 12px;
   }
   
   .icon {

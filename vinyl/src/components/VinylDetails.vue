@@ -10,7 +10,7 @@ defineProps<{
 </script>
 
 <template>
-  <section class="vinyl-header">
+  <section class="vinyl-header" :style="{ background: vinyl?.albumColors?.length ? vinyl.albumColors[0] + '25' : '#3b3b3b75' }" >
     <img class="vinyl-art" v-if="vinyl?.imageUrl" :src="vinyl?.imageUrl" :alt="vinyl?.album" />
     <div class="vinyl-art" v-else />
     <div class="vinyl-details">
@@ -22,18 +22,18 @@ defineProps<{
       <div class="published">Disk: {{ vinyl?.discColor }}</div>
     </div>
     <div :style="{ width: '40px' }" />
-    <button class="back-button" @click="$router.back()">
+    <button v-if="onAdd" class="back-button" @click="$router.back()">
       <img src="../assets/icons/back.png" />
     </button>
   </section>
-  <section class="button-container">
+  <section class="button-container" :style="{ background: vinyl?.albumColors?.length ? vinyl.albumColors[0] + '25' : '#3b3b3b75' }" >
     <button
       v-if="onPlay"
       :style="{ background: vinyl?.albumColors?.length ? vinyl.albumColors[0] : 'white' }"
       class="play-button"
       @click="onPlay"
     >
-      Play Vinyl
+      ▶ Play Vinyl
     </button>
     <button
       v-if="onAdd"
@@ -41,7 +41,7 @@ defineProps<{
       class="play-button"
       @click="onAdd"
     >
-      Add To Catalog
+      + Add To Catalog
     </button>
     <hr class="line" :style="{ borderColor: vinyl?.albumColors?.length ? vinyl.albumColors[0] : 'white' }" />
   </section>
@@ -74,6 +74,7 @@ defineProps<{
       </div>
     </div>
   </section>
+  <br v-if="onAdd" />
 </template>
 
 <style scoped>
@@ -87,7 +88,7 @@ defineProps<{
     position: absolute;
     right: 0;
     margin-top: -2px;
-    margin-right: 5px;
+    margin-right: 8px;
     padding: 0;
     background: none;
   }
@@ -97,11 +98,17 @@ defineProps<{
     margin-top: 5px;
   }
 
+  .vinyl-header {
+    display: flex;
+    padding: 12px 8px 24px 8px;
+    margin: 0 -16px;
+  }
+
   .button-container {
-    width: 100%;
     text-align: center;
     position: relative;
-    margin-bottom: 0;
+    padding-bottom: 12px;
+    margin: 0 -16px 12px -16px;
   }
 
   .line {
@@ -114,15 +121,13 @@ defineProps<{
   .play-button {
     color: black;
     font-size: 20px;
-    padding: 4px 16px;
+    padding: 4px 20px;
+    padding-top: 2px;
     font-weight: bold;
     margin: 10px 0;
     z-index: 2;
     position: relative;
-  }
-
-  .vinyl-header {
-    display: flex;
+    border-radius: 20px;
   }
 
   .vinyl-art {

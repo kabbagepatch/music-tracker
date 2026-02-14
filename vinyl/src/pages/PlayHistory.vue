@@ -23,7 +23,7 @@ getPlayHistory().then(result => {
 <template>
   <h2>Activity</h2>
   <div class="plays">
-    <div class="play-item" v-for="row in playHistory">
+    <div class="play-item" v-for="row in playHistory" :style="{ backgroundColor: row?.albumColors?.length ? row.albumColors[0] + '10' : 'rgb(41, 41, 41)' }">
       <div class="album-info" @click="$router.push(`/catalog/${row.vinylId}`)">
         <img class="album-art" :src="row.imageUrl" :alt="row.album">
         <div>

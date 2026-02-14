@@ -51,7 +51,7 @@ onBeforeUnmount(() => {
         <img class="icon" src="../assets/icons/list.png" />
         <span class="tab-name">Catalog</span>
       </div>
-      <div :style="{ width: '250px', background: 'rgb(41, 41, 41)' }" />
+      <div :style="{ width: '250px', background: 'rgb(54, 54, 54)' }" />
       <div class="add-button-container">
         <div v-if="showDropdown" class="dropdown">
           <button class="option" @click="addActivity">Add Activity</button>
@@ -71,7 +71,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
   footer {
-    background-color: rgb(41, 41, 41);
+    background-color: rgb(54, 54, 54);
     position: fixed;
     bottom: 0;
     left: 0;
@@ -87,7 +87,7 @@ onBeforeUnmount(() => {
     width: 100%;
     text-align: center;
     padding-top: 10px;
-    background-color: rgb(41, 41, 41);
+    background-color: rgb(54, 54, 54);
     font-size: 20px;
     display: flex;
     justify-content: center;
@@ -115,10 +115,10 @@ onBeforeUnmount(() => {
   }
 
   .dropdown {
-    width: 190px;
-    background-color: rgb(41, 41, 41);
+    width: 250px;
+    background-color: rgb(54, 54, 54);
     padding: 10px;
-    margin-left: -130px;
+    margin-left: -200px;
     margin-top: -110px;
     position: fixed;
     right: 40;
@@ -135,7 +135,7 @@ onBeforeUnmount(() => {
   }
 
   .add-button-container {
-    background-color: rgb(41, 41, 41);
+    background-color: rgb(54, 54, 54);
     position: fixed;
     right: 0;
     bottom: 0;

@@ -16,13 +16,13 @@ const addClick = (e: PointerEvent, vinyl: Vinyl) => {
 
 <template>
   <div class="albums">
-    <div class="album-item" v-for="vinyl in vinyls" @click="onVinylSelect(vinyl)">
+    <div class="album-item" v-for="vinyl in vinyls" @click="onVinylSelect(vinyl)" :style="{ backgroundColor: vinyl?.albumColors?.length ? vinyl.albumColors[0] + '10' : 'rgb(41, 41, 41)' }">
       <div class="album-info">
         <img v-if="vinyl.imageUrl" class="album-art" :src="vinyl.imageUrl" :alt="vinyl.album">
         <div v-else class="album-art" :style="{ backgroundColor: 'black' }" />
         <div class="album-name">
           <div class="album">{{ vinyl.album }}</div>
-          <div class="artist">{{ vinyl.artist }}</div>
+          <div class="artist" :style="{ color: vinyl?.albumColors?.length ? vinyl.albumColors[0] : 'white', }">{{ vinyl.artist }}</div>
         </div>
       </div>
       <div v-if="vinyl.favorite" class="icon-container"><img class="icon" src="../assets/icons/heart-filled.png" /></div>

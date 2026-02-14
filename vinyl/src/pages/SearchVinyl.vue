@@ -41,7 +41,9 @@ searchAlbum();
 <template>
   <div class="action-bar">
     <input class="album-search" v-model="search" type="text" placeholder="Search for albums..." @change="onSearch" />
-    <button class="search-button" @click="onSearch()">🔍</button>
+    <button class="search-button" @click="onSearch()">
+      <img class="icon" src="../assets/icons/search.png" />
+    </button>
   </div>
   <VinylList :vinyls="results" @add="selectVinyl" @vinylSelect="selectVinyl" />
   <NavBar />
@@ -78,7 +80,7 @@ searchAlbum();
   .search-button {
     width: 40px;
     height: 40px;
-    padding: 0;
+    padding: 8px;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
