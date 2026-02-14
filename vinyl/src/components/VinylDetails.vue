@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Vinyl } from '../types';
 
-const props = defineProps<{
+defineProps<{
   vinyl?: Vinyl,
   onPlay?: any,
   onAdd?: any,
