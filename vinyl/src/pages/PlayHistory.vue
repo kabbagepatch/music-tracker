@@ -35,7 +35,7 @@ getPlayHistory().then(result => {
         </div>
       </div>
       <div>
-        <div class="date">{{ row.dateString }}</div>
+        <div class="date" :style="{ color: row?.albumColors?.length ? row.albumColors[0] : 'white' }">{{ row.dateString }}</div>
         <div class="time">{{ row.timeString }}</div>
       </div>
     </div>

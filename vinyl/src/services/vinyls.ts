@@ -55,6 +55,11 @@ export const getVinyl = async (id: string): Promise<Vinyl> => {
   return response.data;
 }
 
+export const favoriteVinyl = async (id: string, favorite: boolean): Promise<Vinyl> => {
+  const response = await service.put(`/vinyls/${id}/favorite`, { favorite });
+  return response.data;
+}
+
 export const updateVinyl = async (id: string, data: Vinyl): Promise<Vinyl> => {
   const response = await service.put(`/vinyls/${id}`, data);
   return response.data;

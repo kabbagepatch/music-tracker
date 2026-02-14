@@ -27,6 +27,17 @@ const getVinyl = async (id: string) => {
 watch(() => vinylId, getVinyl)
 getVinyl(vinylId);
 
+const favoriteVinyl = async () => {
+  if (!vinyl.value) return;
+
+  try {
+    await service.favoriteVinyl(vinylId, !vinyl.value.favorite)
+    vinyl.value.favorite = !vinyl.value?.favorite;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 const updateVinyl = async (data: any) => {
   try {
     vinyl.value = await service.updateVinyl(vinylId, data);
@@ -65,6 +76,18 @@ const playVinyl = async (sides: Boolean[]) => {
   <AddVinylModal v-if="showEditModal && vinyl" @close="showEditModal = false" :selected-vinyl="vinyl" @save-vinyl="updateVinyl" />
   <PlayVinylModal v-if="showPlayModal && vinyl" @close="showPlayModal = false" :vinyl="vinyl" @play-vinyl="playVinyl" />
   <VinylDetails :vinyl="vinyl" @play="openPlayModal" />
+  <div class="buttons">
+    <button class="icon-button" @click="favoriteVinyl()">
+      <img v-if="vinyl?.favorite" class="icon" src="../assets/icons/heart-filled.png" />
+      <img v-else class="icon" src="../assets/icons/heart.png" />
+    </button>
+    <button class="icon-button" @click="showEditModal = true">
+      <img class="icon" src="../assets/icons/edit.png" />
+    </button>
+    <button class="icon-button" @click="deleteVinyl()">
+      <img class="icon" src="../assets/icons/delete.png" />
+    </button>
+  </div>
   <NavBar />
 </template>
 
@@ -102,5 +125,14 @@ const playVinyl = async (sides: Boolean[]) => {
     background-color: rgb(139, 46, 46);
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+  }
+
+  .buttons {
+    margin-bottom: 40px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
   }
 </style>

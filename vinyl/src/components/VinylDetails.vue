@@ -1,6 +1,8 @@
 <script setup lang="ts">
-defineProps<{
-  vinyl?: any,
+import type { Vinyl } from '../types';
+
+const props = defineProps<{
+  vinyl?: Vinyl,
   onPlay?: any,
   onAdd?: any,
 }>()
@@ -14,7 +16,7 @@ defineProps<{
     <div class="vinyl-details">
       <h2 v-if="vinyl?.album" class="album">{{ vinyl?.album }}</h2>
       <h2 v-else class="album">Loading...</h2>
-      <h3 class="artist" :style="{ color: 'white' }">{{ vinyl?.artist }}</h3>
+      <h3 class="artist" :style="{ color: vinyl?.albumColors?.length ? vinyl.albumColors[0] : 'white', }">{{ vinyl?.artist }}</h3>
       <div class="published">Released: {{ vinyl?.published }}</div>
       <div v-if="vinyl?.barcode" class="published">Bar Code: {{ vinyl?.barcode }}</div>
       <div class="published">Disk: {{ vinyl?.discColor }}</div>
@@ -25,9 +27,23 @@ defineProps<{
     </button>
   </section>
   <section class="button-container">
-    <button v-if="onPlay" :style="{ background: 'black' }" class="play-button" @click="onPlay">Play Vinyl</button>
-    <button v-if="onAdd" :style="{ background: 'black' }" class="play-button" @click="onAdd">Add To Catalog</button>
-    <hr class="line" />
+    <button
+      v-if="onPlay"
+      :style="{ background: vinyl?.albumColors?.length ? vinyl.albumColors[0] : 'white' }"
+      class="play-button"
+      @click="onPlay"
+    >
+      Play Vinyl
+    </button>
+    <button
+      v-if="onAdd"
+      :style="{ background: vinyl?.albumColors?.length ? vinyl.albumColors[0] : 'white' }"
+      class="play-button"
+      @click="onAdd"
+    >
+      Add To Catalog
+    </button>
+    <hr class="line" :style="{ borderColor: vinyl?.albumColors?.length ? vinyl.albumColors[0] : 'white' }" />
   </section>
   <section>
     <h3 class="subheader">Genres</h3>
@@ -36,8 +52,8 @@ defineProps<{
         <div
           class="tag"
           :style="{
-            color: 'white',
-            borderColor: 'white'
+            color: vinyl?.albumColors?.length ? vinyl.albumColors[0] : 'white',
+            borderColor: vinyl?.albumColors?.length ? vinyl.albumColors[0] : 'white'
           }"
         >{{ tag }}</div>
       </div>
@@ -48,7 +64,7 @@ defineProps<{
     <div class="tracks">
       <div v-for="(track) in vinyl?.tracks">
         <div class="track">
-          <span class="track-index">
+          <span class="track-index" :style="{ color: vinyl?.albumColors?.length ? vinyl.albumColors[0] : 'white', }">
             {{ track.position }}.
           </span>
           <span>
@@ -58,7 +74,6 @@ defineProps<{
       </div>
     </div>
   </section>
-  <br />
 </template>
 
 <style scoped>
@@ -71,7 +86,8 @@ defineProps<{
     height: 36px;
     position: absolute;
     right: 0;
-    margin-right: 10px;
+    margin-top: -2px;
+    margin-right: 5px;
     padding: 0;
     background: none;
   }
@@ -96,6 +112,10 @@ defineProps<{
   }
   
   .play-button {
+    color: black;
+    font-size: 20px;
+    padding: 4px 16px;
+    font-weight: bold;
     margin: 10px 0;
     z-index: 2;
     position: relative;

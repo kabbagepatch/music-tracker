@@ -9,13 +9,17 @@ export interface Vinyl {
   discColor: string,
   favorite: boolean,
   genres: string[],
-  tracks: string[],
+  tracks: {
+    position: string,
+    title: string,
+  }[],
   imageUrl: string,
   albumImageUrl: string,
   vinylImageUrl: string,
   published: string,
   discogsId?: string,
   barcode?: string,
+  albumColors?: string[],
 };
 
 export interface VinylPlay {
@@ -38,4 +42,5 @@ export interface DiscogsVinyl {
   imageUrl: string,
   discColor: string,
   barcode: string,
+  albumColors?: string[],
 }

@@ -44,4 +44,9 @@ const onLogout = async () => {
     align-items: center;
     gap: 10px;
   }
+
+  .icon-button {
+    margin-top: -10px;
+    margin-right: -10px;
+  }
 </style>
