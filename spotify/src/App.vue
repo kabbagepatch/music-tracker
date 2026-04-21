@@ -5,6 +5,19 @@
 </template>
 
 <script setup lang="ts">
+import { load } from '@tauri-apps/plugin-store';
+import { processExtendedData } from './spotify-data-explorer';
+
+const getExtendedData = async () => {
+  const store = await load('store.json');
+  const processed = await store.get('full-history-processed');
+  if (!processed) {
+    await processExtendedData();
+  }
+}
+
+getExtendedData();
+
 </script>
 
 <style>
@@ -50,9 +63,15 @@
   --text-outline: hsl(26, 42%, 19%);
 }
 
- @media (min-width: 768px) {
+ @media (min-width: 400px) {
   :root {
-    --width: 500px;
+    --width: 390px;
+  }
+}
+
+ @media (min-width: 460px) {
+  :root {
+    --width: 450px;
   }
 }
 

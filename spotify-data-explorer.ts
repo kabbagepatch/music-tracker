@@ -38,11 +38,11 @@ type SongStats = {
 type ArtistStats = { [artistName: string]: SongStats };
 type AlbumStats = { [albumName: string]: SongStats };
 
-const EXTENDED_HISTORY_PATH = './data/Spotify Extended Streaming History/';
-const PROCESSSED_DATA_PATH = './data/processed';
-const FULL_SONGS_STATS_PATH = './data/processed/fullSongStats.json';
-const FULL_ARTISTS_STATS_PATH = './data/processed/fullArtistStats.json';
-const FULL_ALBUM_STATS_PATH = './data/processed/fullAlbumStats.json';
+const EXTENDED_HISTORY_PATH = './assets/data/Spotify Extended Streaming History/';
+const PROCESSSED_DATA_PATH = './assets/data/processed';
+const FULL_SONGS_STATS_PATH = './assets/data/processed/fullSongStats.json';
+const FULL_ARTISTS_STATS_PATH = './assets/data/processed/fullArtistStats.json';
+const FULL_ALBUM_STATS_PATH = './assets/data/processed/fullAlbumStats.json';
 const YEARLY_DATA_PATH = (year : string | number) => `${PROCESSSED_DATA_PATH}/yearly/${year}`;
 const MONTHLY_DATA_PATH = (year : string | number, month: string | number) => `${YEARLY_DATA_PATH(year)}/${month}`;
 const SONG_STATS_PATH = (year : string | number, month: string | number) => `${MONTHLY_DATA_PATH(year, month)}/songStats.json`;
@@ -214,12 +214,12 @@ const getTopItemsForYear = (items: 'songs' | 'artists' | 'albums', year: string 
   });
 }
 
-// for (let year = 2024; year <= 2025; year++) {
-//   console.log(`\n=== Stats for ${year} ===`);
-//   getTopItemsForYear('songs', year, 5, true);
-//   getTopItemsForYear('artists', year, 5, true);
-//   getTopItemsForYear('albums', year, 5, true);
-// }
+for (let year = 2024; year <= 2025; year++) {
+  console.log(`\n=== Stats for ${year} ===`);
+  getTopItemsForYear('songs', year, 5, true);
+  getTopItemsForYear('artists', year, 5, true);
+  getTopItemsForYear('albums', year, 5, true);
+}
 
 const getTopItems = (items: 'songs' | 'artists' | 'albums', limit = 5, fromMonth = 0, fromYear = 0, toMonth = 0, toYear = 0) => {
   const yearFolders = fs.readdirSync(`${PROCESSSED_DATA_PATH}/yearly/`, { withFileTypes: true }).filter((d:any) => d.isDirectory()).map((d:any) => d.name);
@@ -260,9 +260,9 @@ const getTopItems = (items: 'songs' | 'artists' | 'albums', limit = 5, fromMonth
   });
 }
 
-getTopItems('songs', 5, 1, 2021);
-getTopItems('artists', 5, 1, 2021);
-getTopItems('albums', 5, 1, 2021);
+// getTopItems('songs', 5, 1, 2021);
+// getTopItems('artists', 5, 1, 2021);
+// getTopItems('albums', 5, 1, 2021);
 
 const getTopSongsBy = (artistName: string, limit=10) => {
   const statsFile = FULL_ARTISTS_STATS_PATH;

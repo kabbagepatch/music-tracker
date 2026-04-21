@@ -1,3 +1,4 @@
+import { BaseDirectory, readFile, readTextFile } from '@tauri-apps/plugin-fs';
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -67,26 +68,27 @@ export const useTrackerStore = defineStore('tracker', () => {
 
   const getTopTracks = async (year : string, month : string | undefined = undefined) => {
     try {
-        if (month) {
+      if (month) {
         if (monthlyTopTracks.value[year] && monthlyTopTracks.value[year][month]) {
           return monthlyTopTracks.value[year][month];
         }
-        const module = await import(`../assets/data/processed/yearly/${year}/${month}/topSongs.json`)
+        const module = await readTextFile(`processedHistory/yearly/${year}/${month}/topSongs.json`, { baseDir: BaseDirectory.AppData })
         if (!monthlyTopTracks.value[year]) {
           monthlyTopTracks.value[year] = {};
         }
-        monthlyTopTracks.value[year][month] = module.default;
+        monthlyTopTracks.value[year][month] = JSON.parse(module);
         return monthlyTopTracks.value[year][month];
       }
       
       if (yearlyTopTracks.value[year]) {
         return yearlyTopTracks.value[year];
       }
-      const module = await import(`../assets/data/processed/yearly/${year}/topSongs.json`);
-      yearlyTopTracks.value[year] = module.default as TotalsList;
+      const module = await readTextFile(`processedHistory/yearly/${year}/topSongs.json`, { baseDir: BaseDirectory.AppData });
+      yearlyTopTracks.value[year] = JSON.parse(module) as TotalsList;
       return yearlyTopTracks.value[year];
     } catch (error) {
       console.log(`Error loading top tracks for ${year}${month ? `/${month}` : ''}`);
+      console.log(error);
       return [];
     }
   }
@@ -97,19 +99,19 @@ export const useTrackerStore = defineStore('tracker', () => {
         if (monthlyTopArtists.value[year] && monthlyTopArtists.value[year][month]) {
           return monthlyTopArtists.value[year][month];
         }
-        const module = await import(`../assets/data/processed/yearly/${year}/${month}/topArtists.json`)
+        const module = await readTextFile(`processedHistory/yearly/${year}/${month}/topArtists.json`, { baseDir: BaseDirectory.AppData })
         if (!monthlyTopArtists.value[year]) {
           monthlyTopArtists.value[year] = {};
         }
-        monthlyTopArtists.value[year][month] = module.default;
+        monthlyTopArtists.value[year][month] = JSON.parse(module);
         return monthlyTopArtists.value[year][month];
       }
       
       if (yearlyTopArtists.value[year]) {
         return yearlyTopArtists.value[year];
       }
-      const module = await import(`../assets/data/processed/yearly/${year}/topArtists.json`);
-      yearlyTopArtists.value[year] = module.default as TotalsList;
+      const module = await readTextFile(`processedHistory/yearly/${year}/topArtists.json`, { baseDir: BaseDirectory.AppData });
+      yearlyTopArtists.value[year] = JSON.parse(module) as TotalsList;
       return yearlyTopArtists.value[year];
     } catch (error) {
       console.log(`Error loading top artists for ${year}${month ? `/${month}` : ''}`);
@@ -123,19 +125,19 @@ export const useTrackerStore = defineStore('tracker', () => {
         if (monthlyTopAlbums.value[year] && monthlyTopAlbums.value[year][month]) {
           return monthlyTopAlbums.value[year][month];
         }
-        const module = await import(`../assets/data/processed/yearly/${year}/${month}/topAlbums.json`)
+        const module = await readTextFile(`processedHistory/yearly/${year}/${month}/topAlbums.json`, { baseDir: BaseDirectory.AppData })
         if (!monthlyTopAlbums.value[year]) {
           monthlyTopAlbums.value[year] = {};
         }
-        monthlyTopAlbums.value[year][month] = module.default;
+        monthlyTopAlbums.value[year][month] = JSON.parse(module);
         return monthlyTopAlbums.value[year][month];
       }
       
       if (yearlyTopAlbums.value[year]) {
         return yearlyTopAlbums.value[year];
       }
-      const module = await import(`../assets/data/processed/yearly/${year}/topAlbums.json`);
-      yearlyTopAlbums.value[year] = module.default as TotalsList;
+      const module = await readTextFile(`processedHistory/yearly/${year}/topAlbums.json`, { baseDir: BaseDirectory.AppData });
+      yearlyTopAlbums.value[year] = JSON.parse(module) as TotalsList;
       return yearlyTopAlbums.value[year];
     } catch (error) {
       console.log(`Error loading top albums for ${year}${month ? `/${month}` : ''}`);
@@ -199,8 +201,8 @@ export const useTrackerStore = defineStore('tracker', () => {
 
   const getTrackStats = async (trackKey: string) => {
     if (!fullTrackStats.value || Object.keys(fullTrackStats.value).length === 0) {
-      const module = await import(`../assets/data/processed/fullSongStats.json`);
-      fullTrackStats.value = module.default as TrackStats;
+      const module = await readTextFile(`processedHistory/fullSongStats.json`, { baseDir: BaseDirectory.AppData });
+      fullTrackStats.value = JSON.parse(module) as TrackStats;
     }
 
     if (!fullTrackStats.value[trackKey]) {
@@ -233,8 +235,8 @@ export const useTrackerStore = defineStore('tracker', () => {
 
   const getArtistStats = async (artistName: string) => {
     if (!fullArtistStats.value || Object.keys(fullArtistStats.value).length === 0) {
-      const module = await import(`../assets/data/processed/fullArtistStats.json`);
-      const fullStats = module.default as ({ [artist: string]: TrackStats });
+      const module = await readTextFile(`processedHistory/fullArtistStats.json`, { baseDir: BaseDirectory.AppData });
+      const fullStats = JSON.parse(module) as ({ [artist: string]: TrackStats });
       if (!fullStats[artistName]) return;
 
       Object.keys(fullStats).forEach(artist => {
@@ -280,8 +282,8 @@ export const useTrackerStore = defineStore('tracker', () => {
 
   const getAlbumStats = async (albumKey: string) => {
     if (!fullAlbumStats.value || Object.keys(fullAlbumStats.value).length === 0) {
-      const module = await import(`../assets/data/processed/fullAlbumStats.json`);
-      const fullStats = module.default as ({ [album: string]: TrackStats });
+      const module = await readTextFile(`processedHistory/fullAlbumStats.json`, { baseDir: BaseDirectory.AppData });
+      const fullStats = JSON.parse(module) as ({ [album: string]: TrackStats });
       if (!fullStats[albumKey]) return;
 
       Object.keys(fullStats).forEach(album => {

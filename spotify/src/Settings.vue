@@ -17,13 +17,13 @@
           "
         />
       </button>
-      <label for="file-input">
+      <label class="file-upload" for="file-input">
         <title-card
           title="Upload Spotify History"
           iconName="cells"
           :subtitles="[
             'Upload a zip file containing the Spotify Extended Streaming History folder',
-            'Last Uploaded: Never'
+            `Last Uploaded: ${lastUpload}`
           ]"
         />
       </label>
@@ -35,6 +35,8 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import * as JSZip from 'jszip'
+import * as taurifs from '@tauri-apps/plugin-fs';
+import * as tauristore from '@tauri-apps/plugin-store';
 
 import TitleCard from "./components/TitleCard.vue";
 import Header from "./Header.vue";
@@ -42,6 +44,8 @@ import Header from "./Header.vue";
 import { conntectToSpotify } from "./services/connectToSpotify.ts";
 import { useUserStore } from "./stores/user.ts";
 import { setTheme } from "./themes.ts";
+import { ref } from "vue";
+import { processExtendedData } from "./spotify-data-explorer.ts";
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
@@ -63,18 +67,41 @@ const connectToSpotifyClick = () => {
   conntectToSpotify();
 };
 
+const lastUpload = ref('Never');
+const getLastUpload = async () => {
+  const store = await tauristore.load('store.json');
+  const lastUploadValue = await store.get<number>('last-upload-history');
+  if (lastUploadValue) {
+    lastUpload.value = `${new Date(lastUploadValue).toDateString()}`;
+  }
+}
+getLastUpload();
+
 const uploadZip = async (e: Event) => {
+  const store = await tauristore.load('store.json');
   const input = e.target as HTMLInputElement;
   if (!input.files) return;
   const file = input.files[0];
   const files = (await JSZip.loadAsync(file)).files;
-  Object.entries(files).filter(([fileName]) => fileName.endsWith('.json')).forEach(async ([fileName, fileData]) => {
-    const data = JSON.parse(await fileData.async('string'));
-    console.log(fileName);
-    console.log(data.length);
-    console.log(data[0].master_metadata_track_name);
-    console.log(data[0].ts);
-  })
+  const exists = await taurifs.exists('rawExtendedHistory', { baseDir: taurifs.BaseDirectory.AppData })
+  if (!exists) {
+    await taurifs.mkdir('rawExtendedHistory', { baseDir: taurifs.BaseDirectory.AppData })
+  }
+  const date = Date.now();
+  await store.set('last-upload-history', date);
+  await store.set('full-history-processed', false);
+  lastUpload.value = `${new Date(date).toDateString()}`;
+  for (const [fileName, fileData] of Object.entries(files)) {
+    if (!fileName.endsWith('.json')) continue;
+    const name = fileName.split('/').pop();
+    if (!name) continue;
+    const data = await fileData.async('uint8array');
+    store.save()
+    await taurifs.writeFile(`rawExtendedHistory/${name}`, data, { baseDir: taurifs.BaseDirectory.AppData });
+  }
+  await store.save();
+
+  processExtendedData();
 }
 
 </script>
@@ -100,5 +127,9 @@ button, label {
 .icon {
   margin: 5px 10px;
   height: 30px;
+}
+
+.file-upload {
+  cursor: pointer;
 }
 </style>
