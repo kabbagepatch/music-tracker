@@ -82,6 +82,12 @@ getExtendedData();
   justify-content: center;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 h1, button, .h1 {
   font-family: Pixels, Inter, Avenir, Helvetica, Arial, sans-serif;
   text-shadow: -1.5px -1.5px 0 var(--text-outline), 1.5px -1.5px 0 var(--text-outline), -1.5px 1.5px 0 var(--text-outline), 1.5px 1.5px 0 var(--text-outline);

@@ -28,7 +28,7 @@ const routes = [
   { path: '/tracker/extended/albums/:album', component: AlbumStats },
   { path: '/tracker/extended/custom', component: CustomStats },
   { path: '/settings', component: Settings },
-  { path: '/', component: Home },
+  { path: '/', component: ExtendedStats },
 ]
 
 const pinia = createPinia()

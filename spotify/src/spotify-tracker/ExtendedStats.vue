@@ -1,12 +1,12 @@
 <template>
   <div class="container">
-    <Header />
+    <Header :rightButtonClick="goToSettings" />
     <button>
       <router-link to="/tracker/extended/year/2025">
         <title-card
           title="Yearly"
           iconName="year"
-          :subtitles="['View your Top Tracks and Artists by year']"
+          :subtitles="['View your Top Tracks and Artists by year', 'A true Spotify Wrapped']"
         />
       </router-link>
     </button>
@@ -32,11 +32,21 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from "vue-router";
 import TitleCard from "../components/TitleCard.vue";
 import Header from "../Header.vue";
+
+const router = useRouter();
+const goToSettings = () => {
+  router.push('/settings');
+}
 </script>
 
 <style scoped>
+.header {
+  margin-bottom: 10px;
+}
+
 button {
   margin-top: 4px;
   margin-bottom: 12px;

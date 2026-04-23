@@ -65,12 +65,6 @@ getUser().then(user => {
   width: 100%;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
 .header .icon {
   display: block;
   margin-right: 10px;

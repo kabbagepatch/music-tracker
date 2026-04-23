@@ -109,7 +109,7 @@ const toggleCardThree = () => {
 }
 
 .summary {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   margin-left: 10px;
   font-family: monospace;
   font-weight: bold;
@@ -120,7 +120,7 @@ const toggleCardThree = () => {
 }
 
 .section {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   font-family: Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 24px;
@@ -178,7 +178,7 @@ const toggleCardThree = () => {
 }
 
 .left-entry {
-  width: calc(var(--width) - 100px);
+  width: calc(var(--width) - 80px);
   display: flex;
   flex-wrap: nowrap;
   white-space: nowrap;

@@ -28,7 +28,7 @@ const router = useRouter();
 const route = useRoute();
 
 const defaultIcon = ref('vinyl-transparent')
-const defaultTitle = ref('Spotify Player and Tracker');
+const defaultTitle = ref('Spotify Tracker');
 const rightIcon = ref('back')
 const routeParts = route.fullPath.split('/');
 if (routeParts.length > 1) {
@@ -66,8 +66,8 @@ const onRightButtonClick = () => {
   width: var(--width);
   display: flex;
   align-items: center;
-  margin-top: -5px;
-  margin-bottom: 10px;
+  margin-top: -10px;
+  margin-bottom: 5px;
 }
 
 .header .icon {

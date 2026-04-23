@@ -51,13 +51,6 @@ trackerStore.getTopItems('albums', from, to).then(data => {
 </script>
 
 <style scoped>
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
 .header h1 {
   text-align: center;
   margin: 0;

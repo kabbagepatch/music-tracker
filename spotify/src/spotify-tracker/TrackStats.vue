@@ -10,7 +10,7 @@
     </div>
     <card v-if="track" class="plays-card">
       <h1>Plays</h1>
-      <div class="plays" v-for="play in (showAll ? track.plays : track.plays.slice(0, 10))">
+      <div class="plays" v-for="play in (showAll ? track.plays : track.plays.slice(0, 12))">
         <div>{{ play.dateString }}</div>
         <div>{{ play.timeString }} for {{ play.timePlayed }}</div>
       </div>
