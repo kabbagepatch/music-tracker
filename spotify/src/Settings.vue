@@ -17,7 +17,18 @@
           "
         />
       </button>
-      <label class="file-upload" for="file-input">
+      
+      <button @click="uploadZip">
+        <title-card
+          title="Upload Spotify History"
+          iconName="cells"
+          :subtitles="[
+            'Upload a zip file containing the Spotify Extended Streaming History folder',
+            `Last Uploaded: ${lastUpload}`
+          ]"
+        />
+      </button>
+      <!-- <label class="file-upload" for="file-input">
         <title-card
           title="Upload Spotify History"
           iconName="cells"
@@ -27,15 +38,15 @@
           ]"
         />
       </label>
-      <input id="file-input" type="file" accept=".zip" hidden @change="uploadZip" />
+      <input id="file-input" type="file" accept=".zip" hidden @change="uploadZip" /> -->
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import * as JSZip from 'jszip'
-import * as taurifs from '@tauri-apps/plugin-fs';
+import { open } from '@tauri-apps/plugin-dialog';
+import { invoke } from '@tauri-apps/api/core';
 import * as tauristore from '@tauri-apps/plugin-store';
 
 import TitleCard from "./components/TitleCard.vue";
@@ -45,7 +56,6 @@ import { conntectToSpotify } from "./services/connectToSpotify.ts";
 import { useUserStore } from "./stores/user.ts";
 import { setTheme } from "./themes.ts";
 import { ref } from "vue";
-import { processExtendedData } from "./spotify-data-explorer.ts";
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
@@ -78,30 +88,19 @@ const getLastUpload = async () => {
 getLastUpload();
 
 const uploadZip = async (e: Event) => {
-  const store = await tauristore.load('store.json');
-  const input = e.target as HTMLInputElement;
-  if (!input.files) return;
-  const file = input.files[0];
-  const files = (await JSZip.loadAsync(file)).files;
-  const exists = await taurifs.exists('rawExtendedHistory', { baseDir: taurifs.BaseDirectory.AppData })
-  if (!exists) {
-    await taurifs.mkdir('rawExtendedHistory', { baseDir: taurifs.BaseDirectory.AppData })
-  }
-  const date = Date.now();
-  await store.set('last-upload-history', date);
-  await store.set('full-history-processed', false);
-  lastUpload.value = `${new Date(date).toDateString()}`;
-  for (const [fileName, fileData] of Object.entries(files)) {
-    if (!fileName.endsWith('.json')) continue;
-    const name = fileName.split('/').pop();
-    if (!name) continue;
-    const data = await fileData.async('uint8array');
-    store.save()
-    await taurifs.writeFile(`rawExtendedHistory/${name}`, data, { baseDir: taurifs.BaseDirectory.AppData });
-  }
-  await store.save();
+  console.log(await invoke('greet', { name: 'kav' }));
 
-  processExtendedData();
+  const selected = await open({
+    multiple: false,
+    filters: [{ name: 'ZIP Archive', extensions: ['zip'] }]
+  });
+
+  if (selected) {
+    lastUpload.value = 'Upload in progress...';
+    const response = await invoke('process_zip_file', { filePath: selected });
+    console.log(response);
+    getLastUpload();
+  }
 }
 
 </script>

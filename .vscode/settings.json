@@ -1,0 +1,5 @@
+{
+  "rust-analyzer.linkedProjects": [
+    "spotify/src-tauri/Cargo.toml"
+  ]
+}

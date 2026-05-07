@@ -19,10 +19,7 @@ type SongEntryData = {
 type YearlyStats = {
   [year: string]: {
     [month: number]: {
-      [key: string]: {
-        msPlayed: number;
-        playCount: number;
-      };
+      [key: string]: Entry;
     }
   }
 };

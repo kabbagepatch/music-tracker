@@ -5,6 +5,7 @@
         <div><span class="summary-value">{{ item.value }}</span> {{ item.key }}</div>
       </div>
     </div>
+    <chart />
     <div class="section" v-if="cardOne.entries.length && displayCardOne">
       <card>
         <button class="title-button" @click="toggleCardOne"><h1 class="title">{{ cardOne.title }}</h1></button>
@@ -62,6 +63,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import Card from "../components/Card.vue";
+import Chart from "./Chart.vue";
 
 defineProps<{
   summary: { key: string; value: string | number | undefined }[],
