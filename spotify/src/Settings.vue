@@ -28,17 +28,6 @@
           ]"
         />
       </button>
-      <!-- <label class="file-upload" for="file-input">
-        <title-card
-          title="Upload Spotify History"
-          iconName="cells"
-          :subtitles="[
-            'Upload a zip file containing the Spotify Extended Streaming History folder',
-            `Last Uploaded: ${lastUpload}`
-          ]"
-        />
-      </label>
-      <input id="file-input" type="file" accept=".zip" hidden @change="uploadZip" /> -->
     </div>
   </main>
 </template>
@@ -87,9 +76,7 @@ const getLastUpload = async () => {
 }
 getLastUpload();
 
-const uploadZip = async (e: Event) => {
-  console.log(await invoke('greet', { name: 'kav' }));
-
+const uploadZip = async (_: Event) => {
   const selected = await open({
     multiple: false,
     filters: [{ name: 'ZIP Archive', extensions: ['zip'] }]
@@ -97,10 +84,14 @@ const uploadZip = async (e: Event) => {
 
   if (selected) {
     lastUpload.value = 'Upload in progress...';
-    const response = await invoke('process_zip_file', { filePath: selected });
-    console.log(response);
-    invoke('process_raw_history');
+    try {
+      const response = await invoke('process_zip_file', { filePath: selected });
+      console.log(response);
+    } catch (e) {
+      lastUpload.value = 'There was an error during the upload';
+    }
     getLastUpload();
+    invoke('process_raw_history');
   }
 }
 

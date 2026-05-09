@@ -14,23 +14,23 @@ pub struct RawTrackData {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Entry {
-  pub ms_played: i32,
-  pub play_count: i32,
+    pub ms_played: i32,
+    pub play_count: i32,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TrackData {
-  pub id: String,
-  pub track_name: String,
-  pub artist_name: String,
-  pub album_name: String,
+    pub id: String,
+    pub track_name: String,
+    pub artist_name: String,
+    pub album_name: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TrackEntryData {
-  pub track: TrackData,
-  pub time_stamp: String,
-  pub ms_played: i32,
+    pub track: TrackData,
+    pub time_stamp: String,
+    pub ms_played: i32,
 }
 
 pub type EntryStats = HashMap<String, Entry>;
