@@ -6,17 +6,17 @@
 
 <script setup lang="ts">
 import { load } from '@tauri-apps/plugin-store';
-import { processExtendedData } from './spotify-data-explorer';
+import { invoke } from '@tauri-apps/api/core';
 
-const getExtendedData = async () => {
+const invokeProcessing = async () => {
   const store = await load('store.json');
   const processed = await store.get('full-history-processed');
   if (!processed) {
-    await processExtendedData();
+    invoke('process_raw_history');
   }
 }
 
-getExtendedData();
+invokeProcessing();
 
 </script>
 

@@ -99,6 +99,7 @@ const uploadZip = async (e: Event) => {
     lastUpload.value = 'Upload in progress...';
     const response = await invoke('process_zip_file', { filePath: selected });
     console.log(response);
+    invoke('process_raw_history');
     getLastUpload();
   }
 }
