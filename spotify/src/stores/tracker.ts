@@ -1,6 +1,6 @@
-import { BaseDirectory, readFile, readTextFile } from '@tauri-apps/plugin-fs';
+import { BaseDirectory, readTextFile } from '@tauri-apps/plugin-fs';
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { Ref, ref } from 'vue'
 
 export interface TrackTotals { msPlayed: number; playCount: number; }
 export type TotalsList = [ string, TrackTotals ][];
@@ -55,6 +55,101 @@ export interface AlbumStats {
   }
 };
 
+const createTopItemLoader = (fileName: string, yearlyCache: Ref<YearlyTotals>, monthlyCache: Ref<MonthlyTotals>) => {
+  return async (year: string, month?: string) => {
+    try {
+      if (month) {
+        if (monthlyCache.value[year]?.[month]) {
+          return monthlyCache.value[year][month];
+        }
+        const module = await readTextFile(`processed_history/${year}/${month}/${fileName}`, { baseDir: BaseDirectory.AppData })
+        monthlyCache.value[year] ??= {};
+        monthlyCache.value[year][month] = JSON.parse(module).map(trasformEntry);
+        return monthlyCache.value[year][month];
+      }
+      
+      if (yearlyCache.value[year]) {
+        return yearlyCache.value[year];
+      }
+      const module = await readTextFile(`processed_history/${year}/${fileName}`, { baseDir: BaseDirectory.AppData });
+      yearlyCache.value[year] = JSON.parse(module).map(trasformEntry) as TotalsList;
+      return yearlyCache.value[year];
+    } catch (error) {
+      console.log(`Error loading ${fileName} for ${year}${month ? `/${month}` : ''}`);
+      console.log(error);
+      return [];
+    }
+  }
+}
+
+const createFullStatsLoader = (fileName: string, statsCache: Ref<ArtistStats | AlbumStats>, createBaseEntry: (key: string) => any) => {
+  return async (key: string) => {
+    if (!statsCache.value || Object.keys(statsCache.value).length === 0) {
+      const module = await readTextFile(`processed_history/${fileName}`, { baseDir: BaseDirectory.AppData });
+      const fullStats = JSON.parse(module) as ({ [artist: string]: TrackStats });
+      if (!fullStats[key]) return;
+
+      Object.keys(fullStats).forEach(entryKey  => {
+        statsCache.value[entryKey] ??= createBaseEntry(entryKey);
+        statsCache.value[entryKey].tracks = fullStats[entryKey] as TrackStats;
+      });
+    }
+
+    const stats = statsCache.value[key];
+    if (stats.computed) {
+      return stats;
+    }
+    console.log(`Computing stats for: ${key}`);
+    Object.keys(stats.tracks).forEach(key => {
+      stats.tracks[key] = trasformFullStats(stats.tracks[key]);
+    });
+    Object.entries(stats.tracks).sort((a, b) => b[1].plays.length - a[1].plays.length).forEach(([key, entry]) => {
+      stats.topTracks.push({ ...entry.info, key, playCount: entry.plays.length });
+    });
+  
+    let firstTimestamps : { [key : string]: number } = {};
+    stats.totalPlays = 0;
+    let totalMsPlayed = 0;
+    Object.keys(stats.tracks).forEach(key => {
+      firstTimestamps[key] = stats.tracks[key].plays.map(play => new Date(play.timeStamp).getTime()).sort((a, b) => a - b)[0];
+      stats.totalPlays += stats.tracks[key].plays.length;
+      totalMsPlayed += stats.tracks[key].plays.reduce((sum, play) => sum + play.msPlayed, 0);
+    });
+    const totalHours = Math.floor(totalMsPlayed / 3600000);
+    const totalMinutes = Math.floor((totalMsPlayed % 3600000) / 60000);
+    const totalSeconds = Math.floor((totalMsPlayed % 60000) / 1000);
+    stats.timePlayed = `${totalHours}h ${totalMinutes}m ${totalSeconds}s`;
+
+    const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' } as const;
+    Object.entries(firstTimestamps).sort((a, b) => (a[1] - b[1])).forEach(([key, timeStamp]) => {
+      const date = new Date(timeStamp);
+      stats.firstTracks.push({ ...stats.tracks[key].info, key, firstPlayed: date.toLocaleDateString('en-US', dateOptions) });
+    });
+    stats.computed = true;
+
+    return stats;
+  }
+}
+
+const trasformEntry = (item: any) => {
+  return [item[0], { "msPlayed": item[1].ms_played, "playCount": item[1].play_count, }];
+}
+
+const trasformFullStats = (item: any) => {
+  return {
+    info: {
+      id: item.info.id,
+      trackName: item.info.track_name,
+      artistName: item.info.artist_name,
+      albumName: item.info.album_name,
+    },
+    plays: item.plays.map((i: any) => ({
+      msPlayed: i.ms_played,
+      timeStamp: i.time_stamp,
+    })),
+  };
+}
+
 export const useTrackerStore = defineStore('tracker', () => {
   const yearlyTopTracks = ref<YearlyTotals>({});
   const monthlyTopTracks = ref<MonthlyTotals>({});
@@ -62,88 +157,16 @@ export const useTrackerStore = defineStore('tracker', () => {
   const monthlyTopArtists = ref<MonthlyTotals>({});
   const yearlyTopAlbums = ref<YearlyTotals>({});
   const monthlyTopAlbums = ref<MonthlyTotals>({});
+  const yearlyTopPerDays = ref<YearlyTotals>({});
+  const monthlyTopPerDays = ref<MonthlyTotals>({});
   const fullTrackStats = ref<TrackStats>({});
   const fullArtistStats = ref<ArtistStats>({});
   const fullAlbumStats = ref<AlbumStats>({});
 
-  const getTopTracks = async (year : string, month : string | undefined = undefined) => {
-    try {
-      if (month) {
-        if (monthlyTopTracks.value[year] && monthlyTopTracks.value[year][month]) {
-          return monthlyTopTracks.value[year][month];
-        }
-        const module = await readTextFile(`processedHistory/yearly/${year}/${month}/topSongs.json`, { baseDir: BaseDirectory.AppData })
-        if (!monthlyTopTracks.value[year]) {
-          monthlyTopTracks.value[year] = {};
-        }
-        monthlyTopTracks.value[year][month] = JSON.parse(module);
-        return monthlyTopTracks.value[year][month];
-      }
-      
-      if (yearlyTopTracks.value[year]) {
-        return yearlyTopTracks.value[year];
-      }
-      const module = await readTextFile(`processedHistory/yearly/${year}/topSongs.json`, { baseDir: BaseDirectory.AppData });
-      yearlyTopTracks.value[year] = JSON.parse(module) as TotalsList;
-      return yearlyTopTracks.value[year];
-    } catch (error) {
-      console.log(`Error loading top tracks for ${year}${month ? `/${month}` : ''}`);
-      console.log(error);
-      return [];
-    }
-  }
-
-  const getTopArtists = async (year : string, month : string | undefined = undefined) => {
-    try {
-      if (month) {
-        if (monthlyTopArtists.value[year] && monthlyTopArtists.value[year][month]) {
-          return monthlyTopArtists.value[year][month];
-        }
-        const module = await readTextFile(`processedHistory/yearly/${year}/${month}/topArtists.json`, { baseDir: BaseDirectory.AppData })
-        if (!monthlyTopArtists.value[year]) {
-          monthlyTopArtists.value[year] = {};
-        }
-        monthlyTopArtists.value[year][month] = JSON.parse(module);
-        return monthlyTopArtists.value[year][month];
-      }
-      
-      if (yearlyTopArtists.value[year]) {
-        return yearlyTopArtists.value[year];
-      }
-      const module = await readTextFile(`processedHistory/yearly/${year}/topArtists.json`, { baseDir: BaseDirectory.AppData });
-      yearlyTopArtists.value[year] = JSON.parse(module) as TotalsList;
-      return yearlyTopArtists.value[year];
-    } catch (error) {
-      console.log(`Error loading top artists for ${year}${month ? `/${month}` : ''}`);
-      return [];
-    }
-  }
-
-  const getTopAlbums = async (year : string, month : string | undefined = undefined) => {
-    try {
-      if (month) {
-        if (monthlyTopAlbums.value[year] && monthlyTopAlbums.value[year][month]) {
-          return monthlyTopAlbums.value[year][month];
-        }
-        const module = await readTextFile(`processedHistory/yearly/${year}/${month}/topAlbums.json`, { baseDir: BaseDirectory.AppData })
-        if (!monthlyTopAlbums.value[year]) {
-          monthlyTopAlbums.value[year] = {};
-        }
-        monthlyTopAlbums.value[year][month] = JSON.parse(module);
-        return monthlyTopAlbums.value[year][month];
-      }
-      
-      if (yearlyTopAlbums.value[year]) {
-        return yearlyTopAlbums.value[year];
-      }
-      const module = await readTextFile(`processedHistory/yearly/${year}/topAlbums.json`, { baseDir: BaseDirectory.AppData });
-      yearlyTopAlbums.value[year] = JSON.parse(module) as TotalsList;
-      return yearlyTopAlbums.value[year];
-    } catch (error) {
-      console.log(`Error loading top albums for ${year}${month ? `/${month}` : ''}`);
-      return [];
-    }
-  }
+  const getTopTracks = createTopItemLoader('top_tracks.json', yearlyTopTracks, monthlyTopTracks);
+  const getTopArtists = createTopItemLoader('top_artists.json', yearlyTopArtists, monthlyTopArtists);
+  const getTopAlbums = createTopItemLoader('top_albums.json', yearlyTopAlbums, monthlyTopAlbums);
+  const getTopDays = createTopItemLoader('top_days.json', yearlyTopPerDays, monthlyTopPerDays);
 
   const getTopItems = async (type : 'tracks' | 'artists' | 'albums', from : string, to : string) => {
     const fromParts = from.split('-');
@@ -201,7 +224,7 @@ export const useTrackerStore = defineStore('tracker', () => {
 
   const getTrackStats = async (trackKey: string) => {
     if (!fullTrackStats.value || Object.keys(fullTrackStats.value).length === 0) {
-      const module = await readTextFile(`processedHistory/fullSongStats.json`, { baseDir: BaseDirectory.AppData });
+      const module = await readTextFile(`processed_history/full_track_stats.json`, { baseDir: BaseDirectory.AppData });
       fullTrackStats.value = JSON.parse(module) as TrackStats;
     }
 
@@ -214,6 +237,7 @@ export const useTrackerStore = defineStore('tracker', () => {
 
     const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' } as const;
     const timeOptions = { hour: 'numeric', minute: '2-digit' } as const;
+    fullTrackStats.value[trackKey] = trasformFullStats(fullTrackStats.value[trackKey]);
     fullTrackStats.value[trackKey].plays = fullTrackStats.value[trackKey].plays.map(play => {
       const date = new Date(play.timeStamp);
       
@@ -233,105 +257,24 @@ export const useTrackerStore = defineStore('tracker', () => {
     return fullTrackStats.value[trackKey];
   }
 
-  const getArtistStats = async (artistName: string) => {
-    if (!fullArtistStats.value || Object.keys(fullArtistStats.value).length === 0) {
-      const module = await readTextFile(`processedHistory/fullArtistStats.json`, { baseDir: BaseDirectory.AppData });
-      const fullStats = JSON.parse(module) as ({ [artist: string]: TrackStats });
-      if (!fullStats[artistName]) return;
+  const getArtistStats = createFullStatsLoader(
+    "full_artist_stats.json",
+    fullArtistStats,
+    artist => ({ name: artist, tracks: {}, totalPlays: 0, topTracks: [], firstTracks: []  }),
+  );
 
-      Object.keys(fullStats).forEach(artist => {
-        if (!fullArtistStats.value[artist]) {
-          fullArtistStats.value[artist] = { name: artist, tracks: {}, totalPlays: 0, topTracks: [], firstTracks: []  };
-        }
-        fullArtistStats.value[artist].tracks = fullStats[artist] as TrackStats;
-      });
-    }
-
-    if (fullArtistStats.value[artistName].computed) {
-      return fullArtistStats.value[artistName];
-    }
-    console.log(`Computing stats for artist: ${artistName}`);
-    
-    const artistStats = fullArtistStats.value[artistName];
-    Object.entries(artistStats.tracks).sort((a, b) => b[1].plays.length - a[1].plays.length).forEach(([key, entry]) => {
-      artistStats.topTracks.push({ ...entry.info, key, playCount: entry.plays.length });
-    });
-  
-    let firstTimestamps : { [key : string]: number } = {};
-    artistStats.totalPlays = 0;
-    let totalMsPlayed = 0;
-    Object.keys(artistStats.tracks).forEach(key => {
-      firstTimestamps[key] = artistStats.tracks[key].plays.map(play => new Date(play.timeStamp).getTime()).sort((a, b) => a - b)[0];
-      artistStats.totalPlays += artistStats.tracks[key].plays.length;
-      totalMsPlayed += artistStats.tracks[key].plays.reduce((sum, play) => sum + play.msPlayed, 0);
-    });
-    const totalHours = Math.floor(totalMsPlayed / 3600000);
-    const totalMinutes = Math.floor((totalMsPlayed % 3600000) / 60000);
-    const totalSeconds = Math.floor((totalMsPlayed % 60000) / 1000);
-    artistStats.timePlayed = `${totalHours}h ${totalMinutes}m ${totalSeconds}s`;
-
-    const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' } as const;
-    Object.entries(firstTimestamps).sort((a, b) => (a[1] - b[1])).forEach(([key, timeStamp]) => {
-      const date = new Date(timeStamp);
-      artistStats.firstTracks.push({ ...artistStats.tracks[key].info, key, firstPlayed: date.toLocaleDateString('en-US', dateOptions) });
-    });
-    fullArtistStats.value[artistName] = artistStats
-    fullArtistStats.value[artistName].computed = true;
-    return artistStats;
-  }
-
-  const getAlbumStats = async (albumKey: string) => {
-    if (!fullAlbumStats.value || Object.keys(fullAlbumStats.value).length === 0) {
-      const module = await readTextFile(`processedHistory/fullAlbumStats.json`, { baseDir: BaseDirectory.AppData });
-      const fullStats = JSON.parse(module) as ({ [album: string]: TrackStats });
-      if (!fullStats[albumKey]) return;
-
-      Object.keys(fullStats).forEach(album => {
-        if (!fullAlbumStats.value[album]) {
-          fullAlbumStats.value[album] = { name: album.split(' - ')[0], artistName: album.split(' - ')[1], tracks: {}, totalPlays: 0, topTracks: [], firstTracks: []  };
-        }
-        fullAlbumStats.value[album].tracks = fullStats[album] as TrackStats;
-      });
-    }
-
-    if (fullAlbumStats.value[albumKey].computed) {
-      return fullAlbumStats.value[albumKey];
-    }
-    console.log(`Computing stats for album: ${albumKey}`);
-    
-    const albumStats = fullAlbumStats.value[albumKey];
-    Object.entries(albumStats.tracks).sort((a, b) => b[1].plays.length - a[1].plays.length).forEach(([key, entry]) => {
-      albumStats.topTracks.push({ ...entry.info, key, playCount: entry.plays.length });
-    });
-  
-    let firstTimestamps : { [key : string]: number } = {};
-    albumStats.totalPlays = 0;
-    let totalMsPlayed = 0;
-    Object.keys(albumStats.tracks).forEach(key => {
-      firstTimestamps[key] = albumStats.tracks[key].plays.map(play => new Date(play.timeStamp).getTime()).sort((a, b) => a - b)[0];
-      albumStats.totalPlays += albumStats.tracks[key].plays.length;
-      totalMsPlayed += albumStats.tracks[key].plays.reduce((sum, play) => sum + play.msPlayed, 0);
-    });
-    const totalHours = Math.floor(totalMsPlayed / 3600000);
-    const totalMinutes = Math.floor((totalMsPlayed % 3600000) / 60000);
-    const totalSeconds = Math.floor((totalMsPlayed % 60000) / 1000);
-    albumStats.timePlayed = `${totalHours}h ${totalMinutes}m ${totalSeconds}s`;
-
-    const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' } as const;
-    Object.entries(firstTimestamps).sort((a, b) => (a[1] - b[1])).forEach(([key, timeStamp]) => {
-      const date = new Date(timeStamp);
-      albumStats.firstTracks.push({ ...albumStats.tracks[key].info, key, firstPlayed: date.toLocaleDateString('en-US', dateOptions) });
-    });
-    fullAlbumStats.value[albumKey] = albumStats
-    fullAlbumStats.value[albumKey].computed = true;
-    return albumStats;
-  }
+  const getAlbumStats = createFullStatsLoader(
+    "full_album_stats.json",
+    fullAlbumStats,
+    album => ({ name: album.split(' - ')[0], artistName: album.split(' - ')[1], tracks: {}, totalPlays: 0, topTracks: [], firstTracks: []  }),
+  );
 
   return {
     getTopTracks,
     getTopItems,
     getTopArtists,
     getTopAlbums,
+    getTopDays,
     getTrackStats,
     getArtistStats,
     getAlbumStats,

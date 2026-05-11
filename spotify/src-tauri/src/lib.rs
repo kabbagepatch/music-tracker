@@ -4,7 +4,7 @@ use tauri_plugin_store::StoreExt;
 use zip::{ZipArchive, result::ZipError};
 
 use crate::{
-    file::{get_raw_history, rename_processed_dir, rename_raw_dir, save_raw_track_data},
+    file::{get_raw_history_files, rename_processed_dir, rename_raw_dir, save_raw_track_data},
     processing::{process_raw_history_files, process_top_items}
 };
 
@@ -100,7 +100,7 @@ async fn process_raw_history(app: tauri::AppHandle) -> Result<String, AppError> 
     }
 
     let result: String = spawn_blocking(move || -> Result<String, AppError> {
-        let raw_json_files = get_raw_history(&app)?;
+        let raw_json_files = get_raw_history_files(&app)?;
         process_raw_history_files(&app, &raw_json_files)?;
         process_top_items(&app)?;
 
