@@ -60,7 +60,7 @@ const props = defineProps<{
   forward?: () => void,
 }>();
 
-const years = Array.from({ length: 2025 - 2012 + 1 }, (_, i) => (2012 + i).toString()).reverse();
+const years = Array.from({ length: 2026 - 2012 + 1 }, (_, i) => (2012 + i).toString()).reverse();
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const selectYear = (year: string) => {

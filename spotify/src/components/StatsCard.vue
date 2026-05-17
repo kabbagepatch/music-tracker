@@ -97,7 +97,7 @@ const emit = defineEmits<{
 }
 
 .left-entry {
-  width: calc(var(--width) - 80px);
+  width: calc(var(--width) - 150px);
   display: flex;
   flex-wrap: nowrap;
   white-space: nowrap;

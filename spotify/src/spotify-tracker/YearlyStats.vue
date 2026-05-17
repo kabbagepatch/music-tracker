@@ -48,7 +48,7 @@ trackerStore.getTopAlbums(year).then(data => {
 
 const forward = () => {
   const nextYear = parseInt(year, 10) + 1;
-  if (nextYear > 2025) return;
+  if (nextYear > 2026) return;
   router.replace(`/tracker/extended/year/${nextYear}`)
 }
 

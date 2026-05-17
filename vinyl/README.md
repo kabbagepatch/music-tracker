@@ -1,5 +1,29 @@
-# Vue 3 + TypeScript + Vite
+# Vinyl Tracker
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+PWA built using Vue, you can use this to keep track of your vinyl catalog and listening history, to see visualized user trends and stats. Uses the Discogs API to get the Vinyl data and build the catalog.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+## Workflow and Implementation
+
+### Run Locally
+
+```
+yarn install
+
+yarn dev
+```
+
+### User Workflow
+
+The user can add vinyls to their catalog using the search function. I use the Discogs API to get the Vinyl results to allow the users to build their catalog. The application displays the vinyl tracks, disc colors and barcodes to confirm the correct vinyl is being selected.
+
+Once the user has vinyls in their catalog, they can log vinyl activity by selecting any of their vinyls and "playing" them. The app then keeps track of the vinyl activity and generates monthly and yearly stats from this data.
+
+### Screenshots
+
+
+
+### Technical Implementation
+
+The frontend is written using Vue.js. The project was generated using the [Vite PWA plugin](https://vite-pwa-org.netlify.app/guide/). It uses vue-router for page routing and firebase for user authentication.
+
+The backend is implemented in the [tracker-services](https://github.com/kabbagepatch/tracker-services/blob/main/vinyls.js) repo.

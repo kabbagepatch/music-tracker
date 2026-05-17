@@ -27,7 +27,7 @@ import { TotalsList, useTrackerStore } from "../stores/tracker";
 const trackerStore = useTrackerStore();
 const route = useRoute();
 const from = route.query.from as string || '9-2012';
-const to = route.query.to as string || '9-2025';
+const to = route.query.to as string || '12-2025';
 
 const topTracks = ref<TotalsList>([]);
 const topArtists = ref<TotalsList>([]);
