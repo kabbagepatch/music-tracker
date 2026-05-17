@@ -12,6 +12,8 @@ The backend, or data processeing layer is written using Rust, and utilizes the T
 
 Extensive processing details in: [Data Processing](spotify/README.md#data-processing)
 
+<img width="300" height="450" alt="image" src="https://github.com/user-attachments/assets/30192af0-3111-4609-966b-ad7cc438d8ca" />
+<img width="300" height="450" alt="image" src="https://github.com/user-attachments/assets/41e7ac6b-1395-45f0-8d7c-b40ff592be9d" />
 
 ## Vinyl Tracker
 
@@ -22,3 +24,6 @@ PWA built using Vue, you can use this to keep track of your vinyl catalog and li
 The frontend is written using Vue.js. The project was generated using the [Vite PWA plugin](https://vite-pwa-org.netlify.app/guide/). It uses vue-router for page routing and firebase for user authentication.
 
 The backend is implemented in the [tracker-services](https://github.com/kabbagepatch/tracker-services/blob/main/vinyls.js) repo.
+
+<img width="300" height="548" alt="image" src="https://github.com/user-attachments/assets/0d874a4e-4cda-4f43-807a-ce20972a2ccb" />
+<img width="300" height="548" alt="image" src="https://github.com/user-attachments/assets/1d3679e0-d41f-48a5-b02d-90493a713703" />
