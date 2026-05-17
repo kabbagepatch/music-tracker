@@ -20,7 +20,11 @@ Once the user has vinyls in their catalog, they can log vinyl activity by select
 
 ### Screenshots
 
+<img width="300" height="548" alt="image" src="https://github.com/user-attachments/assets/0d874a4e-4cda-4f43-807a-ce20972a2ccb" />
+<img width="300" height="548" alt="image" src="https://github.com/user-attachments/assets/1d3679e0-d41f-48a5-b02d-90493a713703" />
 
+<img width="300" height="548" alt="image" src="https://github.com/user-attachments/assets/c433682f-e4f8-421b-9562-68b687a39b8a" />
+<img width="300" height="548" alt="image" src="https://github.com/user-attachments/assets/e0233be5-bf4a-4135-a747-a07581a8f62f" />
 
 ### Technical Implementation
 
