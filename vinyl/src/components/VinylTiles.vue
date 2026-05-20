@@ -10,12 +10,19 @@ defineProps<{
 
 <template>
   <div class="albums">
-    <div class="album-tile" v-for="vinyl in vinyls" @click="$router.push(`/catalog/${vinyl.id}`)"  :style="{ backgroundColor: vinyl?.albumColors?.length ? vinyl.albumColors[0] + '20' : 'rgb(41, 41, 41)' }">
+    <div
+      class="album-tile"
+      :style="{ backgroundColor: vinyl?.albumColors?.length ? vinyl.albumColors[0] + '30' : 'rgb(41, 41, 41)' }"
+      v-for="vinyl in vinyls"
+      @click="$router.push(`/catalog/${vinyl.id}`)"
+    >
       <img v-if="vinyl.imageUrl" class="album-art" :src="vinyl.imageUrl" :alt="vinyl.album">
       <div v-else class="album-art" :style="{ marginBottom: '10px', backgroundColor: 'black' }" />
       <div v-if="vinyl.favorite" class="icon-container"><img class="icon" src="../assets/icons/heart-filled.png" /></div>
       <div class="album">{{ vinyl.album.length > 13 ? vinyl.album.slice(0, 12).trim() + '..' : vinyl.album }}</div>
-      <div class="artist" :style="{ color: vinyl?.albumColors?.length ? vinyl.albumColors[0] : 'white', }">{{ vinyl.artist.length > 14 ? vinyl.artist.slice(0, 13).trim() + '..' : vinyl.artist }}</div>
+      <div class="artist" :style="{ color: vinyl?.albumColors?.length ? vinyl.albumColors[0] : 'white', }">
+        {{ vinyl.artist.length > 14 ? vinyl.artist.slice(0, 13).trim() + '..' : vinyl.artist }}
+      </div>
     </div>
   </div>
 </template>
@@ -27,7 +34,7 @@ defineProps<{
     flex-direction: row;
     justify-content: space-between;
     gap: 8px;
-    padding: 16px 0;
+    padding: 8px 0;
   }
 
   .album-tile {

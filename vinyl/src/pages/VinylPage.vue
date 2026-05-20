@@ -75,7 +75,7 @@ const playVinyl = async (sides: Boolean[]) => {
 <template>
   <AddVinylModal v-if="showEditModal && vinyl" @close="showEditModal = false" :selected-vinyl="vinyl" @save-vinyl="updateVinyl" />
   <PlayVinylModal v-if="showPlayModal && vinyl" @close="showPlayModal = false" :vinyl="vinyl" @play-vinyl="playVinyl" />
-  <VinylDetails :vinyl="vinyl" @play="openPlayModal" />
+  <VinylDetails v-if="vinyl" :vinyl="vinyl" @play="playVinyl(new Array(vinyl.nSides).fill(true))" />
   <div class="buttons">
     <button class="icon-button" @click="favoriteVinyl()">
       <img v-if="vinyl?.favorite" class="icon" src="../assets/icons/heart-filled.png" />

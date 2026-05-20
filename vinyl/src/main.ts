@@ -5,7 +5,7 @@ import { currentUser, userLoaded } from './firebaseApp';
 import App from './App.vue'
 import './style.css';
 
-import PlayHistory from './pages/PlayHistory.vue'
+import VinylActivity from './pages/VinylActivity.vue'
 import VinylCatalog from './pages/VinylCatalog.vue'
 import VinylPage from './pages/VinylPage.vue';
 import SearchVinyl from './pages/SearchVinyl.vue'
@@ -18,7 +18,7 @@ const routes = [
   { path: '/catalog/add', component: SearchVinyl, meta: { requiresAuth: true }, },
   { path: '/catalog/add/:id', component: AddVinyl, meta: { requiresAuth: true }, },
   { path: '/catalog/:id', component: VinylPage, meta: { requiresAuth: true }, },
-  { path: '/', component: PlayHistory, meta: { requiresAuth: true }, },
+  { path: '/', component: VinylActivity, meta: { requiresAuth: true }, },
 ]
 
 const router = createRouter({

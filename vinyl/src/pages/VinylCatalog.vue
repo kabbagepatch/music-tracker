@@ -35,6 +35,7 @@ const toggleView = (v : 'tile' | 'list') => {
 </script>
 
 <template>
+  <h2>My Vinyls</h2>
   <div class="content">
     <div class="action-bar">
       <input class="album-search" v-model="search" type="text" placeholder="Search catalog..." @input="onSearch" />
@@ -70,12 +71,13 @@ const toggleView = (v : 'tile' | 'list') => {
     font-size: 16px;
     border-radius: 20px;
     border: none;
+    background-color: hsl(27, 15%, 19%);
   }
 
   .view-toggle {
     height: 35px;
     padding: 10px 12px;
-    background-color: rgb(59, 59, 59);
+    background-color: hsl(27, 15%, 19%);
   }
 
   .icon {
@@ -83,7 +85,7 @@ const toggleView = (v : 'tile' | 'list') => {
   }
 
   .view-toggle.selected {
-    background-color: #1a1a1a;
+    background-color: hsl(27, 15%, 12%);
   }
 
   .view-toggle:nth-of-type(1) {

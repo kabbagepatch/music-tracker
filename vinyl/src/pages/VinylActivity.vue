@@ -1,42 +1,64 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import NavBar from '../components/NavBar.vue';
-import { getPlayHistory } from '../services/vinyls';
+import { deleteVinylPlay, getVinylActivity } from '../services/vinyls';
 
-let playHistory: any = ref([]);
+let vinylActivity: any = ref([]);
 
 const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' } as const;
 const timeOptions = { hour: 'numeric', minute: '2-digit' } as const;
-getPlayHistory().then(result => {
-  playHistory.value = result.map((a: any) => {
+getVinylActivity().then(result => {
+  vinylActivity.value = result.map((a: any) => {
     const date = new Date(a.timestamp);
     return {
       ...a,
       dateString: date.toLocaleDateString('en-US', dateOptions),
       timeString: date.toLocaleTimeString('en-US', timeOptions),
+      showTrash: false,
     };
   });
 })
+
+const deletePlay = async (row: any) => {
+  await deleteVinylPlay(row.vinylId, row.playId);
+  vinylActivity.value = vinylActivity.value.filter((a: any) => a.playId != row.playId);
+}
 
 </script>
 
 <template>
   <h2>Activity</h2>
   <div class="plays">
-    <div class="play-item" v-for="row in playHistory" :style="{ backgroundColor: row?.albumColors?.length ? row.albumColors[0] + '10' : 'rgb(41, 41, 41)' }">
+    <div
+      class="play-item"
+      v-for="row in vinylActivity"
+      :style="{ backgroundColor: row?.albumColors?.length ? row.albumColors[0] + '30' : 'rgb(41, 41, 41)' }"
+      @click="row.showTrash=!row.showTrash"
+    >
       <div class="album-info" @click="$router.push(`/catalog/${row.vinylId}`)">
         <img class="album-art" :src="row.imageUrl" :alt="row.album">
         <div>
           <div class="album">
-            <span class="album-name">{{ row.album.length > 30 ? row.album.slice(0, 28) + '..' : row.album }}</span>
-            <span class="album-sides" v-if="row.sides.length < row.nSides">{{ row.sides.join(', ') }}</span>
+            <span class="album-name" :style="{ color: row?.albumColors?.length ? row.albumColors[0] : 'white' }">
+              {{ row.album.length > 30 ? row.album.slice(0, 28) + '..' : row.album }}
+            </span>
+            <span class="album-sides" v-if="row.sides.length < row.nSides">
+              {{ row.sides.join(', ') }}
+            </span>
           </div>
           <div class="artist">{{ row.artist }}</div>
         </div>
       </div>
-      <div>
-        <div class="date" :style="{ color: row?.albumColors?.length ? row.albumColors[0] : 'white' }">{{ row.dateString }}</div>
-        <div class="time">{{ row.timeString }}</div>
+      <div class="play-item-right">
+        <div>
+          <div class="date">{{ row.dateString }}</div>
+          <div class="time">{{ row.timeString }}</div>
+        </div>
+        <div v-if="row.showTrash">
+          <button class="icon-button" @click="deletePlay(row)">
+            <img class="icon" src="../assets/icons/delete.png" />
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -44,8 +66,19 @@ getPlayHistory().then(result => {
 </template>
 
 <style scoped>
+  h2 {
+    margin-bottom: 16px;
+  }
+
+  .icon-button {
+    margin-right: 10px;
+    width: 30px;
+    height: 30px;
+    background: none;
+  }
+
   .plays {
-    margin-bottom: 30px;
+    margin-bottom: 60px;
   }
 
   .vinyl-title {
@@ -63,6 +96,14 @@ getPlayHistory().then(result => {
     justify-content: space-between;
     background-color: rgb(41, 41, 41);
     margin-bottom: 8px;
+    cursor: pointer;
+  }
+
+  .play-item-right {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 10px;
   }
 
   .album-info {
@@ -70,10 +111,11 @@ getPlayHistory().then(result => {
     flex-direction: row;
     align-items: center;
     gap: 10px;
+    cursor: pointer;
   }
 
   .album-art {
-    height: 40px;
+    height: 50px;
   }
 
   .album {

@@ -46,7 +46,7 @@ const sides = ref(new Array(props.vinyl.nSides).fill(true));
   }
 
   .modal-image {
-    width: 270px;
+    width: 350px;
   }
 
   .checkbox-container {
@@ -62,6 +62,6 @@ const sides = ref(new Array(props.vinyl.nSides).fill(true));
   }
 
   .add-button {
-    border: 1px solid white;
+    border: 1px solid #ece0d1;
   }
 </style>

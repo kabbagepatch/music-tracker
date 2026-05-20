@@ -20,7 +20,7 @@ const modalClick = (e: any) => {
           class="close-button"
           @click="onClose"
         >
-          x
+          X
         </button>
       </header>
 
@@ -54,12 +54,12 @@ const modalClick = (e: any) => {
 }
 
 .modal {
-  background-color: #1a1a1a;
+  background-color: hsl(28, 58%, 8%);
   box-shadow: 2px 2px 5px 1px black;
   overflow-x: auto;
   display: flex;
   flex-direction: column;
-  min-width: 300px;
+  min-width: 350px;
 }
 
 .modal-header, .modal-footer {
@@ -75,13 +75,10 @@ const modalClick = (e: any) => {
   justify-content: end;
 }
 
-.modal-header {
-  padding-right: 0px;
-}
-
 .close-button {
-  font-size: 24px;
-  padding: 5px 15px;
+  font-size: 20px;
+  padding: 0px 10px;
+  margin: 2px;
 }
 
 .modal-body {

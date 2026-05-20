@@ -20,10 +20,11 @@ const onLogout = async () => {
 
 <template>
   <div class="header">
-    <div class="title">
-      <img :style="{ width: '50px', height: '50px' }" src="./assets/vinyl.png" />
-      <a href="/" :style="{ color: 'white' }"><h1>Vinyl Tracker</h1></a>
-    </div>
+    <a href="/" :style="{ color: 'white' }"><div class="title">
+        <img :style="{ width: '50px', height: '50px' }" src="./assets/vinyl.png" />
+        <h1>Vinyl Tracker</h1>
+      </div>
+    </a>
     <button v-if="userLoaded && currentUser" class="icon-button" @click="onLogout"><img class="icon" src="./assets/icons/logout.png" /></button>
   </div>
   <RouterView :key="$route.fullPath" />
@@ -47,6 +48,6 @@ const onLogout = async () => {
 
   .icon-button {
     margin-top: -10px;
-    margin-right: -10px;
+    margin-right: 0px;
   }
 </style>

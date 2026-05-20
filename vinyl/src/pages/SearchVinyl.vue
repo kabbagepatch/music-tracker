@@ -39,6 +39,12 @@ searchAlbum();
 </script>
 
 <template>
+  <div class="search-header">
+    <h2>Add To Catalog</h2>
+    <button class="back-button" @click="$router.back()">
+      <img src="../assets/icons/back.png" />
+    </button>
+  </div>
   <div class="action-bar">
     <input class="album-search" v-model="search" type="text" placeholder="Search for albums..." @change="onSearch" />
     <button class="search-button" @click="onSearch()">
@@ -50,6 +56,27 @@ searchAlbum();
 </template>
 
 <style scoped>
+  .search-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .back-button {
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    margin-bottom: 8px;
+    padding: 0;
+    background: none;
+  }
+
+  .back-button img {
+    width: 24px;
+    margin-top: 5px;
+  }
+
   .header {
     display: flex;
     align-items: center;
@@ -68,17 +95,18 @@ searchAlbum();
   .album-search {
     margin: 8px 0;
     width: calc(100% - 16px);
-    padding: 8px 0;
+    padding: 10px 0;
     padding-left: 16px;
     font-size: 16px;
     border-radius: 20px;
     border: none;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+    background-color: hsl(27, 15%, 19%);
   }
 
   .search-button {
-    width: 40px;
+    width: 50px;
     height: 40px;
     padding: 8px;
     border-top-left-radius: 0;
@@ -86,7 +114,7 @@ searchAlbum();
   }
 
   .manual-add-row {
-    background-color: rgb(41, 41, 41);
+    background-color: hsl(0, 0%, 16%);
     padding: 6px 6px 6px 12px;
     border-radius: 5px;
     display: flex;

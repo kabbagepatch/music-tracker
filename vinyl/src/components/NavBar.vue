@@ -51,7 +51,7 @@ onBeforeUnmount(() => {
         <img class="icon" src="../assets/icons/list.png" />
         <span class="tab-name">Catalog</span>
       </div>
-      <div :style="{ width: '250px', background: 'rgb(54, 54, 54)' }" />
+      <div :style="{ width: '245px', background: 'hsl(21, 42%, 11%)' }" />
       <div class="add-button-container">
         <div v-if="showDropdown" class="dropdown">
           <button class="option" @click="addActivity">Add Activity</button>
@@ -59,7 +59,7 @@ onBeforeUnmount(() => {
         </div>
         <button
           class="add-button"
-          @click="toggleDropdown"
+          @click="addToCatalog"
           >
           <!-- @click="$router.push($route.path.includes('catalog') ? '/catalog/add' : '/catalog')" -->
           <img class="add-button-icon" src="../assets/icons/plus.png" />
@@ -71,7 +71,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
   footer {
-    background-color: rgb(54, 54, 54);
+    background-color: hsl(21, 42%, 11%);
     position: fixed;
     bottom: 0;
     left: 0;
@@ -87,17 +87,18 @@ onBeforeUnmount(() => {
     width: 100%;
     text-align: center;
     padding-top: 10px;
-    background-color: rgb(54, 54, 54);
+    background-color: hsl(21, 42%, 11%);
     font-size: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
+    border-top: 1px solid #ece0d1;
   }
   
   .selected {
     font-weight: bold;
-    background-color: #1a1a1a;
+    background-color: hsl(21, 42%, 9%);
     height: 60px;
     margin-top: -10px;
   }
@@ -116,7 +117,7 @@ onBeforeUnmount(() => {
 
   .dropdown {
     width: 250px;
-    background-color: rgb(54, 54, 54);
+    background-color: hsl(21, 42%, 11%);
     padding: 10px;
     margin-left: -200px;
     margin-top: -110px;
@@ -129,13 +130,13 @@ onBeforeUnmount(() => {
   .dropdown .option {
     width: 100%;
     text-align: left;
-    background-color: #1a1a1a;
+    background-color: hsl(21, 42%, 8%);
     padding: 10px 15px;
     margin-top: 5px;
   }
 
   .add-button-container {
-    background-color: rgb(54, 54, 54);
+    background-color: hsl(21, 42%, 11%);
     position: fixed;
     right: 0;
     bottom: 0;
@@ -145,7 +146,7 @@ onBeforeUnmount(() => {
   }
 
   .add-button {
-    background-color: #1a1a1a;
+    background-color: hsl(21, 42%, 8%);
     border-radius: 50%;
     width: 75px;
     height: 75px;

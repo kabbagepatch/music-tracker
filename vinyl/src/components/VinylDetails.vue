@@ -7,6 +7,8 @@ defineProps<{
   onAdd?: any,
 }>()
 
+window.scrollTo(0, 0);
+
 </script>
 
 <template>
@@ -21,8 +23,8 @@ defineProps<{
       <div v-if="vinyl?.barcode" class="published">Bar Code: {{ vinyl?.barcode }}</div>
       <div class="published">Disk: {{ vinyl?.discColor }}</div>
     </div>
-    <div :style="{ width: '40px' }" />
-    <button v-if="onAdd" class="back-button" @click="$router.back()">
+    <div :style="{ width: '40px', marginLeft: '10px' }" />
+    <button class="back-button" @click="$router.back()">
       <img src="../assets/icons/back.png" />
     </button>
   </section>
@@ -33,7 +35,7 @@ defineProps<{
       class="play-button"
       @click="onPlay"
     >
-      ▶ Play Vinyl
+      Play Vinyl
     </button>
     <button
       v-if="onAdd"
@@ -120,7 +122,7 @@ defineProps<{
   
   .play-button {
     color: black;
-    font-size: 20px;
+    font-size: 22px;
     padding: 4px 20px;
     padding-top: 2px;
     font-weight: bold;

@@ -16,7 +16,12 @@ const addClick = (e: PointerEvent, vinyl: Vinyl) => {
 
 <template>
   <div class="albums">
-    <div class="album-item" v-for="vinyl in vinyls" @click="onVinylSelect(vinyl)" :style="{ backgroundColor: vinyl?.albumColors?.length ? vinyl.albumColors[0] + '10' : 'rgb(41, 41, 41)' }">
+    <div
+      class="album-item"
+      v-for="vinyl in vinyls"
+      @click="onVinylSelect(vinyl)"
+      :style="{ backgroundColor: vinyl?.albumColors?.length ? vinyl.albumColors[0] + '30' : 'hsl(27, 15%, 19%)' }"
+    >
       <div class="album-info">
         <img v-if="vinyl.imageUrl" class="album-art" :src="vinyl.imageUrl" :alt="vinyl.album">
         <div v-else class="album-art" :style="{ backgroundColor: 'black' }" />
@@ -36,7 +41,7 @@ const addClick = (e: PointerEvent, vinyl: Vinyl) => {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 16px 0;
+    padding: 8px 0;
   }
 
   .album-item {
@@ -51,7 +56,7 @@ const addClick = (e: PointerEvent, vinyl: Vinyl) => {
   .album-info {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
   }
 
   .album-art {
@@ -77,6 +82,6 @@ const addClick = (e: PointerEvent, vinyl: Vinyl) => {
   .add-button {
     font-size: 24px;
     line-height: 0.9em;
-    padding: 6px 12px;
+    padding: 8px 12px;
   }
 </style>

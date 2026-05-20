@@ -88,7 +88,7 @@ export const getDiscogsVinyl = async (discogsId: string) : Promise<Vinyl | undef
   }
 }
 
-export const getPlayHistory = async () : Promise<VinylPlay[]> => {
+export const getVinylActivity = async () : Promise<VinylPlay[]> => {
   try {
     // @ts-ignore
     const response = await service.get('/vinyls/history', { id: 'list-vinyl-plays' });
@@ -113,4 +113,8 @@ export const playVinyl = async (id: string, data: { sides: number[] }) => {
       }
     }
   });
+}
+
+export const deleteVinylPlay = async (vinylId: string, playId: string) => {
+  await service.delete(`/vinyls/${vinylId}/plays/${playId}`);
 }
