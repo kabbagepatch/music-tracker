@@ -6,9 +6,9 @@ const router = useRouter();
 
 const showDropdown = ref(false);
 
-const toggleDropdown = () => {
-  showDropdown.value = !showDropdown.value;
-};
+// const toggleDropdown = () => {
+//   showDropdown.value = !showDropdown.value;
+// };
 
 const close = (e : any) => {
   const className = e.target.classList[0];

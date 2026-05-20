@@ -56,9 +56,9 @@ const deleteVinyl = async () => {
   }
 }
 
-const openPlayModal = () => {
-  showPlayModal.value = true;
-}
+// const openPlayModal = () => {
+//   showPlayModal.value = true;
+// }
 
 const playVinyl = async (sides: Boolean[]) => {
   const sidesPlayed = sides.map((_, i) => i + 1)
