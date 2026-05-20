@@ -12,8 +12,8 @@ The backend, or data processeing layer is written using Rust, and utilizes the T
 
 Extensive processing details in: [Data Processing](spotify/README.md#data-processing)
 
-<img width="300" height="450" alt="image" src="https://github.com/user-attachments/assets/30192af0-3111-4609-966b-ad7cc438d8ca" />
-<img width="300" height="450" alt="image" src="https://github.com/user-attachments/assets/41e7ac6b-1395-45f0-8d7c-b40ff592be9d" />
+<img width="300" height="450" alt="Yearly Stats" src="https://github.com/user-attachments/assets/30192af0-3111-4609-966b-ad7cc438d8ca" />
+<img width="300" height="450" alt="Monthly Stats" src="https://github.com/user-attachments/assets/41e7ac6b-1395-45f0-8d7c-b40ff592be9d" />
 
 ## Vinyl Tracker
 
@@ -25,5 +25,5 @@ The frontend is written using Vue.js. The project was generated using the [Vite 
 
 The backend is implemented in the [tracker-services](https://github.com/kabbagepatch/tracker-services/blob/main/vinyls.js) repo.
 
-<img width="300" height="548" alt="image" src="https://github.com/user-attachments/assets/0d874a4e-4cda-4f43-807a-ce20972a2ccb" />
-<img width="300" height="548" alt="image" src="https://github.com/user-attachments/assets/1d3679e0-d41f-48a5-b02d-90493a713703" />
+<img width="300" height="553" alt="Vinyl Activity" src="https://github.com/user-attachments/assets/562ecc49-f7f4-4db0-b0ba-355c7da34b8d" />
+<img width="300" height="553" alt="Vinyl Catalog" src="https://github.com/user-attachments/assets/a696c6dc-bb82-4d5a-b4ba-b40cfcadff69" />
