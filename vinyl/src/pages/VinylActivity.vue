@@ -40,7 +40,7 @@ const deletePlay = async (row: any) => {
         <div>
           <div class="album">
             <span class="album-name" :style="{ color: row?.albumColors?.length ? row.albumColors[0] : 'white' }">
-              {{ row.album.length > 30 ? row.album.slice(0, 28) + '..' : row.album }}
+              {{ row.album.length > 27 ? row.album.slice(0, 25) + '..' : row.album }}
             </span>
             <span class="album-sides" v-if="row.sides.length < row.nSides">
               {{ row.sides.join(', ') }}
